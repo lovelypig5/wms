@@ -1,0 +1,42 @@
+{
+  "name": "wms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wei.ding",
+  "license": "AGPL-3.0",
+  "kil": {
+    "port": 9000,
+    "mock": false,
+    "react": false,
+    "html5Mode": true,
+    "webpack": {
+      "output": {
+        "*.html": {}
+      },
+      "commonTrunk": {},
+      "global": {},
+      "devServer": {
+        "proxy": {
+          "/test_/?*": "please change or remove this as you need"
+        }
+      }
+    },
+    "copy": []
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "highcharts": "^4.2.3",
+    "jquery": "^2.2.2",
+    "normalize.css": "^4.0.0",
+    "select2": "^4.0.2",
+    "taggle": "^1.7.0",
+    "vue": "^1.0.20",
+    "vue-router": "^0.7.11",
+    "vue-validator": "2.0.0-beta.5",
+    "vuex": "^0.6.2"
+  }
+}
