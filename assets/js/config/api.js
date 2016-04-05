@@ -1,4 +1,5 @@
-var base = '/api';
+var host = '/wms';
+var base = host + '/api';
 var api = {
     createGood: base + '/goods/create',
     searchGood: base + '/goods/search',
@@ -11,10 +12,10 @@ var api = {
     inList: base + '/goods/inList',
     outList: base + '/goods/inList',
 
-    user: '/user',
-    isLogin: '/isLogin',
-    login: '/login',
-    logout: '/logout'
+    user: host + '/user',
+    isLogin: host + '/isLogin',
+    login: host + '/login',
+    logout: host + '/logout'
 }
 
 export default api;
