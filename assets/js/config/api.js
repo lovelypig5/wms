@@ -1,4 +1,4 @@
-var host = '/wms';
+var host = '';
 var base = host + '/api';
 var api = {
     createGood: base + '/goods/create',

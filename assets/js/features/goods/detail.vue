@@ -17,18 +17,18 @@
                     <td>
                     </td>
                     <td>
-                        <a href="javascript:void(0)" v-link="{path: '/goods/analysis'}">趋势</a>
+                        <a href="javascript:void(0)" v-link="{path: 'goods/analysis'}">趋势</a>
                     </td>
                 </tr>
                 <tr class="item" v-for="g in good.list">
                     <td>{{g.attr | remove-whitespace}}</td>
                     <td>{{g.count}}</td>
                     <td>
-                        <a href="javascript:void(0)" v-link="{path: '/goods/in', query: {id: good.id, name: good.name, attr: g.attr} }">入库</a>
-                        <a href="javascript:void(0)" v-link="{path: '/goods/out', query: {id: good.id, name: good.name, attr: g.attr} }">出库</a>
+                        <a href="javascript:void(0)" v-link="{path: 'goods/in', query: {id: good.id, name: good.name, attr: g.attr} }">入库</a>
+                        <a href="javascript:void(0)" v-link="{path: 'goods/out', query: {id: good.id, name: good.name, attr: g.attr} }">出库</a>
                     </td>
                     <td>
-                        <a href="javascript:void(0)" v-link="{path: '/goods/analysis'}">趋势</a>
+                        <a href="javascript:void(0)" v-link="{path: 'goods/analysis'}">趋势</a>
                     </td>
                 </tr>
             </tbody>

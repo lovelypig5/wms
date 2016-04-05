@@ -1,5 +1,4 @@
 import Router from 'vue-router';
-import API from '../config/api';
 
 Vue.use(Router);
 
@@ -7,12 +6,12 @@ var router = new Router({
     history: true
 });
 router.map({
-    'wms/home': {
+    home: {
         component(resolve) {
             require(['../features/home/index.vue'], resolve);
         }
     },
-    'wms/goods': {
+    goods: {
         component(resolve) {
             require(['../features/goods/index.vue'], resolve);
         },
