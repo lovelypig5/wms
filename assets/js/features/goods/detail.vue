@@ -1,6 +1,6 @@
 <template>
     <div class="panel panel-primary good-list">
-        <div class="panel-heading">{{good.name}}<a href="" v-link="{name: 'good-attr', params: params}">编辑商品属性</a></div>
+        <div class="panel-heading">{{good.name}}<a href="" v-link="{name: '/good-attr', params: params}">编辑商品属性</a></div>
         <table class="table" v-if="!loading.fetch">
             <thead>
                 <tr>
