@@ -17,11 +17,11 @@
                     </td>
                     <td>{{good.count}}</td>
                     <td>
-                        <a href="javascript:void(0)" v-link="{path: 'goods/in', query: {id: good.id, name: good.name} }">入库</a>
-                        <a href="javascript:void(0)" v-link="{path: 'goods/out', query: {id: good.id, name: good.name} }">出库</a>
+                        <a href="javascript:void(0)" v-link="{path: '/goods/in', query: {id: good.id, name: good.name} }">入库</a>
+                        <a href="javascript:void(0)" v-link="{path: '/goods/out', query: {id: good.id, name: good.name} }">出库</a>
                     </td>
                     <td>
-                        <a href="javascript:void(0)" v-link="{path: 'goods/analysis', params: {id: good.id}}">趋势</a>
+                        <a href="javascript:void(0)" v-link="{path: '/goods/analysis', params: {id: good.id}}">趋势</a>
                     </td>
                 </tr>
             </tbody>

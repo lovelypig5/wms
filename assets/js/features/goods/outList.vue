@@ -13,7 +13,7 @@
             </thead>
             <tbody>
                 <tr class="item" v-for="good in outList">
-                    <td><a href="javascript:void(0)" v-link="{path: 'goods/detail/'+good.goods_id}">{{good.name}}</a></td>
+                    <td><a href="javascript:void(0)" v-link="{path: '/goods/detail/'+good.goods_id}">{{good.name}}</a></td>
                     <td>{{good.goods_attr | remove-whitespace}}</td>
                     <td>{{good.amount}}</td>
                     <td>{{good.price}}</td>

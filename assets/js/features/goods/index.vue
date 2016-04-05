@@ -2,7 +2,7 @@
     <div class="container" v-if="user.id">
         <div class="col-md-3">
             <div class="list-group">
-                <a href="javascript:void(0)" v-link="{path: 'goods' + path[$index], activeClass:'active'}" class="list-group-item" v-for="item in menu">{{ $t(item) }} </a>
+                <a href="javascript:void(0)" v-link="{path: '/goods' + path[$index], activeClass:'active'}" class="list-group-item" v-for="item in menu">{{ $t(item) }} </a>
             </div>
         </div>
         <div class="col-md-9 content">

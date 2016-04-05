@@ -1,4 +1,5 @@
 import Router from 'vue-router';
+import API from '../config/api';
 
 Vue.use(Router);
 

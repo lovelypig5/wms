@@ -12,7 +12,7 @@
                 <tr class="item" v-for="g in good.list">
                     <td>{{g.attr}}</td>
                     <td>
-                        <a href="javascript:void(0)" v-link="{path: 'goods/analysis'}">趋势</a>
+                        <a href="javascript:void(0)" v-link="{path: '/goods/analysis'}">趋势</a>
                     </td>
                 </tr>
                 <tr class="item" v-if="good.list.length==0">
