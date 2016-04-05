@@ -1,20 +1,20 @@
-var base = '/wms';
+var base = '/api';
 var api = {
-    createGood: base + '/api/goods/create',
-    searchGood: base + '/api/goods/search',
-    goodsAttrs: base + '/api/goods/attrs',
-    goodsAttrlist: base + '/api/goods/attrlist',
-    goodsIn: base + '/api/goods/in',
-    goodsOut: base + '/api/goods/out',
-    goodsDetail: base + '/api/goods/detail',
-    goodList: base + '/api/goods',
-    inList: base + '/api/goods/inList',
-    outList: base + '/api/goods/inList',
+    createGood: base + '/goods/create',
+    searchGood: base + '/goods/search',
+    goodsAttrs: base + '/goods/attrs',
+    goodsAttrlist: base + '/goods/attrlist',
+    goodsIn: base + '/goods/in',
+    goodsOut: base + '/goods/out',
+    goodsDetail: base + '/goods/detail',
+    goodList: base + '/goods',
+    inList: base + '/goods/inList',
+    outList: base + '/goods/inList',
 
-    user: base + '/user',
-    isLogin: base + '/isLogin',
-    login: base + '/login',
-    logout: base + '/logout'
+    user: '/user',
+    isLogin: '/isLogin',
+    login: '/login',
+    logout: '/logout'
 }
 
 export default api;
