@@ -6,12 +6,12 @@ var router = new Router({
     history: true
 });
 router.map({
-    home: {
+    'home': {
         component(resolve) {
             require(['../features/home/index.vue'], resolve);
         }
     },
-    goods: {
+    'goods': {
         component(resolve) {
             require(['../features/goods/index.vue'], resolve);
         },
