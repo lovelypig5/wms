@@ -24,8 +24,8 @@ apis.forEach((api) => {
 
 app.use(express.static('assets/dist'));
 // history api fallback
-app.use(fallback('fallback.html', {
-    root: `${__dirname}/assets`
+app.use(fallback('index.html', {
+    root: `${__dirname}/assets/dist`
 }));
 
 app.listen(3000, function() {
