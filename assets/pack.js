@@ -12,7 +12,7 @@ module.exports = (modulePath) => {
             dependences: ['taggle', 'select2']
         },
         output: {
-            publicPath: ''
+            publicPath: '/wms/'
         },
         // plugins example, default no more
         plugins: [
