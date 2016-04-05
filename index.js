@@ -22,10 +22,10 @@ apis.forEach((api) => {
     app[method](api.route, api.func);
 })
 
-app.use(express.static('dist'));
+app.use(express.static('assets/dist'));
 // history api fallback
 app.use(fallback('fallback.html', {
-    root: `${__dirname}/dist`
+    root: `${__dirname}/assets`
 }));
 
 app.listen(3000, function() {
