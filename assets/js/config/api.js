@@ -1,5 +1,4 @@
-var host = '';
-var base = host + '/api';
+var base = '/api';
 var api = {
     createGood: base + '/goods/create',
     searchGood: base + '/goods/search',
@@ -12,10 +11,10 @@ var api = {
     inList: base + '/goods/inList',
     outList: base + '/goods/inList',
 
-    user: host + '/user',
-    isLogin: host + '/isLogin',
-    login: host + '/login',
-    logout: host + '/logout'
+    user: '/user',
+    isLogin: '/isLogin',
+    login: '/login',
+    logout: '/logout'
 }
 
 export default api;
