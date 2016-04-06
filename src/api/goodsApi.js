@@ -142,6 +142,22 @@ class GoodsApi extends BaseApi {
         })
     }
 
+    addAttr(req, res) {
+        var user_id = req.session.user.id
+        var body = req.body;
+        var goods_id = body.goods_id;
+        var attr = body.attr;
+        if (!attr) {
+            res.status(500).send('缺少参数');
+        }
+
+        goodsDao.addAttr(user_id, goods_id, attr).then((attr) => {
+            res.status(attr.status).json(attr.ret);
+        }, (attr) => {
+            res.status(attr.status).send(attr.ret);
+        })
+    }
+
     attrlist(req, res) {
         var user_id = req.session.user.id;
         var query = req.query;
@@ -192,6 +208,10 @@ module.exports = [{
     method: 'get',
     route: '/api/goods/attrs',
     func: goodsApi.attrs
+}, {
+    method: 'post',
+    route: '/api/goods/attrs/add',
+    func: goodsApi.addAttr
 }, {
     method: 'get',
     route: '/api/goods/attrlist',

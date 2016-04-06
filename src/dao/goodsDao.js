@@ -261,6 +261,16 @@ class GoodsDao extends BaseDao {
         })
     }
 
+    addAttr(user_id, goods_id, attr) {
+        return this.queryWithTransaction({
+            sql: 'insert into r_user_goods_attr (`user_id`, `goods_id`, `attr`) values (?, ?, ?)',
+            params: [user_id, goods_id, attr],
+            parse(rows) {
+                return rows;
+            }
+        });
+    }
+
     attrlist(user_id, goods_id) {
         return this.query({
             sql: 'select ga.attr from goods_attrs ga left join r_user_goods rug on rug.goods_id = ga.goods_id where rug.user_id = ? and ga.goods_id = ?',
