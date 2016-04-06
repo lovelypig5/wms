@@ -7,6 +7,11 @@ var router = new Router({
     history: true
 });
 router.map({
+    '/': {
+        component(resolve) {
+            require(['../features/home/index.vue'], resolve);
+        }
+    },
     'home': {
         component(resolve) {
             require(['../features/home/index.vue'], resolve);

@@ -2,8 +2,9 @@ var base = '/api';
 var api = {
     createGood: base + '/goods/create',
     searchGood: base + '/goods/search',
+    addAttr: base + '/goods/attrs/add',
     goodsAttrs: base + '/goods/attrs',
-    goodsAttrlist: base + '/goods/attrlist',
+    attrCombination: base + '/goods/attrlist',
     goodsIn: base + '/goods/in',
     goodsOut: base + '/goods/out',
     goodsDetail: base + '/goods/detail',

@@ -108,7 +108,7 @@ var Out = Vue.extend({
             if (data) {
                 self.model.id = data.id;
                 self.model.name = data.text;
-                self.fetchAttrList();
+                self.fetchCombination();
             }
         })
         $(this.$el).find('#productAttr').select2({
@@ -126,10 +126,10 @@ var Out = Vue.extend({
         }
     },
     methods: {
-        fetchAttrList() {
+        fetchCombination() {
             var self = this;
             $.ajax({
-                url: API.goodsAttrlist,
+                url: API.attrCombination,
                 data: {
                     good_id: this.model.id
                 },
@@ -149,7 +149,7 @@ var Out = Vue.extend({
                 this.model.id = id;
                 this.model.name = decodeURIComponent(name);
                 $(this.$el).find('#productName').append('<option value="' + this.model.id + '">' + this.model.name + '</option>');
-                this.fetchAttrList();
+                this.fetchCombination();
             }
             var attr = this.$route.query.attr;
             if (attr) {

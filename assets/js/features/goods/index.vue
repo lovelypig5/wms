@@ -1,11 +1,11 @@
 <template>
     <div class="container" v-if="user.id">
-        <div class="col-md-3">
+        <div class="col-sm-3">
             <div class="list-group">
                 <a href="javascript:void(0)" v-link="{path: '/goods' + path[$index], activeClass:'active'}" class="list-group-item" v-for="item in menu">{{ $t(item) }} </a>
             </div>
         </div>
-        <div class="col-md-9 content">
+        <div class="col-sm-9 content">
             <router-view transition="fade" transition-mode="out-in"></router-view>
         </div>
     </div>

@@ -1,4 +1,5 @@
 import API from '../config/api';
+import router from '../router';
 
 const theme = {
     "default": "default",
@@ -20,6 +21,9 @@ const mutations = {
             type: 'post',
             success(resp) {
                 state.user = {};
+                router.go({
+                    path: '/home'
+                });
             },
             error(resp) {
                 mutations.ALERT({
