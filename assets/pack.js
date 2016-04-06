@@ -8,8 +8,7 @@ module.exports = (modulePath) => {
         // if single entry is used, bundle name will be named as main.js
         entry: {
             main: "./index",
-            common: ['jquery', 'vue'],
-            dependences: ['taggle', 'select2']
+            common: ['jquery', 'vue', 'vue-router', 'vue-i18n', 'vue-validator', 'vuex', 'taggle', 'select2']
         },
         output: {
             publicPath: '/'
@@ -24,16 +23,11 @@ module.exports = (modulePath) => {
             new HtmlWebpackPlugin({
                 template: './index.html',
                 filename: './index.html',
-                chunks: ['main', 'common', 'dependences']
+                chunks: ['main', 'common']
             }),
             new webpack.optimize.CommonsChunkPlugin({
-                name: "common",
-                chunks: ['main']
+                name: "common"
             })
-        // new webpack.optimize.CommonsChunkPlugin({
-        //     name: "dependences",
-        //     chunks: ['main']
-        // })
         ],
         module: {
             loaders: []
