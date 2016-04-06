@@ -16,14 +16,18 @@
                         <li v-link="{path: '/home', activeClass: 'active'}"><a href="javascript:void(0)">{{ $t("home") }} <span class="sr-only">(current)</span></a></li>
                         <li v-link="{path: '/goods/', activeClass: 'active'}"><a href="javascript:void(0)" v-if="user.id">{{ $t("goods") }}</a></li>
                     </ul>
-                    <ul class="nav navbar-nav navbar-right">
+                    <ul class="nav navbar-nav navbar-right" v-if="!user.id">
+                        <li><a href="javascript:void(0)" @click="login">{{$t('action_login')}}</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" v-if="user.id">
                         <li class="dropdown">
-                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.name}}<span class="caret"></span></a>
+                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                {{user.name}}<span class="caret"></span>
+                            </a>
                             <ul class="dropdown-menu">
                                 <li><a href="javascript:void(0)" @click="changeLocale('en')">{{$t('text_language')}}</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="javascript:void(0)" v-if="user.id" @click="logout">{{$t('action_logout')}}</a></li>
-                                <li><a href="javascript:void(0)" v-if="!user.id" @click="login">{{$t('action_login')}}</a></li>
+                                <li><a href="javascript:void(0)" @click="logout">{{$t('action_logout')}}</a></li>
                             </ul>
                         </li>
                     </ul>
