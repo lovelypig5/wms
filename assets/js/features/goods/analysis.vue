@@ -49,7 +49,7 @@ var Analysis = Vue.extend({
             $.ajax({
                 url: API.trend,
                 data: {
-                    goods_id: 1
+                    goods_id: 3
                 },
                 success(resp) {
                     self.data = resp;
