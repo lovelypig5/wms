@@ -21,7 +21,7 @@ class GoodsApi extends BaseApi {
         var query = req.query;
         var page = parseInt(query.page) || 1;
         var pageSize = parseInt(query.pageSize) || 20;
-        var type = parseInt(query.type) || 0;
+        var type = parseInt(query.type) || -1;
 
         goodsDao.inlist(user_id, type, page, pageSize).then((goods) => {
             res.status(goods.status).json(goods.ret);
@@ -34,11 +34,19 @@ class GoodsApi extends BaseApi {
         var user_id = req.session.user.id
         var body = req.body;
         var name = body.name;
-        var attr = body.attr || [];
+        var attr = body.attr;
         if (!name) {
             res.status(500).send('缺少参数');
             return
         }
+        if (!attr) {
+            attr = [];
+        }
+        if (!Array.isArray(attr)) {
+            res.status(500).send('参数错误，属性必须为数组');
+            return
+        }
+
         goodsDao.create(name, attr, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (goods) => {
@@ -51,7 +59,7 @@ class GoodsApi extends BaseApi {
         var body = req.body;
         var id = body.id;
         var amount = body.amount;
-        var attr = body.attr || [];
+        var attr = body.attr;
         var price = body.priceIn;
         if (!id || !amount || !price) {
             res.status(500).send('缺少参数');
@@ -60,6 +68,13 @@ class GoodsApi extends BaseApi {
         price = parseFloat(price);
         if (isNaN(amount) || amount <= 0 || isNaN(price) || price <= 0) {
             res.status(500).send('参数格式错误');
+        }
+        if (!attr) {
+            attr = [];
+        }
+        if (!Array.isArray(attr)) {
+            res.status(500).send('参数错误，属性必须为数组');
+            return
         }
 
         goodsDao.in(id, amount, price, attr.join(','), user_id).then((goods) => {
@@ -172,6 +187,22 @@ class GoodsApi extends BaseApi {
             res.status(goods.status).send(goods.ret);
         })
     }
+
+    trend(req, res) {
+        var user_id = req.session.user.id;
+        var query = req.query;
+        var goods_id = query.goods_id;
+        var attr = query.attr;
+        if (!goods_id) {
+            res.status(500).send('缺少参数');
+        }
+
+        goodsDao.trend(user_id, goods_id, attr).then((trendData) => {
+            res.status(trendData.status).json(trendData.ret);
+        }, (trendData) => {
+            res.status(trendData.status).send(trendData.ret);
+        })
+    }
 }
 
 var goodsApi = new GoodsApi();
@@ -216,4 +247,8 @@ module.exports = [{
     method: 'get',
     route: '/api/goods/attrlist',
     func: goodsApi.attrlist
+}, {
+    method: 'get',
+    route: '/api/goods/trend',
+    func: goodsApi.trend
 }]

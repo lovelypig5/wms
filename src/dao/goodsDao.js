@@ -1,4 +1,5 @@
 var BaseDao = require('./baseDao');
+var logger = require('../logger');
 
 class GoodsDao extends BaseDao {
 
@@ -273,7 +274,9 @@ class GoodsDao extends BaseDao {
 
     attrlist(user_id, goods_id) {
         return this.query({
-            sql: 'select ga.attr from goods_attrs ga left join r_user_goods rug on rug.goods_id = ga.goods_id where rug.user_id = ? and ga.goods_id = ?',
+            sql: 'select ga.attr from goods_attrs ga \
+            left join r_user_goods rug on rug.goods_id = ga.goods_id \
+            where rug.user_id = ? and ga.goods_id = ?',
             params: [user_id, goods_id],
             parse(rows) {
                 if (rows && rows.length > 0) {
@@ -283,6 +286,114 @@ class GoodsDao extends BaseDao {
                 }
             }
         })
+    }
+
+    trend(user_id, goods_id, attr) {
+        var querys = [];
+        if (attr) {
+            querys.push({
+                sql: 'select g.attr, g.count, sum(gr.type * -1 * gr.amount) as amount, DATE_FORMAT(gr.date, \'%Y-%m-%d\') as date from goods_attrs g \
+                    left join goods_records gr on gr.goods_id = g.goods_id and gr.goods_attr = g.attr \
+                    left join r_user_goods rug on rug.goods_id = g.goods_id \
+                    where g.goods_id = ? and rug.user_id = ? and g.attr = ? \
+                    group by DATE_FORMAT(gr.date, \'%Y-%m-%d\'), g.attr \
+                    order by g.attr, DATE_FORMAT(gr.date, \'%Y-%m-%d\') asc;',
+                params: [goods_id, user_id, attr],
+                parse(rows) {
+                    var ret = {
+                        datasets: [{
+                            data: []
+                        }],
+                        labels: []
+                    };
+                    if (rows && rows.length > 0) {
+                        var count = 0;
+                        for (var i = 0; i < rows.length; i++) {
+                            var record = rows[0];
+                            var name = record.name;
+                            var amount = record.amount;
+                            var type = record.type;
+                            var date = record.date;
+
+                            switch (type) {
+                            case 1:
+                                count -= amount;
+                                break;
+                            case 0:
+                            default:
+                                count += amount;
+                                break;
+                            }
+                            ret.datasets[0].label = name;
+                            ret.datasets[0].data.push(count);
+                            ret.labels.push(date);
+                        }
+
+                        if (count == rows[0].count) {
+                            return ret;
+                        } else {
+                            logger.error('数据错误，库存和出入库记录总数无法匹配')
+                            logger.error('用户ID: %s', user_id);
+                            logger.error('商品ID: %s', goods_id);
+                            logger.error('属性名称: %s', attr);
+                            return ret;
+                        }
+                    }
+                }
+            })
+        } else {
+            querys.push({
+                sql: 'select g.count, g.name, sum(gr.type * -1 * gr.amount) as amount, DATE_FORMAT(gr.date, \'%Y-%m-%d\') as date from goods g \
+                        left join goods_records gr on gr.goods_id = g.id \
+                        left join r_user_goods rug on rug.goods_id = g.id \
+                        where g.id = 1 and rug.user_id = 1 \
+                        group by DATE_FORMAT(gr.date, \'%Y-%m-%d\') \
+                        order by DATE_FORMAT(gr.date, \'%Y-%m-%d\') asc',
+                params: [goods_id, user_id],
+                parse(rows) {
+                    var ret = {
+                        datasets: [{
+                            data: []
+                        }],
+                        labels: []
+                    };
+                    if (rows && rows.length > 0) {
+                        var count = 0;
+                        for (var i = 0; i < rows.length; i++) {
+                            var record = rows[i];
+                            var name = record.name;
+                            var amount = record.amount;
+                            var type = record.type;
+                            var date = record.date;
+
+                            switch (type) {
+                            case 1:
+                                count -= amount;
+                                break;
+                            case 0:
+                            default:
+                                count += amount;
+                                break;
+                            }
+                            ret.datasets[0].label = name;
+                            ret.datasets[0].data.push(count);
+                            ret.labels.push(date);
+                        }
+
+                        if (count == rows[0].count) {
+                            return ret;
+                        } else {
+                            logger.error('数据错误，库存和出入库记录总数无法匹配')
+                            logger.error('用户ID: %s', user_id);
+                            logger.error('商品ID: %s', goods_id);
+                            return ret;
+                        }
+                    }
+                }
+            })
+        }
+
+        return this.query(...querys);
     }
 }
 

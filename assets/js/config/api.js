@@ -11,6 +11,7 @@ var api = {
     goodList: base + '/goods',
     inList: base + '/goods/inList',
     outList: base + '/goods/inList',
+    trend: base + '/goods/trend',
 
     user: '/user',
     isLogin: '/isLogin',
