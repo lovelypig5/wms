@@ -338,6 +338,8 @@ class GoodsDao extends BaseDao {
                             logger.error('属性名称: %s', attr);
                             return ret;
                         }
+                    } else {
+                        return {};
                     }
                 }
             })
@@ -389,6 +391,8 @@ class GoodsDao extends BaseDao {
                             return ret;
                         }
                     }
+
+                    return {};
                 }
             })
         }
