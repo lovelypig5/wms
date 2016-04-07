@@ -346,7 +346,7 @@ class GoodsDao extends BaseDao {
                 sql: 'select g.count, g.name, sum(gr.type * -1 * gr.amount) as amount, DATE_FORMAT(gr.date, \'%Y-%m-%d\') as date from goods g \
                         left join goods_records gr on gr.goods_id = g.id \
                         left join r_user_goods rug on rug.goods_id = g.id \
-                        where g.id = 1 and rug.user_id = 1 \
+                        where g.id = ? and rug.user_id = ? \
                         group by DATE_FORMAT(gr.date, \'%Y-%m-%d\') \
                         order by DATE_FORMAT(gr.date, \'%Y-%m-%d\') asc',
                 params: [goods_id, user_id],
