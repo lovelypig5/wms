@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.6",
+    "chart.js": "^2.0.0",
     "highcharts": "^4.2.3",
     "jquery": "^2.2.2",
     "normalize.css": "^4.0.0",
