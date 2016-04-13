@@ -8,14 +8,18 @@ const layout = StyleSheet.create({
         backgroundColor: '#F5FCFF',
     },
     title: {
-        fontSize: 20,
+        fontSize: 26,
         textAlign: 'center',
-        margin: 10,
+        marginBottom: 20,
     },
     row: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        margin: 8
+    },
+    button: {
+        marginTop: 12
     },
     label: {
         fontSize: 20,
@@ -24,11 +28,9 @@ const layout = StyleSheet.create({
     input: {
         flex: 1
     },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
-    },
+    navigator: {
+        height: 30
+    }
 });
 
 export default layout;

@@ -1,5 +1,6 @@
+import React, { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import styles from '../../styles';
-import React, { Text, View, TextInput, Button } from 'react-native';
+import Login from '../login';
 
 var ios = React.createClass({
     getInitialState() {
@@ -12,23 +13,8 @@ var ios = React.createClass({
         return (
             <View style={ styles.layout.container }>
               <Text style={ styles.layout.title }>
-                登录WMS
+                欢迎使用本系统
               </Text>
-              <View style={ styles.layout.row }>
-                <Text style={ styles.layout.label }>
-                  用户名
-                </Text>
-                <TextInput onChangeText={ this.change } value={ this.state.text } style={ styles.common.input } />
-              </View>
-              <View style={ styles.layout.row }>
-                <Text style={ styles.layout.label }>
-                  密码
-                </Text>
-                <TextInput onChangeText={ this.change } value={ this.state.text } style={ styles.common.input } />
-              </View>
-              <View style={ styles.common.button }>
-                <Text style={ styles.common.buttonText }>登录</Text>
-              </View>
             </View>
             );
     },
@@ -36,6 +22,16 @@ var ios = React.createClass({
         this.setState({
             text: text
         });
+    },
+    login() {
+        var {index, navigator} = this.props;
+        var nextIndex = index + 1;
+
+        navigator.push({
+            name: 'Login',
+            component: Login,
+            index: nextIndex
+        })
     }
 })
 

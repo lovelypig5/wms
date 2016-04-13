@@ -9,7 +9,8 @@ const common = StyleSheet.create({
         borderStyle: 'solid'
     },
     button: {
-        width: 120,
+        paddingLeft: 30,
+        paddingRight: 30,
         height: 40,
         borderWidth: 1,
         borderColor: '#AAA',
