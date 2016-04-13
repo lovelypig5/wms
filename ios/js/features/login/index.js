@@ -1,13 +1,15 @@
 import React, { AsyncStorage, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import Welcome from '../welcome';
 import DICT from '../../config/dict';
+import API from '../../config/api';
 import styles from '../../styles';
 
 var Login = React.createClass({
 
     getInitialState() {
+        // AsyncStorage.removeItem(DICT.LOGINKEY);
         return {
-            text: "",
+            name: "",
             password: ""
         }
     },
@@ -37,15 +39,18 @@ var Login = React.createClass({
                 <Text style={ styles.layout.label }>
                   用户名
                 </Text>
-                <TextInput onChangeText={ this.changeText }
-                           value={ this.state.text }
+                <TextInput placeholder="请输入用户名"
+                           onChangeText={ this.changeName }
+                           value={ this.state.name }
                            style={ styles.common.input } />
               </View>
               <View style={ styles.layout.row }>
                 <Text style={ styles.layout.label }>
                   密码
                 </Text>
-                <TextInput onChangeText={ this.changePswd }
+                <TextInput placeholder="请输入密码"
+                           secureTextEntry={ true }
+                           onChangeText={ this.changePswd }
                            value={ this.state.password }
                            style={ styles.common.input } />
               </View>
@@ -59,9 +64,9 @@ var Login = React.createClass({
             );
     },
 
-    changeText(text) {
+    changeName(name) {
         this.setState({
-            text: text
+            name: name
         });
     },
 
@@ -71,13 +76,59 @@ var Login = React.createClass({
         });
     },
 
-    async login() {
-        try {
-            await AsyncStorage.setItem(DICT.LOGINKEY, "true");
-            this.jumpForward();
-        } catch ( error ) {
-            console.error(error.message);
+    login() {
+        var {name, password} = this.state;
+        if (!name || !password) {
+            return;
         }
+
+        try {
+            fetch(API.login, {
+                method: 'post',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userName: name,
+                    password: password
+                })
+            }).then((response) => {
+                console.warn(response.text())
+                return response.text();
+            }).then((responseText) => {
+                console.warn(responseText);
+            }).catch((error) => {
+                // Handle error
+                console.error(error);
+            });
+        } catch ( error ) {
+            // Handle error
+            console.error(error);
+        }
+
+
+
+
+
+
+        // switch (response.status) {
+        // case 500:
+        //     console.warn(response.text().responseText || '服务器错误');
+        //     break;
+        // case 400:
+        //     console.warn(response.text().responseText || '请求出现错误');
+        //     break;
+        // default: break;
+        // }
+
+
+        // try {
+        //     await AsyncStorage.setItem(DICT.LOGINKEY, "true");
+        //     this.jumpForward();
+        // } catch ( error ) {
+        //     console.error(error.message);
+        // }
     },
 
     jumpForward() {

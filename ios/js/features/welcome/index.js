@@ -3,12 +3,14 @@ import styles from '../../styles';
 import Login from '../login';
 
 var ios = React.createClass({
+
     getInitialState() {
         return {
             text: "",
             password: ""
         }
     },
+
     render() {
         return (
             <View style={ styles.layout.container }>
@@ -17,22 +19,8 @@ var ios = React.createClass({
               </Text>
             </View>
             );
-    },
-    change(text) {
-        this.setState({
-            text: text
-        });
-    },
-    login() {
-        var {index, navigator} = this.props;
-        var nextIndex = index + 1;
-
-        navigator.push({
-            name: 'Login',
-            component: Login,
-            index: nextIndex
-        })
     }
+
 })
 
 export default ios;
