@@ -1,15 +1,12 @@
 import React, { Navigator, ScrollView, TouchableOpacity, Text, View } from 'react-native';
 import SideMenu from 'react-native-side-menu';
 // import menu from '../features/menu';
-import Loading from '../features/loading';
+import Home from '../features/home';
+import LoginButton from '../features/login/loginButton';
 // import NavigationBar from '../features/navigationBar';
 import styles from '../styles';
 
 var Router = React.createClass({
-
-    getInitialState() {
-        return {};
-    },
 
     render() {
         var menu = <ScrollView scrollsToTop={ false }
@@ -30,36 +27,38 @@ var Router = React.createClass({
                    </ScrollView>
 
         return (
-            // <SideMenu menu={ menu }>
-            <Navigator initialRoute={ this.initialRoute() }
-                       configureScene={ this.configureScene }
-                       renderScene={ this.renderScene }
-                       onForward={ () => {
-                                       console.warn('forward');
-                                   } }
-                       onBack={ () => {
-                                    console.warn('back');
-                                } }
-                       navigationBar={ <Navigator.NavigationBar routeMapper={ this.getRouteMapper() }
-                                                                style={ [styles.common.container, styles.layout.navigator] } /> } />
-            // </SideMenu>
+            <SideMenu menu={ menu }>
+              <Navigator initialRoute={ this.initialRoute() }
+                         configureScene={ this.configureScene }
+                         renderScene={ this.renderScene }
+                         navigationBar={ <Navigator.NavigationBar routeMapper={ this.getRouteMapper() }
+                                                                  style={ [styles.common.container, styles.layout.navigator] } /> } />
+            </SideMenu>
             );
     },
 
     initialRoute() {
         return {
-            title: '',
-            component: Loading,
-            index: 0
+            title: '首页',
+            back: '',
+            component: Home,
+            index: 0,
+            right: LoginButton
         }
     },
 
     configureScene(route) {
+        if (route.sceneConfig) {
+            return route.sceneConfig;
+        }
         return Navigator.SceneConfigs.FloatFromRight;
     },
 
     renderScene(route, navigator) {
         let RouteView = route.component;
+        if (route.configureScene) {
+            navigator.configureScene = route.configureScene;
+        }
         return <RouteView {...route.params}
                           navigator={ navigator } />
     },
@@ -74,14 +73,15 @@ var Router = React.createClass({
                 return (
                     <TouchableOpacity onPress={ () => navigator.pop() }>
                       <Text style={ [styles.common.row, styles.layout.text] }>
-                        { previousRoute.title }
+                        { previousRoute.back || '< 返回' }
                       </Text>
                     </TouchableOpacity>
                 )
             },
             RightButton(route, navigator, index, navState) {
-                if (route.right) {
-                    return route.right
+                var Right = route.right
+                if (Right) {
+                    return <Right navigator={ navigator } />
                 }
             },
             Title(route, navigator, index, navState) {

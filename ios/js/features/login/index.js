@@ -1,5 +1,5 @@
 import React, { AsyncStorage, Alert, Text, View, TextInput, TouchableOpacity } from 'react-native';
-import Welcome from '../welcome';
+// import Welcome from '../welcome';
 import DICT from '../../config/dict';
 import API from '../../config/api';
 import styles from '../../styles';
