@@ -1,4 +1,4 @@
-import React, { AsyncStorage, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import React, { AsyncStorage, Alert, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import Welcome from '../welcome';
 import DICT from '../../config/dict';
 import API from '../../config/api';
@@ -76,14 +76,13 @@ var Login = React.createClass({
         });
     },
 
-    login() {
+    async login() {
         var {name, password} = this.state;
         if (!name || !password) {
             return;
         }
-
         try {
-            fetch(API.login, {
+            var response = await fetch(API.login, {
                 method: 'post',
                 headers: {
                     'Accept': 'application/json',
@@ -93,42 +92,36 @@ var Login = React.createClass({
                     userName: name,
                     password: password
                 })
-            }).then((response) => {
-                console.warn(response.text())
-                return response.text();
-            }).then((responseText) => {
-                console.warn(responseText);
-            }).catch((error) => {
-                // Handle error
-                console.error(error);
-            });
+            })
+
+            var status = response.status;
+            var responseText = await response.text();
+            switch (status) {
+            case 500:
+                Alert.alert(
+                    '登录失败',
+                    responseText || '服务器内部错误'
+                )
+                break;
+            case 400:
+                Alert.alert(
+                    '登录失败',
+                    responseText || '请求出现错误'
+                )
+                break;
+            case 200:
+                try {
+                    await AsyncStorage.setItem(DICT.LOGINKEY, "true");
+                } catch ( error ) {
+                    console.error(error.message);
+                }
+                this.jumpForward();
+                break;
+            default: break;
+            }
         } catch ( error ) {
-            // Handle error
             console.error(error);
         }
-
-
-
-
-
-
-        // switch (response.status) {
-        // case 500:
-        //     console.warn(response.text().responseText || '服务器错误');
-        //     break;
-        // case 400:
-        //     console.warn(response.text().responseText || '请求出现错误');
-        //     break;
-        // default: break;
-        // }
-
-
-        // try {
-        //     await AsyncStorage.setItem(DICT.LOGINKEY, "true");
-        //     this.jumpForward();
-        // } catch ( error ) {
-        //     console.error(error.message);
-        // }
     },
 
     jumpForward() {
