@@ -1,20 +1,13 @@
-import React, { Text, View, TextInput, TouchableOpacity } from 'react-native';
+import React, { AsyncStorage, Text, View, TextInput, TouchableOpacity } from 'react-native';
+
 import styles from '../../styles';
-import Login from '../login';
 
-var ios = React.createClass({
-
-    getInitialState() {
-        return {
-            text: "",
-            password: ""
-        }
-    },
+var Welcome = React.createClass({
 
     render() {
         return (
-            <View style={ styles.layout.container }>
-              <Text style={ styles.layout.title }>
+            <View style={ styles.common.container }>
+              <Text style={ styles.login.title }>
                 欢迎使用本系统
               </Text>
             </View>
@@ -23,4 +16,4 @@ var ios = React.createClass({
 
 })
 
-export default ios;
+export default Welcome;
