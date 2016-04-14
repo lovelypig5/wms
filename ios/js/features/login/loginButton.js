@@ -5,12 +5,14 @@ import styles from '../../styles';
 var LoginButton = React.createClass({
 
     render() {
-        return <TouchableOpacity onPress={ this.login }
-                                 style={ styles.layout.button }>
-                 <Text style={ [styles.common.row, styles.layout.text] }>
-                   登录
-                 </Text>
-               </TouchableOpacity>
+        return (
+            <TouchableOpacity onPress={ this.login }
+                              style={ styles.layout.button }>
+              <Text style={ [styles.common.row, styles.layout.text] }>
+                登录
+              </Text>
+            </TouchableOpacity>
+        )
     },
 
     login() {
