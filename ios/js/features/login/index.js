@@ -1,5 +1,5 @@
 import React, { AsyncStorage, Alert, Text, View, TextInput, TouchableOpacity } from 'react-native';
-// import Welcome from '../welcome';
+import Home from '../home';
 import DICT from '../../config/dict';
 import API from '../../config/api';
 import styles from '../../styles';
@@ -110,8 +110,8 @@ var Login = React.createClass({
         var nextIndex = index + 1;
 
         navigator.replace({
-            title: '仓储管理系统',
-            component: Welcome,
+            title: '首页',
+            component: Home,
             index: 0
         })
     }
