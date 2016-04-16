@@ -17,7 +17,7 @@ const Nav = React.createClass({
 
     initialRoute() {
         return {
-            title: '首页',
+            title: '仓储管理系统',
             back: '',
             component: Home,
             index: 0,
@@ -51,7 +51,7 @@ const Nav = React.createClass({
                 return (
                     <TouchableOpacity onPress={ () => navigator.pop() }>
                       <Text style={ [styles.common.row, styles.layout.text] }>
-                        { previousRoute.back || '< 返回' }
+                        { previousRoute.back || ' < ' }
                       </Text>
                     </TouchableOpacity>
                 )
