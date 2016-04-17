@@ -93,10 +93,9 @@ class BaseDao {
 
             async.waterfall(waterfall, (err, connection, data) => {
                 if (err) {
-                    errHandler(err, connection, data);
-                    return;
+                    return errHandler(err, connection, data);
                 }
-                successHandler(err, connection, data);
+                return successHandler(err, connection, data);
             });
         })
     }

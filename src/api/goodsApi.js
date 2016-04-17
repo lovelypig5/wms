@@ -36,14 +36,14 @@ class GoodsApi extends BaseApi {
         var name = body.name;
         var attr = body.attr;
         if (!name) {
-            res.status(500).send('缺少参数');
+            res.status(400).send('缺少参数');
             return
         }
         if (!attr) {
             attr = [];
         }
         if (!Array.isArray(attr)) {
-            res.status(500).send('参数错误，属性必须为数组');
+            res.status(400).send('参数错误，属性必须为数组');
             return
         }
 
@@ -62,18 +62,18 @@ class GoodsApi extends BaseApi {
         var attr = body.attr;
         var price = body.priceIn;
         if (!id || !amount || !price) {
-            res.status(500).send('缺少参数');
+            res.status(400).send('缺少参数');
         }
         amount = parseInt(amount);
         price = parseFloat(price);
         if (isNaN(amount) || amount <= 0 || isNaN(price) || price <= 0) {
-            res.status(500).send('参数格式错误');
+            res.status(400).send('参数格式错误');
         }
         if (!attr) {
             attr = [];
         }
         if (!Array.isArray(attr)) {
-            res.status(500).send('参数错误，属性必须为数组');
+            res.status(400).send('参数错误，属性必须为数组');
             return
         }
 
@@ -92,12 +92,12 @@ class GoodsApi extends BaseApi {
         var attr = body.attr;
         var price = body.priceOut;
         if (!id || !amount || !price) {
-            res.status(500).send('缺少参数');
+            res.status(400).send('缺少参数');
         }
         amount = parseInt(amount);
         price = parseFloat(price);
         if (isNaN(amount) || amount <= 0 || isNaN(price) || price <= 0) {
-            res.status(500).send('参数格式错误');
+            res.status(400).send('参数格式错误');
         }
 
         goodsDao.out(id, amount, price, attr, user_id).then((goods) => {
@@ -112,12 +112,12 @@ class GoodsApi extends BaseApi {
         var query = req.query;
         var id = query.id;
         if (!id) {
-            res.status(500).send('缺少参数');
+            res.status(400).send('缺少参数');
         }
 
         id = parseInt(id);
         if (isNaN(id)) {
-            res.status(500).send('参数错误');
+            res.status(400).send('参数错误');
         }
 
         goodsDao.detail(id, user_id).then((goods) => {
@@ -147,7 +147,7 @@ class GoodsApi extends BaseApi {
         var query = req.query;
         var good_id = query.good_id;
         if (!good_id) {
-            res.status(500).send('缺少参数');
+            res.status(400).send('缺少参数');
         }
 
         goodsDao.attrs(user_id, good_id).then((goods) => {
@@ -163,7 +163,7 @@ class GoodsApi extends BaseApi {
         var goods_id = body.goods_id;
         var attr = body.attr;
         if (!attr) {
-            res.status(500).send('缺少参数');
+            res.status(400).send('缺少参数');
         }
 
         goodsDao.addAttr(user_id, goods_id, attr).then((attr) => {
@@ -178,7 +178,7 @@ class GoodsApi extends BaseApi {
         var query = req.query;
         var good_id = query.good_id;
         if (!good_id) {
-            res.status(500).send('缺少参数');
+            res.status(400).send('缺少参数');
         }
 
         goodsDao.attrlist(user_id, good_id).then((goods) => {
@@ -194,7 +194,7 @@ class GoodsApi extends BaseApi {
         var goods_id = query.goods_id;
         var attr = query.attr;
         if (!goods_id) {
-            res.status(500).send('缺少参数');
+            res.status(400).send('缺少参数');
         }
 
         goodsDao.trend(user_id, goods_id, attr).then((trendData) => {
