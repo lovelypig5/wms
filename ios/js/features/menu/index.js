@@ -9,16 +9,12 @@ const Menu = React.createClass({
                         style={ styles.menu.menu }>
               <View style={ styles.menu.avatarContainer }>
                 <Text style={ styles.menu.name }>
-                  Your name
+                  { this.props.user.name }
                 </Text>
               </View>
-              <Text onPress={ () => this.props.onItemSelected('About') }
+              <Text onPress={ () => this.props.onItemSelected('logout') }
                     style={ styles.menu.item }>
-                About
-              </Text>
-              <Text onPress={ () => this.props.onItemSelected('Contacts') }
-                    style={ styles.menu.item }>
-                Contacts
+                退出登录
               </Text>
             </ScrollView>
         )

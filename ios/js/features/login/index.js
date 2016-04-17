@@ -92,7 +92,8 @@ var Login = React.createClass({
                 break;
             case 200:
                 try {
-                    await AsyncStorage.setItem(DICT.LOGINKEY, "true");
+                    await AsyncStorage.setItem(DICT.LOGINKEY, responseText);
+                    this.props.initUser(responseText);
                 } catch ( error ) {
                     console.error(error.message);
                 }
@@ -106,14 +107,8 @@ var Login = React.createClass({
     },
 
     jumpForward() {
-        var {index, navigator} = this.props;
-        var nextIndex = index + 1;
-
-        navigator.replace({
-            title: '首页',
-            component: Home,
-            index: 0
-        })
+        var {navigator} = this.props;
+        navigator.pop();
     }
 })
 

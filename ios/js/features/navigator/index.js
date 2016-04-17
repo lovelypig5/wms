@@ -38,10 +38,12 @@ const Nav = React.createClass({
             navigator.configureScene = route.configureScene;
         }
         return <RouteView {...route.params}
+                          {...this.props}
                           navigator={ navigator } />
     },
 
     getRouteMapper() {
+        let props = this.props;
         var routeMapper = {
             LeftButton(route, navigator, index, navState) {
                 if (index === 0) {
@@ -59,7 +61,8 @@ const Nav = React.createClass({
             RightButton(route, navigator, index, navState) {
                 var Right = route.right
                 if (Right) {
-                    return <Right navigator={ navigator } />
+                    return <Right {...props}
+                                  navigator={ navigator } />
                 }
             },
             Title(route, navigator, index, navState) {
