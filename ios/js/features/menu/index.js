@@ -12,6 +12,10 @@ const Menu = React.createClass({
                   { this.props.user.name }
                 </Text>
               </View>
+              <Text onPress={ () => this.props.onItemSelected('goods') }
+                    style={ styles.menu.item }>
+                商品管理
+              </Text>
               <Text onPress={ () => this.props.onItemSelected('logout') }
                     style={ styles.menu.item }>
                 退出登录

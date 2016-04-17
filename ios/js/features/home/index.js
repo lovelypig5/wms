@@ -1,4 +1,4 @@
-import React, { WebView, AsyncStorage, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import React, { AsyncStorage, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import styles from '../../styles';
 
 var Home = React.createClass({

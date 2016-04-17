@@ -61,6 +61,9 @@ var Router = React.createClass({
                 console.error(err);
             }
             break;
+        case 'goods':
+
+            break;
         default:
             break;
         }
