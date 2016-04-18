@@ -10,4 +10,4 @@ class App extends React.Component {
     }
 }
 
-AppRegistry.registerComponent('ios', () => App);
+AppRegistry.registerComponent('wms', () => App);
