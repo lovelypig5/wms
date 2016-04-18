@@ -1,7 +1,8 @@
 import React, { AsyncStorage } from 'react-native';
 import SideMenu from 'react-native-side-menu';
 import Menu from '../features/menu';
-import Nav from '../features/navigator';
+import Home from '../features/home';
+import Goods from '../features/goods';
 import DICT from '../config/dict';
 import styles from '../styles';
 
@@ -9,7 +10,8 @@ var Router = React.createClass({
 
     getInitialState() {
         return {
-            user: ""
+            user: "",
+            component: Home
         }
     },
 
@@ -18,15 +20,17 @@ var Router = React.createClass({
     },
 
     render() {
-        var App = <Nav {...this.state}
-                       initUser={ this.initUser } />;
+        var Component = this.state.component;
+        var App = <Component user={ this.state.user }
+                             initUser={ this.initUser } />;
         if (this.state.user != "") {
-            App = <SideMenu {...this.state}
-                            menu={ <Menu {...this.state}
+            App = <SideMenu user={ this.state.user }
+                            menu={ <Menu user={ this.state.user }
                                          onItemSelected={ this.selected } /> }>
                     { App }
                   </SideMenu>;
         }
+
         return (
             App
         )
@@ -62,7 +66,9 @@ var Router = React.createClass({
             }
             break;
         case 'goods':
-
+            this.setState({
+                component: Goods
+            })
             break;
         default:
             break;
