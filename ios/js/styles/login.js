@@ -6,7 +6,6 @@ const login = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
     },
-
     button: {
         marginTop: 12
     },

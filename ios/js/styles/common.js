@@ -3,15 +3,28 @@ import { StyleSheet } from 'react-native';
 const common = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         backgroundColor: '#FFFFFF',
+    },
+    container_center: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFFFFF',
+    },
+    navigator: {
+        height: 55,
+        backgroundColor: '#333'
     },
     row: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         margin: 8
+    },
+    title: {
+        fontSize: 16,
+        lineHeight: 20,
+        marginTop: 10
     },
     input: {
         width: 200,

@@ -10,7 +10,7 @@ const HomeNav = React.createClass({
                        configureScene={ this.configureScene }
                        renderScene={ this.renderScene }
                        navigationBar={ <Navigator.NavigationBar routeMapper={ this.getRouteMapper() }
-                                                                style={ [styles.common.container, styles.layout.navigator] } /> } />
+                                                                style={ styles.common.navigator } /> } />
         )
     },
 

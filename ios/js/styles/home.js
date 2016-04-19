@@ -3,8 +3,6 @@ import { StyleSheet } from 'react-native';
 const home = StyleSheet.create({
     container: {
         padding: 20,
-        alignItems: 'flex-start',
-        justifyContent: 'flex-start',
         marginTop: 50
     },
     h1: {

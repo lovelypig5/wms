@@ -1,5 +1,6 @@
 import React, { AsyncStorage, Alert, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import Home from '../home';
+import Goods from '../goods';
 import DICT from '../../config/dict';
 import API from '../../config/api';
 import styles from '../../styles';
@@ -15,7 +16,7 @@ var Login = React.createClass({
 
     render() {
         return (
-            <View style={ styles.common.container }>
+            <View style={ styles.common.container_center }>
               <View style={ styles.common.row }>
                 <Text style={ styles.login.label }>
                   用户名

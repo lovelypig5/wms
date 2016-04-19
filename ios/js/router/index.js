@@ -20,10 +20,15 @@ var Router = React.createClass({
     },
 
     render() {
+        console.log('run Router');
         var Component = this.state.component;
+        if (this.state.user) {
+            Component = Goods;
+        }
         var App = <Component user={ this.state.user }
-                             initUser={ this.initUser } />;
-        if (this.state.user != "") {
+                             initUser={ this.initUser }
+                             changeModule={ this.changeModule } />;
+        if (this.state.user) {
             App = <SideMenu user={ this.state.user }
                             menu={ <Menu user={ this.state.user }
                                          onItemSelected={ this.selected } /> }>

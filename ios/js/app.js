@@ -5,7 +5,7 @@ import styles from './styles';
 class App extends React.Component {
     render() {
         return (
-            <Router style={ styles.common.container } />
+            <Router />
             );
     }
 }
