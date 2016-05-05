@@ -21,6 +21,7 @@
                 </tr>
             </tbody>
         </table>
+        <pagination :pagination="params" :change="change"></pagination>
         <div class="empty" v-if="!loading.fetch && inList.length == 0">
             <div class="msg">没有入库记录</div>
         </div>
@@ -32,9 +33,13 @@
 <script>
 import API from '../../config/api';
 import actions from '../../vuex/actions';
+import Pagination from '../../common/pagination.vue';
 
 var InList = Vue.extend({
     name: 'inList',
+    components: {
+        pagination: Pagination
+    },
     data() {
         return {
             inList: [],
@@ -52,6 +57,10 @@ var InList = Vue.extend({
         this.fetch(true);
     },
     methods: {
+        change(page){
+            this.params.page = page;
+            this.fetch();
+        },
         fetch(reset) {
             var self = this;
 
@@ -61,8 +70,6 @@ var InList = Vue.extend({
                     pageSize: 10,
                     count: 0
                 }
-            } else {
-                self.params.page += 1;
             }
 
             if (self.loading.fetch) {
@@ -75,8 +82,7 @@ var InList = Vue.extend({
                 data: self.params,
                 success(resp) {
                     self.inList = resp.content;
-                    self.params.total = resp.total;
-                    self.params.totalPage = resp.total / self.params.pageSize;
+                    self.params.count = Math.ceil(resp.count / self.params.pageSize);
                 },
                 error(resp) {
                     self.alert({
