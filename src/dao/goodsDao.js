@@ -109,17 +109,31 @@ class GoodsDao extends BaseDao {
         return this.queryWithTransaction(...querys);
     }
 
-    inlist(user_id, type) {
-        return this.query({
-            sql: 'select g_r.*, g.name from goods_records g_r left join goods g on g.id = g_r.goods_id where g_r.user_id = ? and type = ?',
-            params: [user_id, type],
+    inlist(user_id, type, page, pageSize) {
+        var limit = pageSize > 20 ? 20 : pageSize;
+        var offset = page > 1 ? limit * (page - 1) : 0;
+        var querys = [{
+            sql: 'select g_r.id, g_r.goods_id, g_r.goods_attr, g_r.amount, g_r.price, DATE_FORMAT(g_r.date, \'%Y-%m-%d\') as date, g.name from goods_records g_r \
+                left join goods g on g.id = g_r.goods_id \
+                where g_r.user_id = ? and type = ? \
+                limit ? offset ?',
+            params: [user_id, type, limit, offset],
             parse(rows) {
+                return rows;
+            }
+        }, {
+            sql: 'select count(*) as count from goods_records g_r \
+                left join goods g on g.id = g_r.goods_id \
+                where g_r.user_id = ? and type = ?',
+            params: [user_id, type],
+            parse(results, rows) {
                 return {
-                    count: 5,
+                    count: results[0].count,
                     content: rows
                 }
             }
-        })
+        }]
+        return this.query(...querys);
     }
 
     out(id, amount, price, attr, user_id) {
