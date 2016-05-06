@@ -54,6 +54,33 @@ class GoodsApi extends BaseApi {
         });
     }
 
+    modifyInOut(req, res) {
+        var user_id = req.session.user.id
+        var body = req.body;
+        var id = body.id;
+        var amount = body.amount;
+        var attr = body.goods_attr;
+        var price = body.price;
+        var type = body.type == 1 ? 1 : -1;
+        if (!id || !amount || !price) {
+            res.status(400).send('缺少参数');
+        }
+        amount = parseInt(amount);
+        price = parseFloat(price);
+        if (isNaN(amount) || amount <= 0 || isNaN(price) || price <= 0) {
+            res.status(400).send('参数格式错误');
+        }
+        if (!attr) {
+            attr = "";
+        }
+
+        goodsDao.modify(id, amount, price, attr, user_id, type).then((goods) => {
+            res.status(goods.status).json(goods.ret);
+        }, (goods) => {
+            res.status(goods.status).send(goods.ret);
+        });
+    }
+
     in(req, res) {
         var user_id = req.session.user.id
         var body = req.body;
@@ -251,4 +278,8 @@ module.exports = [{
     method: 'get',
     route: '/api/goods/trend',
     func: goodsApi.trend
+}, {
+    method: 'post',
+    route: '/api/goods/modifyInOut',
+    func: goodsApi.modifyInOut
 }]

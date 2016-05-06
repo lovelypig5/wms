@@ -109,6 +109,50 @@ class GoodsDao extends BaseDao {
         return this.queryWithTransaction(...querys);
     }
 
+    modify(record_id, amount, price, good_attr, user_id, type) {
+        var querys = [{
+            sql: 'select * from goods_records where id = ? and user_id = ? and goods_attr = ?',
+            params: [record_id, user_id, good_attr],
+            parse(rows) {
+                if (rows && rows.length == 1) {
+                    return rows[0];
+                } else {
+                    return {
+                        error: '不存在该出入库记录'
+                    }
+                }
+            }
+        }, {
+            sql: 'update goods_records set price = ?, amount = ? where id = ?',
+            params: [price, amount, record_id],
+            parse(result, data) {
+                return {
+                    diff: (data.amount - amount) * type,
+                    goods_id: data.goods_id
+                }
+            }
+        }, {
+            sql: 'update goods set count = count + ? where id = ?',
+            params(data) {
+                return [data.diff, data.goods_id]
+            },
+            parse(result, data) {
+                return data;
+            }
+        }];
+
+        if (good_attr) {
+            querys.push({
+                sql: 'update goods_attrs set count = count + ? where goods_id = ? and attr = ?',
+                params(data) {
+                    return [data.diff, data.goods_id, good_attr]
+                }
+            })
+        }
+
+        return this.queryWithTransaction(...querys);
+    }
+
     inlist(user_id, type, page, pageSize) {
         var limit = pageSize > 20 ? 20 : pageSize;
         var offset = page > 1 ? limit * (page - 1) : 0;
