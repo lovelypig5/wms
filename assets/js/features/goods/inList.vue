@@ -9,15 +9,28 @@
                     <th>入库数量</th>
                     <th>入库价格</th>
                     <th>入库时间</th>
+                    <th>操作</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="item" v-for="good in inList">
                     <td><a href="javascript:void(0)" v-link="{name: 'detail', params: {id: good.goods_id} }">{{good.name}}</a></td>
                     <td>{{good.goods_attr | remove-whitespace}}</td>
-                    <td>{{good.amount}}</td>
-                    <td>{{good.price}}</td>
+                    <td v-if="!good.edit">
+                        {{good.amount}}
+                    </td>
+                    <td v-if="good.edit">
+                        <input type="text" v-model="good.amount">
+                    </td>
+                    <td v-if="!good.edit">{{good.price}}
+                    </td>
+                    <td v-if="good.edit">
+                        <input type="text" v-model="good.price">
+                    </td>
                     <td>{{good.date}}</td>
+                    <td><i class="fa fa-pencil-square-o" aria-hidden="true" @click="edit(good)" v-if="!good.edit"></i>
+                        <i class="fa fa-floppy-o" aria-hidden="true" v-if="good.edit" @click="save(good)"></i>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -57,7 +70,31 @@ var InList = Vue.extend({
         this.fetch(true);
     },
     methods: {
-        change(page){
+        edit(good) {
+            Vue.set(good, 'edit', !good.edit);
+        },
+        save(good) {
+            var self = this;
+            good.type = -1;
+            $.ajax({
+                url: API.modifyInOut,
+                type: 'post',
+                data: JSON.stringify(good),
+                success(resp) {
+
+                },
+                error(resp) {
+                    self.alert({
+                        show: true,
+                        msg: resp || '修改入库记录失败',
+                        type: 'error'
+                    })
+                }
+            }).always(() => {
+                Vue.set(good, 'edit', !good.edit);
+            })
+        },
+        change(page) {
             this.params.page = page;
             this.fetch();
         },

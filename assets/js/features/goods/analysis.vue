@@ -10,7 +10,7 @@
     </div>
 </template>
 <script>
-import Chart from 'chart.js';
+import Chart from 'chart.js/src/chart';
 import API from '../../config/api';
 import actions from '../../vuex/actions';
 
@@ -45,23 +45,27 @@ var Analysis = Vue.extend({
             }
 
             var ctx = $(this.$el).find("#chart")[0].getContext("2d");
-            this.mychart = new Chart(ctx).Line(this.data, {
-                scaleShowGridLines: true,
-                scaleGridLineColor: "rgba(0,0,0,.05)",
-                scaleGridLineWidth: 1,
-                scaleShowHorizontalLines: true,
-                scaleShowVerticalLines: true,
-                bezierCurve: true,
-                bezierCurveTension: 0.4,
-                pointDot: true,
-                pointDotRadius: 4,
-                pointDotStrokeWidth: 1,
-                pointHitDetectionRadius: 20,
-                datasetStroke: true,
-                datasetStrokeWidth: 2,
-                datasetFill: true,
-                responsive: true,
-                legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+            this.mychart = new Chart(ctx, {
+                type: 'line',
+                data: this.data,
+                options: {
+                    scaleShowGridLines: true,
+                    scaleGridLineColor: "rgba(0,0,0,.05)",
+                    scaleGridLineWidth: 1,
+                    scaleShowHorizontalLines: true,
+                    scaleShowVerticalLines: true,
+                    bezierCurve: true,
+                    bezierCurveTension: 0.4,
+                    pointDot: true,
+                    pointDotRadius: 4,
+                    pointDotStrokeWidth: 1,
+                    pointHitDetectionRadius: 20,
+                    datasetStroke: true,
+                    datasetStrokeWidth: 2,
+                    datasetFill: true,
+                    responsive: true,
+                    legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+                }
             });
         },
         choose() {
@@ -115,10 +119,19 @@ var Analysis = Vue.extend({
                 },
                 success(resp) {
                     var data = resp;
+                    var datasets_data = [0];
+                    var labels = ["0"];
                     for (var i = 0; i < data.datasets.length; i++) {
+                        Array.prototype.push.apply(datasets_data, data.datasets[i].data);
+                        Array.prototype.push.apply(labels, data.labels);
+
+                        data.datasets[i].data = datasets_data;
+                        data.labels = labels;
+
                         Object.assign(data.datasets[i], opt);
                     }
-                    self.data = resp;
+                    console.log(data)
+                    self.data = data;
                 },
                 error(resp) {
                     self.alert({

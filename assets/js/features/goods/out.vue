@@ -31,7 +31,7 @@
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon" id="productAmount">出售总价</span>
-                    <input type="text" class="form-control" placeholder="请输入商品进价" aria-describedby="productPriceIn" v-model="model.priceOut" v-validate:price="{required:true, number: true}" :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}">
+                    <input type="text" class="form-control" placeholder="请输入商品总价" aria-describedby="productPriceIn" v-model="model.priceOut" v-validate:price="{required:true, number: true}" :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}">
                 </div>
                 <div class="input-group error-msg" v-if="$v.price.touched && $v.price.invalid">
                     <div v-if="$v.price.required" class="red-color">出售总价不能为空</div>
