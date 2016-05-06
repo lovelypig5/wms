@@ -1,3 +1,4 @@
+import 'font-awesome/css/font-awesome.css';
 import 'taggle/assets/css/taggle.css';
 import 'select2/dist/css/select2.min.css';
 import 'normalize.css/normalize.css';
