@@ -185,7 +185,7 @@ var GoodIn = Vue.extend({
                         msg: '入库成功',
                         type: 'success'
                     });
-                    self.reset();
+                    self.reset(true);
                 },
                 error(resp) {
                     self.alert({
@@ -198,10 +198,12 @@ var GoodIn = Vue.extend({
                 self.loading.in = !self.loading.in;
             })
         },
-        reset() {
+        reset(flag) {
+            var id = flag ? this.model.id: "";
+            var name = flag ? this.model.name : "";
             this.model = {
-                id: "",
-                name: "",
+                id: id,
+                name: name,
                 attr: [],
                 amount: 0,
                 priceIn: ""

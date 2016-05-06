@@ -180,7 +180,7 @@ var Out = Vue.extend({
                         msg: '出库成功',
                         type: 'success'
                     });
-                    self.reset();
+                    self.reset(true);
                 },
                 error(resp) {
                     self.alert({
@@ -193,10 +193,12 @@ var Out = Vue.extend({
                 self.loading.out = !self.loading.out;
             })
         },
-        reset() {
+        reset(flag) {
+            var id = flag ? this.model.id: "";
+            var name = flag ? this.model.name : "";
             this.model = {
-                id: "",
-                name: "",
+                id: id,
+                name: name,
                 attr: "",
                 amount: 0,
                 priceOut: ""
