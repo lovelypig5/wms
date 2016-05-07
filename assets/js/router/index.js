@@ -4,7 +4,7 @@ import API from '../config/api';
 Vue.use(Router);
 
 var router = new Router({
-    // history: true
+    history: true
 });
 router.map({
     '/': {
