@@ -121,7 +121,7 @@ class BaseDao {
                     }
 
                     // 数据逻辑中存在的错误情况，如数据已存在，非法数据等
-                    if (r.error) {
+                    if (r && r.error) {
                         callback(r.error, connection, r);
                     } else {
                         callback(err, connection, r);
