@@ -160,6 +160,7 @@ class GoodsDao extends BaseDao {
             sql: 'select g_r.id, g_r.goods_id, g_r.goods_attr, g_r.amount, g_r.price, DATE_FORMAT(g_r.date, \'%Y-%m-%d\') as date, g.name from goods_records g_r \
                 left join goods g on g.id = g_r.goods_id \
                 where g_r.user_id = ? and type = ? \
+                order by date desc \
                 limit ? offset ?',
             params: [user_id, type, limit, offset],
             parse(rows) {

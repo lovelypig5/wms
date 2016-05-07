@@ -4,7 +4,6 @@ var logger = require('../logger');
 class OrderDao extends BaseDao {
 
     create(user_id, orderId, expressId, expressCost, name, price, goodList) {
-        logger.debug('should not be here');
         var querys = [{
             sql: 'insert into `order` (`id`,`expressId`,`expressCost`,`name`,`user_id`) values(?,?,?,?,?)',
             params: [orderId, expressId, expressCost, name, user_id]
