@@ -4,6 +4,7 @@ var logger = require('../logger');
 class OrderDao extends BaseDao {
 
     create(user_id, orderId, expressId, expressCost, name, price, goodList) {
+        logger.debug('should not be here');
         var querys = [{
             sql: 'insert into `order` (`id`,`expressId`,`expressCost`,`name`,`user_id`) values(?,?,?,?,?)',
             params: [orderId, expressId, expressCost, name, user_id]
@@ -105,6 +106,18 @@ class OrderDao extends BaseDao {
         }]
 
         return this.query(...querys);
+    }
+
+    orderDetail(user_id, order_id) {
+        return this.query({
+            sql: 'select g.name, g.id, g_r.goods_attr, g_r.amount from goods_records g_r \
+            left join goods g on g.id = g_r.goods_id \
+            where g_r.order_id = ? and g_r.user_id = ?',
+            params: [order_id, user_id],
+            parse(rows) {
+                return rows;
+            }
+        })
     }
 }
 

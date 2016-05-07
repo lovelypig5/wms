@@ -7,8 +7,7 @@ class UserApi extends BaseApi {
         var userName = body.userName;
         var password = body.password;
         if (!userName || !password) {
-            res.status(400).send('缺少参数');
-            return
+            return res.status(400).send('缺少参数');
         }
         userDao.login(userName, password).then((user) => {
             req.session.user = user.ret;

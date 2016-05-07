@@ -20,7 +20,7 @@ class OrderApi extends BaseApi {
         price = parseFloat(price);
         if (isNaN(orderId) || orderId <= 0 || isNaN(price) || price <= 0
                 || isNaN(expressId) || expressId <= 0 || isNaN(expressCost) || expressCost <= 0) {
-            res.status(400).send('参数格式错误');
+            return res.status(400).send('参数格式错误');
         }
         var goodList = body.goodList;
         if (goodList && goodList.length > 0) {
@@ -29,15 +29,15 @@ class OrderApi extends BaseApi {
                 var attr = good.attr || [];
                 var amount = good.amount;
                 if (!amount) {
-                    res.status(400).send('缺少参数');
+                    return res.status(400).send('缺少参数');
                 }
                 amount = parseInt(amount);
                 if (isNaN(amount) || amount <= 0) {
-                    res.status(400).send('参数格式错误');
+                    return res.status(400).send('参数格式错误');
                 }
             }
         } else {
-            res.status(400).send('该订单中没有包含商品');
+            return res.status(400).send('该订单中没有包含商品');
         }
 
         orderDao.create(user_id, orderId, expressId, expressCost, name, price, goodList).then((order) => {
@@ -60,6 +60,21 @@ class OrderApi extends BaseApi {
         })
     }
 
+    orderDetail(req, res) {
+        var user_id = req.session.user.id;
+        var query = req.query;
+        var order_id = query.order_id;
+        if (!order_id) {
+            return res.status(400).send('缺少参数');
+        }
+
+        orderDao.orderDetail(user_id, order_id).then((order) => {
+            res.status(order.status).json(order.ret);
+        }, (order) => {
+            res.status(order.status).send(order.ret);
+        })
+    }
+
 }
 
 var orderApi = new OrderApi();
@@ -72,4 +87,8 @@ module.exports = [{
     method: 'get',
     route: '/api/order/list',
     func: orderApi.list
+}, {
+    method: 'get',
+    route: '/api/order/detail',
+    func: orderApi.orderDetail
 }]
