@@ -1,5 +1,6 @@
 const dict = {
     goodsMenu: ['text_goods_state', 'text_goods_list', 'text_goods_out', 'text_goods_in', 'text_goods_outlist', 'text_goods_inlist', 'text_goods_create'],
+    orderMenu: ['text_order_list', 'text_order_create'],
     select2: {
         "zh": {
             errorLoading: function() {

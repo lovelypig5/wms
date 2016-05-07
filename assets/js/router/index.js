@@ -75,6 +75,28 @@ router.map({
                 }
             }
         }
+    },
+    'order': {
+        component(resolve) {
+            require(['../features/order/index.vue'], resolve);
+        },
+        subRoutes: {
+            '/': {
+                component(resolve) {
+                    require(['../features/order/list.vue'], resolve);
+                }
+            },
+            '/list': {
+                component(resolve) {
+                    require(['../features/order/list.vue'], resolve);
+                }
+            },
+            '/create': {
+                component(resolve) {
+                    require(['../features/order/create.vue'], resolve);
+                }
+            }
+        }
     }
 });
 

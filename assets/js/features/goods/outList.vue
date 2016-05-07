@@ -91,7 +91,7 @@ var OutList = Vue.extend({
                 error(resp) {
                     self.alert({
                         show: true,
-                        msg: resp || '修改入库记录失败',
+                        msg: resp || '修改出库记录失败',
                         type: 'error'
                     })
                 }
@@ -105,7 +105,7 @@ var OutList = Vue.extend({
             if (reset) {
                 self.params = {
                     page: 1,
-                    pageSize: 1,
+                    pageSize: 10,
                     count: 0,
                     type: 1
                 }

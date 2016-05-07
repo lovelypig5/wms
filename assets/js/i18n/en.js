@@ -2,6 +2,7 @@ const EN = {
     brand: 'WMS',
     home: 'Home',
     goods: 'Goods Manage',
+    order: 'Order Manage',
 
     text_language: 'Change Language',
 
@@ -15,7 +16,10 @@ const EN = {
     text_goodsattr_dict: 'Attr Definition',
     text_goods_out: 'Goods out',
 
+    text_order_list: 'Order List',
+    text_order_create: 'Create Order',
+
     action_login: 'log in',
-    action_logout: 'log out'
+    action_logout: 'log out',
 }
 export default EN;

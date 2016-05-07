@@ -14,6 +14,9 @@ var api = {
     trend: base + '/goods/trend',
     modifyInOut: base + '/goods/modifyInOut',
 
+    createOrder: base + '/order/create',
+    orderList: base + '/order/list',
+
     user: '/user',
     isLogin: '/isLogin',
     login: '/login',
