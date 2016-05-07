@@ -14,8 +14,8 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li v-link="{path: '/home', activeClass: 'active'}"><a href="javascript:void(0)">{{ $t("home") }} <span class="sr-only">(current)</span></a></li>
-                        <li v-link="{path: '/goods/', activeClass: 'active'}"><a href="javascript:void(0)" v-if="user.id">{{ $t("goods") }}</a></li>
-                        <li v-link="{path: '/order/', activeClass: 'active'}"><a href="javascript:void(0)" v-if="user.id">{{ $t("order") }}</a></li>
+                        <li v-link="{path: '/goods/list', activeClass: 'active'}"><a href="javascript:void(0)" v-if="user.id">{{ $t("goods") }}</a></li>
+                        <li v-link="{path: '/order/list', activeClass: 'active'}"><a href="javascript:void(0)" v-if="user.id">{{ $t("order") }}</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right" v-if="!user.id">
                         <li><a href="javascript:void(0)" @click="login">{{$t('action_login')}}</a></li>
