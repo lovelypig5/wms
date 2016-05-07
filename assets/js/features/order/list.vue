@@ -12,19 +12,26 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="item" v-for="order in orderList">
-                    <td>
-                        {{order.id}}
-                    </td>
-                    <td>{{order.expressId}}</td>
-                    <td>
-                        {{order.expressCost}}
-                    </td>
-                    <td>
-                        {{order.name}}
-                    </td>
-                    <td><a href="javascript:void(0)">展开</a></td>
-                </tr>
+                    <tr class="item" v-for="order in orderList">
+                        <td>
+                            {{order.id}}
+                        </td>
+                        <td>{{order.expressId}}</td>
+                        <td>
+                            {{order.expressCost}}
+                        </td>
+                        <td>
+                            {{order.name}}
+                        </td>
+                        <td><a href="javascript:void(0)" @click="expand(order)" v-if="!order.goodList">展开</a>
+                            <div v-if="order.goodList && order.goodList.length > 0" v-for="good in order.goodList">
+                                <span>{{ good.name }}</span>
+                                <span>{{ good.goods_attr }}</span>
+                                <span>{{ good.amount }}</span>
+                            </div>
+                        </td>
+                    </tr>
+
             </tbody>
         </table>
         <pagination :pagination="params" :change="change"></pagination>
@@ -50,7 +57,8 @@ var OrderList = Vue.extend({
         return {
             orderList: [],
             loading: {
-                fetch: false
+                fetch: false,
+                fetchGood: false
             },
             params: {
                 page: 1,
@@ -93,12 +101,38 @@ var OrderList = Vue.extend({
                 error(resp) {
                     self.alert({
                         show: true,
-                        msg: '拉取商品列表失败',
+                        msg: '拉取订单列表失败',
                         type: 'error'
                     })
                 }
             }).always(() => {
                 self.loading.fetch = !self.loading.fetch;
+            })
+        },
+        expand(order){
+            var self = this;
+            if (self.loading.fetchGood) {
+                return;
+            }
+            self.loading.fetchGood = !self.loading.fetchGood;
+
+            $.ajax({
+                url: API.orderDetail,
+                data: {
+                    order_id: order.id
+                },
+                success(resp){
+                    Vue.set(order, 'goodList', resp);
+                },
+                error(resp) {
+                    self.alert({
+                        show: true,
+                        msg: '获取订单商品失败',
+                        type: 'error'
+                    })
+                }
+            }).always(() => {
+                self.loading.fetchGood = !self.loading.fetchGood;
             })
         }
     },
