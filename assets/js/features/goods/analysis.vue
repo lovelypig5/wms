@@ -130,7 +130,6 @@ var Analysis = Vue.extend({
 
                         Object.assign(data.datasets[i], opt);
                     }
-                    console.log(data)
                     self.data = data;
                 },
                 error(resp) {
