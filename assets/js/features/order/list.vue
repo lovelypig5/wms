@@ -9,6 +9,7 @@
                     <th>快递费用</th>
                     <th>收件人</th>
                     <th>操作</th>
+                    <th>发货时间</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +30,9 @@
                                 <span>{{ good.goods_attr }}</span>
                                 <span>{{ good.amount }}</span>
                             </div>
+                        </td>
+                        <td>
+                            {{order.date}}
                         </td>
                     </tr>
 

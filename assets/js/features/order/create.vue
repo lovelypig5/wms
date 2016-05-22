@@ -187,10 +187,27 @@ var CreateOrder = Vue.extend({
             $(this.$el).find('#productName').trigger('change');
         },
         addGood() {
-            this.good.attr = $(this.$el).find('#productAttr').val();
+            this.good.attr = $(this.$el).find('#productAttr').val() || [];
             var good = Object.assign({}, this.good);
+            if(!this.good.id || !this.good.name){
+                this.alert({
+                        show: true,
+                        msg: '请输入商品名称',
+                        type: 'success'
+                    });
+                return;
+            }
+            if(!this.good.amount){
+                this.alert({
+                        show: true,
+                        msg: '请输入商品数量',
+                        type: 'success'
+                    });
+                return;
+            }
             this.reset();
             this.model.goodList.push(good);
+            this.add = !this.add;
         },
         fetchAttrs(callback) {
             var self = this;
