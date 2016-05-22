@@ -88,7 +88,7 @@ class OrderDao extends BaseDao {
         var offset = page > 1 ? limit * (page - 1) : 0;
 
         var querys = [{
-            sql: 'select * from `order` where user_id = ? limit ? offset ?',
+            sql: 'select id, expressCost, expressId, name, DATE_FORMAT(expressDate, \'%Y-%m-%d\') as date from `order` where user_id = ? order by date limit ? offset ?',
             params: [user_id, limit, offset],
             parse(rows) {
                 return rows;
