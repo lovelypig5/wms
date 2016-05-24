@@ -3,9 +3,15 @@ import API from '../config/api';
 
 Vue.use(Router);
 
-var router = new Router({
-    history: true
-});
+var router;
+if (WEBPACK_DEBUG) {
+    router = new Router();
+} else {
+    router = new Router({
+        history: true
+    });
+}
+
 router.map({
     '/': {
         component(resolve) {
