@@ -8,12 +8,14 @@
                     <th>快递单号</th>
                     <th>快递费用</th>
                     <th>收件人</th>
+                    <th>价格</th>
                     <th>操作</th>
                     <th>发货时间</th>
                 </tr>
             </thead>
             <tbody>
-                    <tr class="item" v-for="order in orderList">
+                <template v-for="order in orderList">
+                    <tr class="item" >
                         <td>
                             {{order.id}}
                         </td>
@@ -23,6 +25,9 @@
                         </td>
                         <td>
                             {{order.name}}
+                        </td>
+                        <td>
+                            {{order.price}}
                         </td>
                         <td><a href="javascript:void(0)" @click="expand(order)" v-if="!order.goodList">展开</a>
                             <div v-if="order.goodList && order.goodList.length > 0" v-for="good in order.goodList">
@@ -35,7 +40,10 @@
                             {{order.date}}
                         </td>
                     </tr>
-
+                    <tr v-if="order.comment">
+                        <td colspan="7">{{order.comment}}</td>
+                    </tr>
+                </template>
             </tbody>
         </table>
         <pagination :pagination="params" :change="change"></pagination>

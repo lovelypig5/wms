@@ -78,7 +78,6 @@ var Out = Vue.extend({
         $(this.$el).find('#productName').select2({
             placeholder: "请输入商品名称（必填）",
             language: DICT.select2[this.lang],
-            minimumInputLength: 1,
             ajax: {
                 url: API.searchGood,
                 data(params) {
@@ -203,7 +202,6 @@ var Out = Vue.extend({
                 amount: 0,
                 priceOut: ""
             };
-            this.attrList = [];
             this.$resetValidation();
         }
     },

@@ -5,7 +5,7 @@
             <validator name="v">
                 <div class="input-group">
                     <span class="input-group-addon">订单号：</span>
-                    <input id="orderId" type="text" class="form-control" placeholder="请输入订单号" aria-describedby="orderId" v-model="model.orderId" v-validate:order-id="{required:true, posInt: true}" :class="{'red-border': $v.orderId && $v.orderId.touched && $v.orderId.invalid}" number>
+                    <input id="orderId" type="text" class="form-control" placeholder="请输入订单号" aria-describedby="orderId" v-model="model.orderId" v-validate:order-id="{required:true, posInt: true}" :class="{'red-border': $v.orderId && $v.orderId.touched && $v.orderId.invalid}">
                 </div>
                 <div class="input-group error-msg" v-if="$v.orderId.touched && $v.orderId.invalid">
                     <div v-if="$v.orderId.required" class="red-color">订单号不能为空</div>
@@ -20,14 +20,15 @@
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon">订单价格</span>
-                    <input id="price" type="text" class="form-control" placeholder="请输入订单价格" aria-describedby="price" v-model="model.price" v-validate:price="{required:true}" :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}" number>
+                    <input id="price" type="text" class="form-control" placeholder="请输入订单价格" aria-describedby="price" v-model="model.price" v-validate:price="{required:true, posInt: true}" :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}">
                 </div>
                 <div class="input-group error-msg" v-if="$v.price.touched && $v.price.invalid">
-                    <div v-if="$v.price.required" class="red-color">订单号不能为空</div>
+                    <div v-if="$v.price.required" class="red-color">订单价格不能为空</div>
+                     <div v-if="!$v.price.required && $v.price.posInt" class="red-color">订单价格只能为正整数</div>
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon">快递单号</span>
-                    <input id="expressId" type="text" class="form-control" placeholder="请输入快递单号" aria-describedby="expressId" v-model="model.expressId" v-validate:express-id="{required:true, posInt: true}" :class="{'red-border': $v.expressId && $v.expressId.touched && $v.expressId.invalid}" number>
+                    <input id="expressId" type="text" class="form-control" placeholder="请输入快递单号" aria-describedby="expressId" v-model="model.expressId" v-validate:express-id="{required:true, posInt: true}" :class="{'red-border': $v.expressId && $v.expressId.touched && $v.expressId.invalid}">
                 </div>
                 <div class="input-group error-msg" v-if="$v.expressId.touched && $v.expressId.invalid">
                     <div v-if="$v.expressId.required" class="red-color">快递单号不能为空</div>
@@ -35,11 +36,15 @@
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon">快递费：</span>
-                    <input id="expressCost" type="text" class="form-control" placeholder="请输入快递费" aria-describedby="expressCost" v-model="model.expressCost" v-validate:express-cost="{required:true, posInt: true}" :class="{'red-border': $v.expressCost && $v.expressCost.touched && $v.expressCost.invalid}" number>
+                    <input id="expressCost" type="text" class="form-control" placeholder="请输入快递费" aria-describedby="expressCost" v-model="model.expressCost" v-validate:express-cost="{required:true, posInt: true}" :class="{'red-border': $v.expressCost && $v.expressCost.touched && $v.expressCost.invalid}">
                 </div>
                 <div class="input-group error-msg" v-if="$v.expressCost.touched && $v.expressCost.invalid">
                     <div v-if="$v.expressCost.required" class="red-color">快递费不能为空</div>
                     <div v-if="!$v.expressCost.required && $v.expressCost.posInt" class="red-color">快递费只能为正整数</div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">备注：</span>
+                    <textarea id="comment" type="text" class="form-control" placeholder="" aria-describedby="comment" v-model="model.comment"></textarea>
                 </div>
                 <div class="good-list" v-if="model.goodList.length > 0">
                     <table class="table">
@@ -83,7 +88,7 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">商品数量</span>
-                        <input id="productAmount" type="text" class="form-control" placeholder="请输入商品数量" aria-describedby="productAmount" v-model="good.amount" number>
+                        <input id="productAmount" type="text" class="form-control" placeholder="请输入商品数量" aria-describedby="productAmount" v-model="good.amount">
                     </div>
                     <div class="float-right btns">
                         <button type="button" class="btn btn-primary" @click="addGood">保存</button>
@@ -115,13 +120,14 @@ var CreateOrder = Vue.extend({
                 expressId: "",
                 expressCost: "",
                 goodList: [],
-                price: ""
+                price: "",
+                comment: ""
             },
             good: {
                 id: "",
                 name: "",
                 attr: "",
-                amount: 0,
+                amount: "",
             },
             attrList: [],
             loading: {
@@ -235,7 +241,7 @@ var CreateOrder = Vue.extend({
                 id: id,
                 name: name,
                 attr: [],
-                amount: 0,
+                amount: "",
             };
             this.attrList = [];
             this.$resetValidation();
@@ -280,7 +286,8 @@ var CreateOrder = Vue.extend({
                 expressId: "",
                 expressCost: "",
                 goodList: [],
-                price: ""
+                price: "",
+                comment: ""
             }
             this.$resetValidation();
         }
