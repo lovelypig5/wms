@@ -11,6 +11,7 @@ class OrderApi extends BaseApi {
         var expressCost = body.expressCost;
         var name = body.receiveName;
         var price = body.price;
+        var comment = body.comment;
         if (!orderId || !expressId || !expressCost || !name || !price) {
             res.status(400).send('缺少参数');
         }
@@ -40,7 +41,7 @@ class OrderApi extends BaseApi {
             return res.status(400).send('该订单中没有包含商品');
         }
 
-        orderDao.create(user_id, orderId, expressId, expressCost, name, price, goodList).then((order) => {
+        orderDao.create(user_id, orderId, expressId, expressCost, name, price, goodList, comment).then((order) => {
             res.status(order.status).json(order.ret);
         }, (order) => {
             res.status(order.status).send(order.ret);

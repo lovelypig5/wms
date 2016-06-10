@@ -3,10 +3,10 @@ var logger = require('../logger');
 
 class OrderDao extends BaseDao {
 
-    create(user_id, orderId, expressId, expressCost, name, price, goodList) {
+    create(user_id, orderId, expressId, expressCost, name, price, goodList, comment) {
         var querys = [{
-            sql: 'insert into `order` (`id`,`expressId`,`expressCost`,`name`,`user_id`) values(?,?,?,?,?)',
-            params: [orderId, expressId, expressCost, name, user_id]
+            sql: 'insert into `order` (`id`,`expressId`,`expressCost`,`name`,`user_id`, `comment`, `price`) values(?,?,?,?,?,?,?)',
+            params: [orderId, expressId, expressCost, name, user_id, comment, price]
         }];
 
         for (var i = 0; i < goodList.length; i++) {
@@ -88,7 +88,7 @@ class OrderDao extends BaseDao {
         var offset = page > 1 ? limit * (page - 1) : 0;
 
         var querys = [{
-            sql: 'select id, expressCost, expressId, name, DATE_FORMAT(expressDate, \'%Y-%m-%d\') as date from `order` where user_id = ? order by expressDate desc limit ? offset ?',
+            sql: 'select id, expressCost, expressId, name, price, comment, DATE_FORMAT(expressDate, \'%Y-%m-%d\') as date from `order` where user_id = ? order by expressDate desc limit ? offset ?',
             params: [user_id, limit, offset],
             parse(rows) {
                 return rows;
