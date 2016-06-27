@@ -32,8 +32,8 @@
                         <td><a href="javascript:void(0)" @click="expand(order)" v-if="!order.goodList">展开</a>
                             <div v-if="order.goodList && order.goodList.length > 0" v-for="good in order.goodList">
                                 <span>{{ good.name }}</span>
-                                <span>{{ good.goods_attr }}</span>
-                                <span>{{ good.amount }}</span>
+                                <span>({{ good.goods_attr | remove-whitespace }})</span>
+                                <span>*{{ good.amount }}</span>
                             </div>
                         </td>
                         <td>
