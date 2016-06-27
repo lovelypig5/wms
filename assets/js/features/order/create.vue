@@ -20,11 +20,11 @@
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon">订单价格</span>
-                    <input id="price" type="text" class="form-control" placeholder="请输入订单价格" aria-describedby="price" v-model="model.price" v-validate:price="{required:true, posInt: true}" :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}">
+                    <input id="price" type="text" class="form-control" placeholder="请输入订单价格" aria-describedby="price" v-model="model.price" v-validate:price="{required:true, posFloat: true}" :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}">
                 </div>
                 <div class="input-group error-msg" v-if="$v.price.touched && $v.price.invalid">
                     <div v-if="$v.price.required" class="red-color">订单价格不能为空</div>
-                     <div v-if="!$v.price.required && $v.price.posInt" class="red-color">订单价格只能为正整数</div>
+                     <div v-if="!$v.price.required && $v.price.posFloat" class="red-color">订单价格不能小于零</div>
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon">快递单号</span>
@@ -59,7 +59,7 @@
                         <tbody>
                             <tr class="item" v-for="good in model.goodList">
                                 <td>{{good.name}}</td>
-                                <td>{{good.attr.join(',') | remove-whitespace}}</td>
+                                <td>{{good.attr | remove-whitespace}}</td>
                                 <td>
                                     {{good.amount}}
                                 </td>
@@ -82,7 +82,7 @@
                         <span class="input-group-addon">商品属性</span>
                         <div class="select2Div">
                             <select id="productAttr" style="width: 100%">
-                                <option v-for="attr in attrList" :value="attr.attr">{{attr.attr}}</option>
+                                <option v-for="attr in attrList" :value="attr.attr">{{attr.attr | remove-whitespace}}</option>
                             </select>
                         </div>
                     </div>
@@ -170,11 +170,10 @@ var CreateOrder = Vue.extend({
             if (data) {
                 self.good.id = data.id;
                 self.good.name = data.text;
-                self.fetchAttrs();
+                self.fetchCombination();
             }
         })
         $(this.$el).find('#productAttr').select2({
-            multiple: true,
             placeholder: "请选择商品属性",
             language: DICT.select2[this.lang]
         })
@@ -186,6 +185,21 @@ var CreateOrder = Vue.extend({
         }
     },
     methods: {
+        fetchCombination() {
+            var self = this;
+            $.ajax({
+                url: API.attrCombination,
+                data: {
+                    good_id: this.good.id
+                },
+                success(rows) {
+                    self.attrList = rows;
+                },
+                error() {
+                    self.attrList = [];
+                }
+            })
+        },
         remove(index){
             this.model.goodList.splice(index, 1);
         },
@@ -215,25 +229,25 @@ var CreateOrder = Vue.extend({
             this.model.goodList.push(good);
             this.add = !this.add;
         },
-        fetchAttrs(callback) {
-            var self = this;
-            $.ajax({
-                url: API.goodsAttrs,
-                data: {
-                    good_id: this.good.id
-                },
-                success(rows) {
-                    self.attrList = rows;
+        // fetchAttrs(callback) {
+        //     var self = this;
+        //     $.ajax({
+        //         url: API.goodsAttrs,
+        //         data: {
+        //             good_id: this.good.id
+        //         },
+        //         success(rows) {
+        //             self.attrList = rows;
 
-                    if (callback && typeof callback == 'function') {
-                        callback();
-                    }
-                },
-                error() {
-                    self.attrList = [];
-                }
-            })
-        },
+        //             if (callback && typeof callback == 'function') {
+        //                 callback();
+        //             }
+        //         },
+        //         error() {
+        //             self.attrList = [];
+        //         }
+        //     })
+        // },
         reset(flag) {
             var id = flag ? this.good.id : "";
             var name = flag ? this.good.name : "";
