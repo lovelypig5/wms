@@ -11,7 +11,7 @@ class OrderDao extends BaseDao {
 
         for (var i = 0; i < goodList.length; i++) {
             var _good = goodList[i];
-            var attr = _good.attr.join(',');
+            var attr = _good.attr;
 
             Array.prototype.push.apply(querys, [{
                 sql: 'select g.* from goods g left join r_user_goods r on r.goods_id = g.id where r.user_id = ? and g.id = ?',

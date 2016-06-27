@@ -20,14 +20,14 @@ class OrderApi extends BaseApi {
         expressCost = parseInt(expressCost);
         price = parseFloat(price);
         if (isNaN(orderId) || orderId <= 0 || isNaN(price) || price <= 0
-                || isNaN(expressId) || expressId <= 0 || isNaN(expressCost) || expressCost <= 0) {
+                || isNaN(expressId) || expressId <= 0 || isNaN(expressCost) || expressCost < 0) {
             return res.status(400).send('参数格式错误');
         }
         var goodList = body.goodList;
         if (goodList && goodList.length > 0) {
             for (var i = 0; i < goodList.length; i++) {
                 var good = goodList[i];
-                var attr = good.attr || [];
+                var attr = good.attr || "";
                 var amount = good.amount;
                 if (!amount) {
                     return res.status(400).send('缺少参数');

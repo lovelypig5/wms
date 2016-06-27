@@ -112,8 +112,7 @@ var Out = Vue.extend({
         })
         $(this.$el).find('#productAttr').select2({
             placeholder: "请选择商品属性",
-            language: DICT.select2[this.lang],
-            minimumResultsForSearch: Infinity
+            language: DICT.select2[this.lang]
         })
 
         this.$watch('model.id', this.changeSelect);
