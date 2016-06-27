@@ -74,8 +74,6 @@ var Analysis = Vue.extend({
     },
     ready() {
         this.getGoods();
-
-
     },
     methods: {
         getGoods() {

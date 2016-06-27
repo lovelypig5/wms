@@ -35,7 +35,7 @@
                     <div v-if="!$v.expressId.required && $v.expressId.posInt" class="red-color">快递单号只能为正整数</div>
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon">快递费：</span>
+                    <span class="input-group-addon">快递费用</span>
                     <input id="expressCost" type="text" class="form-control" placeholder="请输入快递费" aria-describedby="expressCost" v-model="model.expressCost" v-validate:express-cost="{required:true, posInt: true}" :class="{'red-border': $v.expressCost && $v.expressCost.touched && $v.expressCost.invalid}">
                 </div>
                 <div class="input-group error-msg" v-if="$v.expressCost.touched && $v.expressCost.invalid">
@@ -43,7 +43,7 @@
                     <div v-if="!$v.expressCost.required && $v.expressCost.posInt" class="red-color">快递费只能为正整数</div>
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon">备注：</span>
+                    <span class="input-group-addon">备注说明</span>
                     <textarea id="comment" type="text" class="form-control" placeholder="" aria-describedby="comment" v-model="model.comment"></textarea>
                 </div>
                 <div class="good-list" v-if="model.goodList.length > 0">
