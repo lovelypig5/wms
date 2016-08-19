@@ -16,7 +16,7 @@ var init = () => {
     })
 
     Vue.validator('posFloat', function(val) {
-        return /^[0-9][1-9]*(.?[1-9]*)$/.test(val)
+        return /^[1-9][0-9]*(.?[1-9]*)$/.test(val)
     })
 }
 
