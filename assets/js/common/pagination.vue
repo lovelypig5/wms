@@ -6,7 +6,7 @@
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <li v-for="i in pagination.count" v-if="i >= pagination.page - 1 && i < pagination.page + 9" :class="{active: pagination.page == i + 1}" @click="change(i+1)"><a href="javascript:void(0)">{{ i + 1 }}</a></li>
+            <li v-for="i in pagination.count" v-if="i >= this.lower && i < this.upper" :class="{active: pagination.page == i + 1}" @click="change(i+1)"><a href="javascript:void(0)">{{ i + 1 }}</a></li>
             <li :class="{disabled: pagination.page >= pagination.count}" @click="forword10">
                 <a href="javascript:void(0)" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
@@ -18,6 +18,32 @@
 <script>
 var Pagination = Vue.extend({
     props: ['pagination', 'change'],
+    computed: {
+        lower(){
+            var lower = this.pagination.page - 5;
+            var upper = this.pagination.page + 5;
+            if(upper > this.pagination.count){
+                lower = this.pagination.count - 10;
+            }
+            if(lower < 0){
+                lower = 0;
+            }
+
+            return lower;
+        },
+        upper(){
+            var lower = this.pagination.page - 5;
+            var upper = this.pagination.page + 5;
+            if(lower < 0){
+                upper = 10;
+            }
+            if(upper > this.pagination.count){
+                upper = this.pagination.count;
+            }
+
+            return upper;
+        }
+    },
     methods: {
         back10() {
             if (this.pagination.page <= 1) {
