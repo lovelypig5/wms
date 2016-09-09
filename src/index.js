@@ -1,9 +1,9 @@
 var express = require('express');
 var fallback = require('express-history-api-fallback');
-var logger = require('./src/logger');
-var filters = require('./src/filters');
-var routes = require('./src/route');
-var apis = require('./src/api');
+var logger = require('./logger');
+var filters = require('./filters');
+var routes = require('./route');
+var apis = require('./api');
 
 var app = express();
 
@@ -22,10 +22,15 @@ apis.forEach((api) => {
     app[method](api.route, api.func);
 })
 
-app.use(express.static('assets/dist'));
-// history api fallback
+// app.use(express.static('../assets'));
+// // history api fallback
+// app.use(fallback('index.html', {
+//     root: `../assets`
+// }));
+
+app.use(express.static('../assets/dist'));
 app.use(fallback('index.html', {
-    root: `${__dirname}/assets/dist`
+    root: `../assets/dist`
 }));
 
 app.listen(3000, function() {
