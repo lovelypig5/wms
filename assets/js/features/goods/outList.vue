@@ -1,47 +1,49 @@
 <template>
-    <div class="panel panel-primary good-list">
-        <div class="panel-heading">出库记录</div>
-        <table class="table" v-if="!loading.fetch && outList.length > 0">
-            <thead>
-                <tr>
-                    <th>商品名称</th>
-                    <th>商品属性</th>
-                    <th>出库数量</th>
-                    <th>出库价格</th>
-                    <th>出库时间</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="item" v-for="good in outList">
-                    <td><a href="javascript:void(0)" v-link="{name: 'detail', params: {id: good.goods_id} }">{{good.name}}</a></td>
-                    <td>{{good.goods_attr | remove-whitespace}}</td>
-                    <td v-if="!good.edit">
-                        {{good.amount}}
-                    </td>
-                    <td v-if="good.edit">
-                        <input type="text" v-model="good.amount">
-                    </td>
-                    <td v-if="!good.edit">{{good.price}}
-                    </td>
-                    <td v-if="good.edit">
-                        <input type="text" v-model="good.price">
-                    </td>
-                    <td>{{good.date}}</td>
-                     <td><i class="fa fa-pencil-square-o" aria-hidden="true" @click="edit(good)" v-if="!good.edit"></i>
-                        <i class="fa fa-floppy-o" aria-hidden="true" v-if="good.edit" @click="save(good)"></i>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <pagination :pagination="params" :change="change"></pagination>
-        <div class="empty" v-if="!loading.fetch && outList.length == 0">
-            <div class="msg">没有出库记录</div>
-        </div>
-        <div v-if="loading.fetch">
-            <div class="loading audio-wave"></div>
-        </div>
+<div class="panel panel-primary good-list">
+    <div class="panel-heading">出库记录</div>
+    <table class="table" v-if="!loading.fetch && outList.length > 0">
+        <thead>
+            <tr>
+                <th>商品名称</th>
+                <th>商品属性</th>
+                <th>出库数量</th>
+                <th>出库价格</th>
+                <th>出库时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="item" v-for="good in outList">
+                <td>
+                    <router-link to="{name: 'detail', params: {id: good.goods_id} }">{{good.name}}</router-link>
+                </td>
+                <td>{{good.goods_attr | remove-whitespace}}</td>
+                <td v-if="!good.edit">
+                    {{good.amount}}
+                </td>
+                <td v-if="good.edit">
+                    <input type="text" v-model="good.amount">
+                </td>
+                <td v-if="!good.edit">{{good.price}}
+                </td>
+                <td v-if="good.edit">
+                    <input type="text" v-model="good.price">
+                </td>
+                <td>{{good.date}}</td>
+                <td><i class="fa fa-pencil-square-o" aria-hidden="true" @click="edit(good)" v-if="!good.edit"></i>
+                    <i class="fa fa-floppy-o" aria-hidden="true" v-if="good.edit" @click="save(good)"></i>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <pagination :pagination="params" :change="change"></pagination>
+    <div class="empty" v-if="!loading.fetch && outList.length == 0">
+        <div class="msg">没有出库记录</div>
     </div>
+    <div v-if="loading.fetch">
+        <div class="loading audio-wave"></div>
+    </div>
+</div>
 </template>
 <script>
 import API from '../../config/api';
@@ -67,7 +69,7 @@ var OutList = Vue.extend({
             }
         }
     },
-    ready() {
+    mounted() {
         this.fetch(true);
     },
     methods: {

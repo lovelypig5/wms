@@ -1,30 +1,31 @@
 <template>
-    <div class="panel panel-primary good-create">
-        <div class="panel-heading">添加商品</div>
-        <div class="panel-body">
-            <validator name="v">
-                <div class="input-group">
-                    <span class="input-group-addon" id="productName">商品名称</span>
-                    <input type="text" class="form-control" placeholder="请输入商品名称" aria-describedby="productName" v-model="model.name" v-validate:name="{required:true}" :class="{'red-border': $v.name && $v.name.touched && $v.name.invalid}">
-                </div>
-                <div class="input-group error-msg" v-if="$v.name.touched && $v.name.invalid">
-                    <div v-if="$v.name.required" class="red-color">商品名称不能为空</div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon">商品属性</span>
-                    <div id="productAttr" class="productAttr"></div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="productAmount">商品链接</span>
-                    <input type="text" class="form-control" placeholder="请输入商品链接（选填）" aria-describedby="productAmount" v-model="model.amount">
-                </div>
-                <div class="float-right btns">
-                    <button type="button" class="btn btn-primary" @click="create">添加</button>
-                    <button type="button" class="btn btn-danger" @click="reset">取消</button>
-                </div>
-            </validator>
-        </div>
+<div class="panel panel-primary good-create">
+    <div class="panel-heading">添加商品</div>
+    <div class="panel-body">
+        <validator name="v">
+            <div class="input-group">
+                <span class="input-group-addon" id="productName">商品名称</span>
+                <input type="text" class="form-control" placeholder="请输入商品名称" aria-describedby="productName" v-model="model.name" v-validate:name="{required:true}"
+                    :class="{'red-border': $v.name && $v.name.touched && $v.name.invalid}">
+            </div>
+            <div class="input-group error-msg" v-if="$v.name.touched && $v.name.invalid">
+                <div v-if="$v.name.required" class="red-color">商品名称不能为空</div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">商品属性</span>
+                <div id="productAttr" class="productAttr"></div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" id="productAmount">商品链接</span>
+                <input type="text" class="form-control" placeholder="请输入商品链接（选填）" aria-describedby="productAmount" v-model="model.amount">
+            </div>
+            <div class="float-right btns">
+                <button type="button" class="btn btn-primary" @click="create">添加</button>
+                <button type="button" class="btn btn-danger" @click="reset">取消</button>
+            </div>
+        </validator>
     </div>
+</div>
 </template>
 <script>
 import API from '../../config/api';
@@ -44,7 +45,7 @@ var Create = Vue.extend({
             }
         }
     },
-    ready() {
+    mounted() {
         this.taggle = new Taggle('productAttr', {
             placeholder: '请输入商品属性（选填）（Enter键确认）'
         });
