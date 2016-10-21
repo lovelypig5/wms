@@ -1,18 +1,18 @@
 <template>
-<div class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content" id="modal-content">
-            <component :is="modal.component"></component>
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content" id="modal-content">
+                <component :is="modal.component"></component>
+            </div>
         </div>
     </div>
-</div>
 </template>
 <script>
 import LoginPopup from './login.vue';
 
 var Modal = Vue.extend({
     props: ['modal'],
-    mounted() {
+    ready() {
         var self = this;
         $(self.$el).on('hidden.bs.modal', (e) => {
             self.modal = {

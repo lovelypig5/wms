@@ -21,7 +21,7 @@ const mutations = {
             type: 'post',
             success(resp) {
                 state.user = {};
-                router.push({
+                router.go({
                     path: '/home'
                 });
             },

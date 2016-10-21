@@ -1,10 +1,10 @@
 <template>
-<div :class="'alert alert-dismissible alert-'+alert.type" role="alert">
-    <!-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <div class="alert alert-dismissible alert-{{alert.type}}" role="alert">
+        <!-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
 </button> -->
-    {{alert.msg}}
-</div>
+        {{alert.msg}}
+    </div>
 </template>
 <script>
 var Alert = Vue.extend({

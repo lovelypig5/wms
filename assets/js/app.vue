@@ -1,10 +1,10 @@
 <template>
-<div>
-    <app-header></app-header>
-    <router-view></router-view>
-    <app-footer></app-footer>
-    <common></common>
-</div>
+    <div>
+        <app-header></app-header>
+        <router-view></router-view>
+        <app-footer></app-footer>
+        <common></common>
+    </div>
 </template>
 <script>
 import store from './vuex/store';

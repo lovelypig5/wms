@@ -1,57 +1,57 @@
 <template>
-<div class="panel panel-primary good-detail">
-    <div class="panel-heading">{{good.name}}</div>
-    <div class="attList">
-        <table class="table">
+    <div class="panel panel-primary good-detail">
+        <div class="panel-heading">{{good.name}}</div>
+        <div class="attList">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>属性列表<span class="add-attr" data-container=".good-detail" data-toggle="popover" data-placement="bottom">+</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span v-for="attr in attrlist" class="attr">{{attr.attr}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <table class="table" v-if="!loading.fetch">
             <thead>
                 <tr>
-                    <th>属性列表<span class="add-attr" data-container=".good-detail" data-toggle="popover" data-placement="bottom">+</span></th>
+                    <th>库存列表</th>
+                    <th>库存数量</th>
+                    <th>操作</th>
+                    <th>趋势</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="item">
+                    <td>所有</td>
+                    <td>{{good.total}}</td>
                     <td>
-                        <span v-for="attr in attrlist" class="attr">{{attr.attr}}</span>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" v-link="{path: '/goods/analysis'}">趋势</a>
+                    </td>
+                </tr>
+                <tr class="item" v-for="g in good.list">
+                    <td>{{g.attr | remove-whitespace}}</td>
+                    <td>{{g.count}}</td>
+                    <td>
+                        <a href="javascript:void(0)" v-link="{path: '/goods/in', query: {id: good.id, name: good.name, attr: g.attr} }">入库</a>
+                        <a href="javascript:void(0)" v-link="{path: '/goods/out', query: {id: good.id, name: good.name, attr: g.attr} }">出库</a>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" v-link="{path: '/goods/analysis'}">趋势</a>
                     </td>
                 </tr>
             </tbody>
         </table>
-    </div>
-    <table class="table" v-if="!loading.fetch">
-        <thead>
-            <tr>
-                <th>库存列表</th>
-                <th>库存数量</th>
-                <th>操作</th>
-                <th>趋势</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="item">
-                <td>所有</td>
-                <td>{{good.total}}</td>
-                <td>
-                </td>
-                <td>
-                    <router-link to="/goods/analysis">趋势</router-link>
-                </td>
-            </tr>
-            <tr class="item" v-for="g in good.list">
-                <td>{{g.attr | remove-whitespace}}</td>
-                <td>{{g.count}}</td>
-                <td>
-                    <router-link to="{path: '/goods/in', query: {id: good.id, name: good.name, attr: g.attr} }">入库</router-link>
-                    <router-link to="{path: '/goods/out', query: {id: good.id, name: good.name, attr: g.attr} }">出库</router-link>
-                </td>
-                <td>
-                    <router-link to="analysis">趋势</router-link>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <div v-if="loading.fetch">
-        <div class="loading audio-wave"></div>
-    </div>
+        <div v-if="loading.fetch">
+            <div class="loading audio-wave"></div>
+        </div>
 </template>
 <script>
 import API from '../../config/api';
@@ -72,19 +72,17 @@ var GoodDetail = Vue.extend({
             }
         }
     },
-    mounted() {
+    ready() {
         this.fetch(true);
         this.fetchAttrList();
 
         $(this.$el).on('click', '.save', this.addAttr);
-        Vue.nextTick(() => {
-            $('.add-attr').popover({
-                content() {
-                    return '<input type="text" placeholder="请输入属性名称" class="attrName"/><button class="btn-primary save">保存</button>'
-                },
-                html: true
-            });
-        })
+        $('.add-attr').popover({
+            content() {
+                return '<input type="text" placeholder="请输入属性名称" class="attrName"/><button class="btn-primary save">保存</button>'
+            },
+            html: true
+        });
     },
     methods: {
         addAttr() {
