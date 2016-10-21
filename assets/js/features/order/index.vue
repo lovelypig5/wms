@@ -1,16 +1,14 @@
 <template>
-<div class="container" v-if="user.id">
-    <div class="col-sm-3">
-        <div class="list-group">
-            <router-link to="{path: '/order' + path[index], activeClass:'active'}" class="list-group-item" v-for="item in menu">{{ $t(item) }}</router-link>
+    <div class="container" v-if="user.id">
+        <div class="col-sm-3">
+            <div class="list-group">
+                <a href="javascript:void(0)" v-link="{path: '/order' + path[$index], activeClass:'active'}" class="list-group-item" v-for="item in menu">{{ $t(item) }} </a>
+            </div>
+        </div>
+        <div class="col-sm-9 content">
+            <router-view transition="fade" transition-mode="out-in"></router-view>
         </div>
     </div>
-    <div class="col-sm-9 content">
-        <transition name="fade" mode="out-in">
-            <router-view></router-view>
-        </transition>
-    </div>
-</div>
 </template>
 <script>
 import DICT from '../../config/dict';
@@ -24,7 +22,7 @@ var Order = Vue.extend({
             path: ['/list', '/create']
         }
     },
-    mounted() {
+    ready() {
         this.isLogin();
     },
     methods: {
