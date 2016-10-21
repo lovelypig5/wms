@@ -1,13 +1,13 @@
 <template>
-<div class="chart">
-    <div class="list">
-        请选择商品：
-        <select v-model="choose">
+    <div class="chart">
+        <div class="list">
+            请选择商品：
+            <select v-model="choose">
                 <option :value="good.id" v-for="good in goodList">{{good.name}}</option>
             </select>
+        </div>
+        <canvas id="chart" width="700" height="400"></canvas>
     </div>
-    <canvas id="chart" width="700" height="400"></canvas>
-</div>
 </template>
 <script>
 import Chart from 'chart.js/src/chart';
@@ -72,7 +72,7 @@ var Analysis = Vue.extend({
             this.getData();
         }
     },
-    mounted() {
+    ready() {
         this.getGoods();
     },
     methods: {
