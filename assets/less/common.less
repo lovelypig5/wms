@@ -1,10 +1,12 @@
 @import 'keyframes';
+
 html {
     font-size: 62.5%;
 }
 
 body {
     font-size: 1.4rem;
+    background-color: @gray-lightest;
 }
 
 * {
@@ -12,10 +14,62 @@ body {
 }
 
 a,
-a:hover,
 a:active,
+a:hover,
 a:visited {
     text-decoration: none;
+}
+
+.btn-outline {
+    color: inherit;
+    background-color: transparent;
+    transition: all 0.5s;
+}
+
+.btn-primary.btn-outline {
+    color: @brand-primary;
+}
+
+.btn-success.btn-outline {
+    color: @brand-success;
+}
+
+.btn-info.btn-outline {
+    color: @brand-info;
+}
+
+.btn-warning.btn-outline {
+    color: @brand-warning;
+}
+
+.btn-danger.btn-outline {
+    color: @brand-danger;
+}
+
+.btn-danger.btn-outline:hover,
+.btn-info.btn-outline:hover,
+.btn-primary.btn-outline:hover,
+.btn-success.btn-outline:hover,
+.btn-warning.btn-outline:hover {
+    color: white;
+}
+
+#wrapper {
+    width: 100%;
+}
+
+#page-wrapper {
+    padding: 0 15px;
+    min-height: 568px;
+    background-color: white;
+}
+@media(min-width:768px) {
+    #page-wrapper {
+        position: inherit;
+        margin: 0 0 0 250px;
+        padding: 0 30px;
+        border-left: 1px solid darken(@gray-lightest, 6.5%);
+    }
 }
 
 .float-right {
@@ -56,6 +110,7 @@ a:visited {
     height: 200px;
     margin-right: auto;
     margin-left: auto;
+
     &.audio-wave {
         background: linear-gradient(#9b59b6, #9b59b6) 0 50%, linear-gradient(#9b59b6, #9b59b6) 25% 50%, linear-gradient(#9b59b6, #9b59b6) 50% 50%, linear-gradient(#9b59b6, #9b59b6) 75% 50%, linear-gradient(#9b59b6, #9b59b6) 100% 50%;
         background-repeat: no-repeat;
@@ -68,6 +123,7 @@ a:visited {
     position: relative;
     width: 100%;
     min-height: 300px;
+
     .msg {
         display: inline-block;
         padding: 10px;
@@ -79,7 +135,7 @@ a:visited {
 }
 
 .fade-transition {
-    transition: all .3s ease;
+    transition: all 0.3s ease;
     overflow: hidden;
 }
 
@@ -87,10 +143,7 @@ a:visited {
 .fade-leave {
     opacity: 0;
 }
-
-
 /* rewrite */
-
 .taggle_placeholder {
     left: 13px;
     top: 9px;
@@ -101,16 +154,20 @@ a:visited {
     border: 1px solid #ccc;
     margin-bottom: 0;
     padding-left: 10px;
+
     > li {
         margin-top: 2px;
         margin-bottom: 0;
     }
+
     .taggle_input {
         max-width: 200px !important;
     }
+
     .taggle .close {
         top: 9px;
     }
+
     &:after {
         clear: both;
     }
