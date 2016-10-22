@@ -32,11 +32,16 @@ module.exports = (modulePath) => {
         module: {
             loaders: []
         },
+        resolve: {
+            alias: {
+                templates: path.resolve("./templates")
+            }
+        },
         externals: [],
         devServer: {
             proxy: {
                 '*': 'http://localhost:3000'
             }
         }
-    }
-}
+    };
+};
