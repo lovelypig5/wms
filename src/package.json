@@ -21,7 +21,8 @@
     "express-history-api-fallback": "^2.0.0",
     "log4js": "^0.6.33",
     "mysql": "^2.10.2",
-    "promise": "^7.1.1"
+    "promise": "^7.1.1",
+    "sequelize": "^3.24.5"
   },
   "description": ""
 }

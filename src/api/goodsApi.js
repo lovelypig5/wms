@@ -17,7 +17,7 @@ class GoodsApi extends BaseApi {
     }
 
     inlist(req, res) {
-        var user_id = req.session.user.id
+        var user_id = req.session.user.id;
         var query = req.query;
         var page = parseInt(query.page) || 1;
         var pageSize = parseInt(query.pageSize) || 20;
@@ -31,7 +31,7 @@ class GoodsApi extends BaseApi {
     }
 
     create(req, res) {
-        var user_id = req.session.user.id
+        var user_id = req.session.user.id;
         var body = req.body;
         var name = body.name;
         var attr = body.attr;
@@ -53,7 +53,7 @@ class GoodsApi extends BaseApi {
     }
 
     modifyInOut(req, res) {
-        var user_id = req.session.user.id
+        var user_id = req.session.user.id;
         var body = req.body;
         var id = body.id;
         var amount = body.amount;
@@ -79,8 +79,8 @@ class GoodsApi extends BaseApi {
         });
     }
 
-    in(req, res) {
-        var user_id = req.session.user.id
+    in (req, res) {
+        var user_id = req.session.user.id;
         var body = req.body;
         var id = body.id;
         var amount = body.amount;
@@ -109,7 +109,7 @@ class GoodsApi extends BaseApi {
     }
 
     out(req, res) {
-        var user_id = req.session.user.id
+        var user_id = req.session.user.id;
         var body = req.body;
         var id = body.id;
         var amount = body.amount;
@@ -132,7 +132,7 @@ class GoodsApi extends BaseApi {
     }
 
     detail(req, res) {
-        var user_id = req.session.user.id
+        var user_id = req.session.user.id;
         var query = req.query;
         var id = query.id;
         if (!id) {
@@ -148,13 +148,13 @@ class GoodsApi extends BaseApi {
             res.status(goods.status).json(goods.ret);
         }, (goods) => {
             res.status(goods.status).send(goods.ret);
-        })
+        });
     }
 
     search(req, res) {
         var user_id = req.session.user.id;
         var query = req.query;
-        var name = query.name
+        var name = query.name;
         if (!name) {
             name = '';
         }
@@ -163,7 +163,7 @@ class GoodsApi extends BaseApi {
             res.status(goods.status).json(goods.ret);
         }, (goods) => {
             res.status(goods.status).send(goods.ret);
-        })
+        });
     }
 
     attrs(req, res) {
@@ -178,11 +178,11 @@ class GoodsApi extends BaseApi {
             res.status(goods.status).json(goods.ret);
         }, (goods) => {
             res.status(goods.status).send(goods.ret);
-        })
+        });
     }
 
     addAttr(req, res) {
-        var user_id = req.session.user.id
+        var user_id = req.session.user.id;
         var body = req.body;
         var goods_id = body.goods_id;
         var attr = body.attr;
@@ -194,7 +194,7 @@ class GoodsApi extends BaseApi {
             res.status(attr.status).json(attr.ret);
         }, (attr) => {
             res.status(attr.status).send(attr.ret);
-        })
+        });
     }
 
     attrlist(req, res) {
@@ -209,7 +209,7 @@ class GoodsApi extends BaseApi {
             res.status(goods.status).json(goods.ret);
         }, (goods) => {
             res.status(goods.status).send(goods.ret);
-        })
+        });
     }
 
     trend(req, res) {
@@ -217,15 +217,12 @@ class GoodsApi extends BaseApi {
         var query = req.query;
         var goods_id = query.goods_id;
         var attr = query.attr;
-        if (!goods_id) {
-            return res.status(400).send('缺少参数');
-        }
 
         goodsDao.trend(user_id, goods_id, attr).then((trendData) => {
             res.status(trendData.status).json(trendData.ret);
         }, (trendData) => {
             res.status(trendData.status).send(trendData.ret);
-        })
+        });
     }
 }
 
@@ -279,4 +276,4 @@ module.exports = [{
     method: 'post',
     route: '/api/goods/modifyInOut',
     func: goodsApi.modifyInOut
-}]
+}];
