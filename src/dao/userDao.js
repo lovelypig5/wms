@@ -1,4 +1,5 @@
-var BaseDao = require('./baseDao');
+var BaseDao = require('./baseDao'),
+    User = require('../model/user');
 
 class UserDao extends BaseDao {
 

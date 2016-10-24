@@ -1,12 +1,5 @@
-<template>
-    <div>
-        <app-header></app-header>
-        <router-view></router-view>
-        <app-footer></app-footer>
-        <common></common>
-    </div>
-</template>
 <script>
+import template from 'templates/app.html';
 import store from './vuex/store';
 import acitons from './vuex/actions';
 import AppHeader from './layout/appHeader.vue';
@@ -32,6 +25,7 @@ $.ajaxSetup({
 })
 
 var App = Vue.extend({
+    template: template,
     store,
     components: {
         appHeader: AppHeader,

@@ -57,7 +57,7 @@ var AppHeader = Vue.extend({
         }, {
             name: Vue.t("order"),
             path: '/order/list',
-            className: 'fa-dashboard',
+            className: 'fa-table',
             children: [{
                 name: Vue.t("text_order_list"),
                 path: '/order/list',

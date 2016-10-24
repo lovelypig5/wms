@@ -1,15 +1,5 @@
-<template>
-    <div class="chart">
-        <div class="list">
-            请选择商品：
-            <select v-model="choose">
-                <option :value="good.id" v-for="good in goodList">{{good.name}}</option>
-            </select>
-        </div>
-        <canvas id="chart" width="700" height="400"></canvas>
-    </div>
-</template>
 <script>
+import template from 'templates/goods/analysis.html';
 import Chart from 'chart.js/src/chart';
 import API from '../../config/api';
 import actions from '../../vuex/actions';
@@ -24,6 +14,7 @@ const opt = {
 };
 
 var Analysis = Vue.extend({
+    template: template,
     name: 'analysis',
     data() {
         return {

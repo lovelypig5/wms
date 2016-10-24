@@ -1,5 +1,8 @@
 var BaseDao = require('./baseDao');
 var logger = require('../logger');
+var Goods = require('../model/goods'),
+    User = require('../model/user'),
+    R_User_Goods = require('../model/r_user_goods');
 
 class GoodsDao extends BaseDao {
 
@@ -9,23 +12,34 @@ class GoodsDao extends BaseDao {
                     left join r_user_goods rug on rug.goods_id = g.id \
                     where rug.user_id = ? and g.name like ? ',
             params: [user_id, '%' + name + '%']
-        })
+        });
     }
 
     list(user_id) {
-        var sql = 'select g.* from goods g \
-                    left join r_user_goods r on r.goods_id = g.id \
-                    where r.user_id = ?';
-        return this.query({
-            sql: sql,
-            params: user_id,
-            parse(rows) {
-                return {
-                    count: 5,
-                    content: rows
-                };
-            }
-        })
+        return Goods.findAndCountAll({
+            include: [{
+                model: User
+            }]
+        }).then((result) => {
+            console.log(123);
+            return this.model(200, result);
+        }).catch((err) => {
+            return this.model(500, '服务器出错');
+        });
+        // var sql =
+        //     'select g.* from goods g \
+        //             left join r_user_goods r on r.goods_id = g.id \
+        //             where r.user_id = ?';
+        // return this.query({
+        //     sql: sql,
+        //     params: user_id,
+        //     parse(rows) {
+        //         return {
+        //             count: 5,
+        //             content: rows
+        //         };
+        //     }
+        // });
     }
 
     detail(id, user_id) {
@@ -42,7 +56,7 @@ class GoodsDao extends BaseDao {
                         name: good.name,
                         total: good.total,
                         list: []
-                    }
+                    };
                     return ret;
                 } else {
                     return {
@@ -63,7 +77,7 @@ class GoodsDao extends BaseDao {
 
                 return data;
             }
-        })
+        });
     }
 
     create(name, attrs, user_id) {
@@ -74,10 +88,10 @@ class GoodsDao extends BaseDao {
                 if (rows.length > 0) {
                     return {
                         error: '商品已经存在'
-                    }
+                    };
                 }
 
-                return rows
+                return rows;
             }
         }, {
             sql: 'insert into goods (`name`) values (?)',
@@ -100,10 +114,10 @@ class GoodsDao extends BaseDao {
                         return [user_id, attr, result.insertId];
                     },
                     parse(result, data) {
-                        return data
+                        return data;
                     }
-                })
-            })
+                });
+            });
         }
 
         return this.queryWithTransaction(...querys);
@@ -119,7 +133,7 @@ class GoodsDao extends BaseDao {
                 } else {
                     return {
                         error: '不存在该出入库记录'
-                    }
+                    };
                 }
             }
         }, {
@@ -129,12 +143,12 @@ class GoodsDao extends BaseDao {
                 return {
                     diff: (data.amount - amount) * type,
                     goods_id: data.goods_id
-                }
+                };
             }
         }, {
             sql: 'update goods set count = count + ? where id = ?',
             params(data) {
-                return [data.diff, data.goods_id]
+                return [data.diff, data.goods_id];
             },
             parse(result, data) {
                 return data;
@@ -145,9 +159,9 @@ class GoodsDao extends BaseDao {
             querys.push({
                 sql: 'update goods_attrs set count = count + ? where goods_id = ? and attr = ?',
                 params(data) {
-                    return [data.diff, data.goods_id, good_attr]
+                    return [data.diff, data.goods_id, good_attr];
                 }
-            })
+            });
         }
 
         return this.queryWithTransaction(...querys);
@@ -175,9 +189,9 @@ class GoodsDao extends BaseDao {
                 return {
                     count: results[0].count,
                     content: rows
-                }
+                };
             }
-        }]
+        }];
         return this.query(...querys);
     }
 
@@ -191,14 +205,14 @@ class GoodsDao extends BaseDao {
                     if (good.count < amount) {
                         return {
                             error: '库存不足'
-                        }
+                        };
                     }
                     return good;
                 }
 
                 return {
                     error: '不存在该商品'
-                }
+                };
             }
         }, {
             sql: 'update goods set count = count - ? where id = ?',
@@ -218,14 +232,14 @@ class GoodsDao extends BaseDao {
                         if (good.count < amount) {
                             return {
                                 error: attr + ':该类商品库存不足'
-                            }
+                            };
                         }
                         return good;
                     }
 
                     return {
                         error: '不存在该商品属性' + attr
-                    }
+                    };
                 }
             }, {
                 sql: 'update goods_attrs set count = count - ? where attr = ? and goods_id = ?',
@@ -233,25 +247,25 @@ class GoodsDao extends BaseDao {
                 parse(result) {
                     if (result) {
                         if (result.changedRows == 1) {
-                            return {}
-                        } else if (result.changedRows == 0) {
+                            return {};
+                        } else if (result.changedRows === 0) {
                             return {
                                 error: '不存在该商品属性' + attr
-                            }
+                            };
                         } else {
                             return {
                                 error: '数据错误，请联系管理员'
-                            }
+                            };
                         }
                     }
                 }
-            }])
+            }]);
         }
 
         return this.queryWithTransaction(...querys);
     }
 
-    in(id, amount, price, attr, user_id) {
+    in (id, amount, price, attr, user_id) {
         var querys = [{
             sql: 'select g.* from goods g left join r_user_goods r on r.goods_id = g.id where r.user_id = ? and g.id = ?',
             params: [user_id, id],
@@ -262,12 +276,12 @@ class GoodsDao extends BaseDao {
 
                 return {
                     error: '不存在该商品'
-                }
+                };
             }
         }, {
             sql: 'update goods set count = ? where id = ?',
             params(good) {
-                return [good.count + amount, id]
+                return [good.count + amount, id];
             }
         }, {
             sql: 'insert into `goods_records` (`goods_id`, `user_id`, `goods_attr`, `price`, `amount`) VALUES (?,?,?,?,?)',
@@ -283,13 +297,13 @@ class GoodsDao extends BaseDao {
                         if (result.changedRows == 1) {
                             return {
                                 error: true
-                            }
-                        } else if (result.changedRows == 0) {
-                            return {}
+                            };
+                        } else if (result.changedRows === 0) {
+                            return {};
                         } else {
                             return {
                                 error: '数据错误，请联系管理员'
-                            }
+                            };
                         }
                     }
                 }
@@ -299,9 +313,9 @@ class GoodsDao extends BaseDao {
                 parse(result) {
                     return {
                         id: result.insertId
-                    }
+                    };
                 }
-            }])
+            }]);
         }
 
         return this.queryWithTransaction(...querys);
@@ -318,7 +332,7 @@ class GoodsDao extends BaseDao {
                     return [];
                 }
             }
-        })
+        });
     }
 
     addAttr(user_id, goods_id, attr) {
@@ -344,12 +358,13 @@ class GoodsDao extends BaseDao {
                     return [];
                 }
             }
-        })
+        });
     }
 
     trend(user_id, goods_id, attr) {
         var querys = [];
         if (attr) {
+
             querys.push({
                 sql: 'select g.attr, g.count, sum(gr.type * -1 * gr.amount) as amount, DATE_FORMAT(gr.date, \'%Y-%m-%d\') as date from goods_attrs g \
                     left join goods_records gr on gr.goods_id = g.goods_id and gr.goods_attr = g.attr \
@@ -375,13 +390,13 @@ class GoodsDao extends BaseDao {
                             var date = record.date;
 
                             switch (type) {
-                            case 1:
-                                count -= amount;
-                                break;
-                            case 0:
-                            default:
-                                count += amount;
-                                break;
+                                case 1:
+                                    count -= amount;
+                                    break;
+                                case 0:
+                                default:
+                                    count += amount;
+                                    break;
                             }
                             ret.datasets[0].label = name;
                             ret.datasets[0].data.push(count);
@@ -391,7 +406,7 @@ class GoodsDao extends BaseDao {
                         if (count == rows[0].count) {
                             return ret;
                         } else {
-                            logger.error('数据错误，库存和出入库记录总数无法匹配')
+                            logger.error('数据错误，库存和出入库记录总数无法匹配');
                             logger.error('用户ID: %s', user_id);
                             logger.error('商品ID: %s', goods_id);
                             logger.error('属性名称: %s', attr);
@@ -401,7 +416,7 @@ class GoodsDao extends BaseDao {
                         return {};
                     }
                 }
-            })
+            });
         } else {
             querys.push({
                 sql: 'select g.count, g.name, sum(gr.type * -1 * gr.amount) as amount, DATE_FORMAT(gr.date, \'%Y-%m-%d\') as date from goods g \
@@ -428,13 +443,13 @@ class GoodsDao extends BaseDao {
                             var date = record.date;
 
                             switch (type) {
-                            case 1:
-                                count -= amount;
-                                break;
-                            case 0:
-                            default:
-                                count += amount;
-                                break;
+                                case 1:
+                                    count -= amount;
+                                    break;
+                                case 0:
+                                default:
+                                    count += amount;
+                                    break;
                             }
                             ret.datasets[0].label = name;
                             ret.datasets[0].data.push(count);
@@ -444,7 +459,7 @@ class GoodsDao extends BaseDao {
                         if (count == rows[0].count) {
                             return ret;
                         } else {
-                            logger.error('数据错误，库存和出入库记录总数无法匹配')
+                            logger.error('数据错误，库存和出入库记录总数无法匹配');
                             logger.error('用户ID: %s', user_id);
                             logger.error('商品ID: %s', goods_id);
                             return ret;
@@ -453,11 +468,11 @@ class GoodsDao extends BaseDao {
 
                     return {};
                 }
-            })
+            });
         }
 
         return this.query(...querys);
     }
 }
 
-module.exports = new GoodsDao;
+module.exports = new GoodsDao();
