@@ -8,12 +8,6 @@ import actions from '../../vuex/actions';
 
 var Goods = Vue.extend({
     name: 'goods',
-    data() {
-        return {
-            menu: DICT.goodsMenu,
-            path: ['/analysis', '/list', '/out', '/in', '/outList', '/inList', '/create']
-        }
-    },
     ready() {
         this.isLogin();
     },
