@@ -5,6 +5,9 @@ var sequelize = new Sequelize('wms', 'root', 'root', {
     connectionLimit: 10,
     host: 'localhost',
     dialect: 'mysql',
+    logging: (msg) => {
+        logger.debug(msg);
+    },
 
     pool: {
         max: 10,

@@ -1,8 +1,6 @@
 var BaseDao = require('./baseDao');
 var logger = require('../logger');
-var Goods = require('../model/goods'),
-    User = require('../model/user'),
-    R_User_Goods = require('../model/r_user_goods');
+var model = require('../model');
 
 class GoodsDao extends BaseDao {
 
@@ -15,31 +13,33 @@ class GoodsDao extends BaseDao {
         });
     }
 
+    /**
+     * list goods of given user
+     * @method list
+     * @param  {Number} user_id : user id
+     * @return {Promise}
+     */
     list(user_id) {
-        return Goods.findAndCountAll({
+        return model.Goods.findAndCountAll({
             include: [{
-                model: User
+                model: model.User,
+                attributes: [],
+                where: {
+                    id: user_id
+                },
+                through: {
+                    attributes: []
+                }
             }]
         }).then((result) => {
-            console.log(123);
-            return this.model(200, result);
+            return this.model(200, {
+                count: result.count,
+                content: result.rows
+            });
         }).catch((err) => {
+            logger.error(err);
             return this.model(500, '服务器出错');
         });
-        // var sql =
-        //     'select g.* from goods g \
-        //             left join r_user_goods r on r.goods_id = g.id \
-        //             where r.user_id = ?';
-        // return this.query({
-        //     sql: sql,
-        //     params: user_id,
-        //     parse(rows) {
-        //         return {
-        //             count: 5,
-        //             content: rows
-        //         };
-        //     }
-        // });
     }
 
     detail(id, user_id) {
@@ -321,17 +321,30 @@ class GoodsDao extends BaseDao {
         return this.queryWithTransaction(...querys);
     }
 
+    /**
+     * get goods attributes
+     * @method attrs
+     * @param  {Number} user_id  : user id
+     * @param  {Number} goods_id : good id
+     * @return {Promise}
+     */
     attrs(user_id, goods_id) {
-        return this.query({
-            sql: 'select r.attr from r_user_goods_attr r where user_id = ? and goods_id = ?',
-            params: [user_id, goods_id],
-            parse(rows) {
-                if (rows && rows.length > 0) {
-                    return rows;
-                } else {
-                    return [];
+        return model.Attr.findAll({
+            include: [{
+                model: model.Goods,
+                attributes: [],
+                where: {
+                    id: goods_id
                 }
-            }
+            }],
+            order: [
+                ['attr', 'DESC']
+            ]
+        }).then((rows) => {
+            return this.model(200, rows);
+        }).catch((err) => {
+            logger.error(err);
+            return this.model(500, '服务器出错');
         });
     }
 
@@ -346,19 +359,32 @@ class GoodsDao extends BaseDao {
     }
 
     attrlist(user_id, goods_id) {
-        return this.query({
-            sql: 'select ga.attr from goods_attrs ga \
-            left join r_user_goods rug on rug.goods_id = ga.goods_id \
-            where rug.user_id = ? and ga.goods_id = ?',
-            params: [user_id, goods_id],
-            parse(rows) {
-                if (rows && rows.length > 0) {
-                    return rows;
-                } else {
-                    return [];
+        return Attrs.findAll({
+            include: [{
+                model: Goods,
+                where: {
+                    id: goods_id
                 }
-            }
+            }]
+        }).then((rows) => {
+            return this.model(200, rows);
+        }).catch((err) => {
+            logger.error(err);
+            return this.model(500, '服务器出错');
         });
+        // return this.query({
+        //     sql: 'select ga.attr from goods_attrs ga \
+        //     left join r_user_goods rug on rug.goods_id = ga.goods_id \
+        //     where rug.user_id = ? and ga.goods_id = ?',
+        //     params: [user_id, goods_id],
+        //     parse(rows) {
+        //         if (rows && rows.length > 0) {
+        //             return rows;
+        //         } else {
+        //             return [];
+        //         }
+        //     }
+        // });
     }
 
     trend(user_id, goods_id, attr) {
