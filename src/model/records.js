@@ -6,15 +6,25 @@ var Records = sequelize.define('records', {
         type: Sequelize.INTEGER,
         primaryKey: true
     },
-    attr: {
+    goods_attr: {
         type: Sequelize.STRING
     },
-    count: {
+    price: {
+        type: Sequelize.DOUBLE
+    },
+    amount: {
         type: Sequelize.INTEGER
+    },
+    type: {
+        type: Sequelize.INTEGER
+    },
+    date: {
+        type: Sequelize.DATE
     }
 }, {
     freezeTableName: true,
-    tableName: 'goods_records'
+    tableName: 'goods_records',
+    timestamps: false
 });
 
 module.exports = Records;
