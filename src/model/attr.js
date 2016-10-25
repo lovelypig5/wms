@@ -3,10 +3,16 @@ var sequelize = require('../db/sequelize');
 
 var Attr = sequelize.define('attr', {
     user_id: {
-        type: Sequelize.INTEGER(11)
+        type: Sequelize.INTEGER(11),
+        primaryKey: true
+    },
+    goods_id: {
+        type: Sequelize.INTEGER(11),
+        primaryKey: true
     },
     attr: {
-        type: Sequelize.STRING(45)
+        type: Sequelize.STRING(45),
+        primaryKey: true
     }
 }, {
     freezeTableName: true,

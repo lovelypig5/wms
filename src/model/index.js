@@ -15,8 +15,20 @@ Goods.belongsToMany(User, {
     otherKey: 'user_id',
     timestamps: false
 });
+
 Attr.belongsTo(Goods, {
     foreignKey: 'goods_id',
+});
+
+Attrs.belongsTo(Goods, {
+    foreignKey: 'goods_id',
+});
+
+Records.belongsTo(Goods, {
+    foreignKey: 'goods_id',
+});
+Records.hasOne(Attrs, {
+    foreignKey: 'attr',
 });
 
 module.exports = {
