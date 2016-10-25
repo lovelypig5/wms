@@ -1,5 +1,5 @@
-var Sequelize = require('sequelize');
-var sequelize = require('../db/sequelize');
+var Sequelize = require('sequelize'),
+    sequelize = require('../db/sequelize');
 
 var Attrs = sequelize.define('attrs', {
     attr: {
@@ -10,7 +10,9 @@ var Attrs = sequelize.define('attrs', {
     }
 }, {
     freezeTableName: true,
-    tableName: 'goods_attrs'
+    tableName: 'goods_attrs',
+    timestamps: false
 });
+Attrs.removeAttribute('id');
 
 module.exports = Attrs;

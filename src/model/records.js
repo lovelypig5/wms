@@ -3,7 +3,7 @@ var Sequelize = require('sequelize'),
 
 var Records = sequelize.define('records', {
     id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         primaryKey: true
     },
     attr: {

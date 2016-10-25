@@ -30,6 +30,6 @@ var Order = sequelize.define('order', {
     tableName: 'order'
 });
 
-Order.hasMany(Records);
+// Order.hasMany(Records);
 
 module.exports = Order;
