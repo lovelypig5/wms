@@ -1,4 +1,5 @@
-var sequelize = require('sequelize');
+var Sequelize = require('sequelize'),
+    sequelize = require('../db/sequelize');
 var BaseDao = require('./baseDao');
 var logger = require('../logger');
 var model = require('../model');
@@ -73,7 +74,7 @@ class GoodsDao extends BaseDao {
                     list: good.attrs
                 });
             } else {
-                return this.model(404, '不存在该商品');
+                return this.model(400, '不存在该商品');
             }
         }).catch((err) => {
             logger.error(err);
@@ -81,47 +82,62 @@ class GoodsDao extends BaseDao {
         });
     }
 
+    /**
+     * create new good
+     * @method create
+     * @param  {String} name    : good name
+     * @param  {List} attrs     : a list of attr<string>
+     * @param  {Number} user_id : user id
+     * @return {Promise}
+     */
     create(name, attrs, user_id) {
-        var querys = [{
-            sql: 'select g.id from goods g left join r_user_goods r on r.goods_id = g.id where r.user_id = ? and g.name = ?',
-            params: [user_id, name],
-            parse(rows) {
-                if (rows.length > 0) {
-                    return {
-                        error: '商品已经存在'
-                    };
-                }
-
-                return rows;
-            }
-        }, {
-            sql: 'insert into goods (`name`) values (?)',
-            params: [name]
-        }, {
-            sql: 'insert into r_user_goods (`user_id`, `goods_id`) values (?, ?)',
-            params(result) {
-                return [user_id, result.insertId];
+        return model.User.findOne({
+            where: {
+                id: user_id
             },
-            parse(result, data) {
-                return data;
-            }
-        }];
-
-        if (attrs.length > 0) {
-            attrs.forEach((attr) => {
-                querys.push({
-                    sql: 'insert into r_user_goods_attr (`user_id`, `attr`,`goods_id`) values (?, ?, ?)',
-                    params(result) {
-                        return [user_id, attr, result.insertId];
-                    },
-                    parse(result, data) {
-                        return data;
-                    }
+            include: [{
+                model: model.Goods,
+                required: false,
+                where: {
+                    name: name
+                }
+            }]
+        }).then((user) => {
+            if (user.goods.length > 0) {
+                return this.model(400, '商品已经存在！');
+            } else {
+                return sequelize.transaction((transaction) => {
+                    return model.Goods.create({
+                        name: name,
+                        count: 0
+                    }, {
+                        transaction: transaction
+                    }).then((goods) => {
+                        var promises = [user.addGoods(goods, {
+                            transaction: transaction
+                        })];
+                        if (attrs.length > 0) {
+                            attrs.forEach((attr) => {
+                                let promise = model.Attr.create({
+                                    user_id: user_id,
+                                    goods_id: goods.id,
+                                    attr: attr
+                                }, {
+                                    transaction: transaction
+                                });
+                                promises.push(promise);
+                            });
+                        }
+                        return Promise.all(promises).then(() => {
+                            return this.model(200, goods);
+                        });
+                    });
                 });
-            });
-        }
-
-        return this.queryWithTransaction(...querys);
+            }
+        }).catch((err) => {
+            logger.error(err);
+            return this.model(500, '创建失败！');
+        });
     }
 
     modify(record_id, amount, price, good_attr, user_id, type) {
@@ -185,7 +201,7 @@ class GoodsDao extends BaseDao {
             limit: limit,
             offset: offset,
             attributes: [
-                [sequelize.fn('DATE_FORMAT', sequelize.col('date'), '%Y-%m-%d'), 'date'],
+                [Sequelize.fn('DATE_FORMAT', Sequelize.col('date'), '%Y-%m-%d'), 'date'],
                 'id', 'goods_id', 'goods_attr', 'amount', 'price'
             ],
             include: [{
@@ -475,11 +491,11 @@ class GoodsDao extends BaseDao {
                 return this.model(500, '服务器出错');
             });
         } else {
-            var date = sequelize.fn('DATE_FORMAT', sequelize.col('date'), '%Y-%m-%d');
+            var date = Sequelize.fn('DATE_FORMAT', Sequelize.col('date'), '%Y-%m-%d');
             if (goods_id) {
                 return model.Records.findAll({
                     attributes: [
-                        [sequelize.literal('sum(type * -1 * amount)'), 'amount'],
+                        [Sequelize.literal('sum(type * -1 * amount)'), 'amount'],
                         [date, 'date']
                     ],
                     include: [{
@@ -541,7 +557,7 @@ class GoodsDao extends BaseDao {
             } else {
                 return model.Records.findAll({
                     attributes: [
-                        [sequelize.literal('sum(type * -1 * amount)'), 'amount'],
+                        [Sequelize.literal('sum(type * -1 * amount)'), 'amount'],
                         [date, 'date']
                     ],
                     include: [{
@@ -580,7 +596,7 @@ class GoodsDao extends BaseDao {
                         ret.datasets[0].data.push(count);
                         ret.labels.push(date);
                         if (total.indexOf(record.count) == -1) {
-                            total.push(record.count)
+                            total.push(record.count);
                         }
                     }
 
@@ -588,7 +604,7 @@ class GoodsDao extends BaseDao {
                         var _count = 0;
                         total.forEach((number) => {
                             _count += number;
-                        })
+                        });
                         if (count == _count) {
                             return this.model(200, ret);
                         } else {

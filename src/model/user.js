@@ -3,7 +3,8 @@ var Sequelize = require('sequelize'),
 
 var User = sequelize.define('user', {
     id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER(11),
+        autoIncrement: true,
         primaryKey: true
     },
     name: {

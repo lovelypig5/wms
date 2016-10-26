@@ -4,6 +4,7 @@ var Sequelize = require('sequelize'),
 var Goods = sequelize.define('goods', {
     id: {
         type: Sequelize.INTEGER(11),
+        autoIncrement: true,
         primaryKey: true
     },
     name: {

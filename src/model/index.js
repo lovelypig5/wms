@@ -9,6 +9,13 @@ var User = require('./user'),
 // });
 // Goods.hasMany(Attr);
 // Goods.hasMany(Records);
+// User.belongsToMany(Goods, {
+//     through: 'r_user_goods',
+//     foreignKey: 'user_id',
+//     otherKey: 'goods_id',
+//     timestamps: false
+// });
+// 
 Goods.belongsToMany(User, {
     through: 'r_user_goods',
     foreignKey: 'goods_id',
