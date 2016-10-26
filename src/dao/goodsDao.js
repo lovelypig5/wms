@@ -43,41 +43,41 @@ class GoodsDao extends BaseDao {
         });
     }
 
+    /**
+     * get goods detail
+     * @method detail
+     * @param  {Number} id      : good id
+     * @param  {Number} user_id : user id
+     * @return {Promise}
+     */
     detail(id, user_id) {
-        return this.query({
-            sql: 'select g.id, g.name, g.count as total from goods g \
-                    left join r_user_goods rug on g.id = rug.goods_id \
-                    where g.id = ? and rug.user_id = ?',
-            params: [id, user_id],
-            parse(rows) {
-                if (rows && rows.length > 0) {
-                    var good = rows[0];
-                    var ret = {
-                        id: good.id,
-                        name: good.name,
-                        total: good.total,
-                        list: []
-                    };
-                    return ret;
-                } else {
-                    return {
-                        error: '不存在该商品'
-                    };
+        return model.Goods.findOne({
+            include: [{
+                model: model.Attrs
+            }, {
+                model: model.User,
+                attributes: [],
+                where: {
+                    id: user_id
                 }
+            }],
+            where: {
+                id: id
             }
-        }, {
-            sql: 'select g_a.attr, g_a.count from goods_attrs g_a \
-                left join goods g on g_a.goods_id = g.id \
-                left join r_user_goods rug on g.id = rug.goods_id \
-                where g.id = ? and rug.user_id = ?',
-            params: [id, user_id],
-            parse(rows, data) {
-                if (rows && rows.length > 0) {
-                    data.list = rows;
-                }
-
-                return data;
+        }).then((good) => {
+            if (good) {
+                return this.model(200, {
+                    id: good.id,
+                    name: good.name,
+                    total: good.count,
+                    list: good.attrs
+                });
+            } else {
+                return this.model(404, '不存在该商品');
             }
+        }).catch((err) => {
+            logger.error(err);
+            return this.model(500, '服务器出错,不能获取商品详情！');
         });
     }
 
@@ -168,37 +168,72 @@ class GoodsDao extends BaseDao {
         return this.queryWithTransaction(...querys);
     }
 
+    /**
+     * in or out list
+     * @method inlist
+     * @param  {Number} user_id  : user id
+     * @param  {Number} type     : record type 1 or -1
+     * @param  {Number} page     : page index , default 1
+     * @param  {Number} pageSize : page size , default 20
+     * @return {Promise}
+     */
     inlist(user_id, type, page, pageSize) {
         var limit = pageSize > 20 ? 20 : pageSize;
         var offset = page > 1 ? limit * (page - 1) : 0;
 
-        return Records.findAll({
-
-        })
-
-        var querys = [{
-            sql: 'select g_r.id, g_r.goods_id, g_r.goods_attr, g_r.amount, g_r.price, DATE_FORMAT(g_r.date, \'%Y-%m-%d\') as date, g.name from goods_records g_r \
-                left join goods g on g.id = g_r.goods_id \
-                where g_r.user_id = ? and type = ? \
-                order by date desc \
-                limit ? offset ?',
-            params: [user_id, type, limit, offset],
-            parse(rows) {
-                return rows;
+        return model.Records.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            attributes: [
+                [sequelize.fn('DATE_FORMAT', sequelize.col('date'), '%Y-%m-%d'), 'date'],
+                'id', 'goods_id', 'goods_attr', 'amount', 'price'
+            ],
+            include: [{
+                model: model.Goods,
+                include: [{
+                    model: model.User,
+                    attributes: [],
+                    where: {
+                        id: user_id
+                    }
+                }]
+            }],
+            where: {
+                type: type
             }
-        }, {
-            sql: 'select count(*) as count from goods_records g_r \
-                left join goods g on g.id = g_r.goods_id \
-                where g_r.user_id = ? and type = ?',
-            params: [user_id, type],
-            parse(results, rows) {
-                return {
-                    count: results[0].count,
-                    content: rows
-                };
-            }
-        }];
-        return this.query(...querys);
+        }).then((result) => {
+            return this.model(200, {
+                count: result.count,
+                content: result.rows
+            });
+        }).catch((err) => {
+            logger.error(err);
+            return this.model(500, '服务器出错,不能获取商品详情！');
+        });
+
+        // var querys = [{
+        //     sql: 'select g_r.id, g_r.goods_id, g_r.goods_attr, g_r.amount, g_r.price, DATE_FORMAT(g_r.date, \'%Y-%m-%d\') as date, g.name from goods_records g_r \
+        //         left join goods g on g.id = g_r.goods_id \
+        //         where g_r.user_id = ? and type = ? \
+        //         order by date desc \
+        //         limit ? offset ?',
+        //     params: [user_id, type, limit, offset],
+        //     parse(rows) {
+        //         return rows;
+        //     }
+        // }, {
+        //     sql: 'select count(*) as count from goods_records g_r \
+        //         left join goods g on g.id = g_r.goods_id \
+        //         where g_r.user_id = ? and type = ?',
+        //     params: [user_id, type],
+        //     parse(results, rows) {
+        //         return {
+        //             count: results[0].count,
+        //             content: rows
+        //         };
+        //     }
+        // }];
+        // return this.query(...querys);
     }
 
     out(id, amount, price, attr, user_id) {
@@ -342,6 +377,7 @@ class GoodsDao extends BaseDao {
                 attributes: [],
                 include: [{
                     model: model.User,
+                    attributes: [],
                     where: {
                         id: user_id
                     }
@@ -386,6 +422,7 @@ class GoodsDao extends BaseDao {
                 attributes: [],
                 include: [{
                     model: model.User,
+                    attributes: [],
                     where: {
                         id: user_id
                     }
@@ -412,12 +449,14 @@ class GoodsDao extends BaseDao {
      */
     trend(user_id, goods_id, attr) {
         if (goods_id && attr) {
+            //TODO
             return Attrs.findAll({
                 attributes: [],
                 include: [{
                     model: model.Goods,
                     include: [{
                         model: model.User,
+                        attributes: [],
                         where: {
                             id: user_id
                         }
@@ -566,79 +605,6 @@ class GoodsDao extends BaseDao {
                 });
             }
         }
-
-        // var querys = [];
-        // if (attr) {
-        //     querys.push({
-        //         sql: 'select g.attr, g.count, sum(gr.type * -1 * gr.amount) as amount, DATE_FORMAT(gr.date, \'%Y-%m-%d\') as date from goods_attrs g \
-        //             left join goods_records gr on gr.goods_id = g.goods_id and gr.goods_attr = g.attr \
-        //             left join r_user_goods rug on rug.goods_id = g.goods_id \
-        //             where g.goods_id = ? and rug.user_id = ? and g.attr = ? \
-        //             group by DATE_FORMAT(gr.date, \'%Y-%m-%d\'), g.attr \
-        //             order by g.attr, DATE_FORMAT(gr.date, \'%Y-%m-%d\') asc;',
-        //         params: [goods_id, user_id, attr],
-        //         parse(rows) {
-        //             var ret = {
-        //                 datasets: [{
-        //                     data: []
-        //                 }],
-        //                 labels: []
-        //             };
-        //             if (rows && rows.length > 0) {
-        //                 var count = 0;
-        //                 for (var i = 0; i < rows.length; i++) {
-        //                     var record = rows[0];
-        //                     var name = record.name;
-        //                     var amount = record.amount;
-        //                     var type = record.type;
-        //                     var date = record.date;
-        //
-        //                     switch (type) {
-        //                         case 1:
-        //                             count -= amount;
-        //                             break;
-        //                         case 0:
-        //                         default:
-        //                             count += amount;
-        //                             break;
-        //                     }
-        //                     ret.datasets[0].label = name;
-        //                     ret.datasets[0].data.push(count);
-        //                     ret.labels.push(date);
-        //                 }
-        //
-        //                 if (count == rows[0].count) {
-        //                     return ret;
-        //                 } else {
-        //                     logger.error('数据错误，库存和出入库记录总数无法匹配');
-        //                     logger.error('用户ID: %s', user_id);
-        //                     logger.error('商品ID: %s', goods_id);
-        //                     logger.error('属性名称: %s', attr);
-        //                     return ret;
-        //                 }
-        //             } else {
-        //                 return {};
-        //             }
-        //         }
-        //     });
-        // } else {
-        //     querys.push({
-        //         sql: 'select g.count, g.name, sum(gr.type * -1 * gr.amount) as amount, DATE_FORMAT(gr.date, \'%Y-%m-%d\') as date from goods g \
-        //                 left join goods_records gr on gr.goods_id = g.id \
-        //                 left join r_user_goods rug on rug.goods_id = g.id \
-        //                 where g.id = ? and rug.user_id = ? \
-        //                 group by DATE_FORMAT(gr.date, \'%Y-%m-%d\') \
-        //                 order by DATE_FORMAT(gr.date, \'%Y-%m-%d\') asc',
-        //         params: [goods_id, user_id],
-        //         parse(rows) {
-
-        //
-        //             return {};
-        //         }
-        //     });
-        // }
-        //
-        // return this.query(...querys);
     }
 }
 

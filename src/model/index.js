@@ -15,6 +15,9 @@ Goods.belongsToMany(User, {
     otherKey: 'user_id',
     timestamps: false
 });
+Goods.hasMany(Attrs, {
+    foreignKey: 'goods_id'
+});
 
 Attr.belongsTo(Goods, {
     foreignKey: 'goods_id',
