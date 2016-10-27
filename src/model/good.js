@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize'),
     sequelize = require('../db/sequelize');
 
-var Goods = sequelize.define('goods', {
+var Good = sequelize.define('good', {
     id: {
         type: Sequelize.INTEGER(11),
         autoIncrement: true,
@@ -19,4 +19,4 @@ var Goods = sequelize.define('goods', {
     timestamps: false
 });
 
-module.exports = Goods;
+module.exports = Good;

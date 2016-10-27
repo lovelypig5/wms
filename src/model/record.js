@@ -1,9 +1,10 @@
 var Sequelize = require('sequelize'),
     sequelize = require('../db/sequelize');
 
-var Records = sequelize.define('records', {
+var Record = sequelize.define('record', {
     id: {
         type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true
     },
     goods_attr: {
@@ -23,8 +24,7 @@ var Records = sequelize.define('records', {
     }
 }, {
     freezeTableName: true,
-    tableName: 'goods_records',
     timestamps: false
 });
 
-module.exports = Records;
+module.exports = Record;

@@ -1,10 +1,14 @@
 var Sequelize = require('sequelize'),
     sequelize = require('../db/sequelize');
 
-var R_User_Goods = sequelize.define('r_user_goods', {
+var GoodSub = sequelize.define('goodsub', {
     id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER(11),
+        autoIncrement: true,
         primaryKey: true
+    },
+    count: {
+        type: Sequelize.INTEGER(11)
     }
 }, {
     freezeTableName: true,
@@ -12,4 +16,4 @@ var R_User_Goods = sequelize.define('r_user_goods', {
     timestamps: false
 });
 
-module.exports = R_User_Goods;
+module.exports = GoodSub;
