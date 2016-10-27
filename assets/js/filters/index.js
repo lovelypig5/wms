@@ -2,10 +2,10 @@ Vue.filter('remove-whitespace', (attr) => {
     return attr.replace(/,/g, ' ');
 })
 
-Vue.filter('join-attrs', (attrs) => {
+Vue.filter('join-attrs', (attrs, name, sep) => {
     var temp = [];
     attrs.forEach((item) => {
-        temp.push(item.attr);
+        temp.push(item[!name ? 'attr' : name]);
     })
-    return temp.join(' ');
+    return temp.join(!sep ? ' ' : sep);
 })
