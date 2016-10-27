@@ -15,7 +15,7 @@
         <tbody>
             <tr class="item" v-for="record in outList">
                 <td><a href="javascript:void(0)" v-link="{name: 'detail', params: {id: record.goods_id} }">{{record.good.name}}</a></td>
-                <td>{{record.goods_attr | remove-whitespace}}</td>
+                <td>{{record.attrs | join-attrs}}</td>
                 <td v-if="!record.edit">
                     {{record.amount}}
                 </td>
