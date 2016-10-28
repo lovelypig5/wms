@@ -7,9 +7,6 @@ var Record = sequelize.define('record', {
         autoIncrement: true,
         primaryKey: true
     },
-    goods_attr: {
-        type: Sequelize.STRING
-    },
     price: {
         type: Sequelize.DOUBLE
     },

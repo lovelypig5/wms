@@ -18,6 +18,12 @@ var User = require('./user'),
 //
 Good.belongsTo(User);
 Good.hasMany(GoodSub);
+Good.belongsToMany(Attr, {
+    through: 'r_good_attr',
+    foreignKey: 'good_id',
+    otherKey: 'attr_id',
+    timestamps: false
+});
 // Good.hasMany(Attrs, {
 //     foreignKey: 'good_id'
 // });

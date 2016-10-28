@@ -4,6 +4,7 @@ var Sequelize = require('sequelize'),
 var Attr = sequelize.define('attr', {
     id: {
         type: Sequelize.INTEGER(11),
+        autoIncrement: true,
         primaryKey: true
     },
     attr: {
