@@ -218,8 +218,7 @@ class GoodsDao extends BaseDao {
                             console.log(goodsub.count);
                             console.log(amount);
                             console.log(record.type);
-                            let diff = (goodsub.count - amount) * record.type;
-
+                            var diff = (goodsub.count - amount) * record.type;
                             if (diff + goodsub.count < 0) {
                                 return this.model(400, '库存不足');
                             }
