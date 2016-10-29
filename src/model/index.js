@@ -2,7 +2,9 @@ var User = require('./user'),
     Good = require('./good'),
     GoodSub = require('./goodsub'),
     Attr = require('./attr'),
-    Record = require('./record');
+    Record = require('./record'),
+
+    V_Attr = require('./v_attr');
 
 // Good.hasMany(Attrs, {
 //     foreignKey: 'good_id',
@@ -37,6 +39,9 @@ GoodSub.belongsToMany(Attr, {
     otherKey: 'attr_id',
     timestamps: false
 });
+GoodSub.hasOne(V_Attr, {
+    foreignKey: 'goodsub_id'
+});
 
 Attr.belongsToMany(Good, {
     through: 'r_good_attr',
@@ -64,5 +69,7 @@ module.exports = {
     Good: Good,
     GoodSub: GoodSub,
     Attr: Attr,
-    Record: Record
+    Record: Record,
+
+    V_Attr: V_Attr
 };

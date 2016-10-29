@@ -194,24 +194,24 @@ class GoodsDao extends BaseDao {
 
                 let attrs = record.attrs;
                 if (attrs.length > 0) {
-                    var temp = [];
+                    var ids = [];
                     attrs.forEach((item) => {
-                        temp.push(item.id);
+                        ids.push(item.id);
                     });
-                    return model.GoodSub.findAll({
+                    ids.sort((a, b) => {
+                        return a > b ? 1 : -1
+                    });
+                    return model.GoodSub.findOne({
                         include: [{
-                            model: model.Attr,
+                            model: model.V_Attr,
                             where: {
-                                id: {
-                                    $in: temp
-                                }
+                                attr_id: ids.join(',')
                             }
                         }],
                         where: {
                             good_id: record.good_id
                         }
                     }).then((goodsub) => {
-                        console.log(goodsub);
                         if (!goodsub) {
                             return this.model(400, '没有找到对应的记录');
                         } else {
