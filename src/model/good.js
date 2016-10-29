@@ -1,23 +1,22 @@
 var Sequelize = require('sequelize'),
     sequelize = require('../db/sequelize');
 
-var Attrs = sequelize.define('attrs', {
-    goods_id: {
+var Good = sequelize.define('good', {
+    id: {
         type: Sequelize.INTEGER(11),
+        autoIncrement: true,
         primaryKey: true
     },
-    attr: {
-        type: Sequelize.STRING(45),
-        primaryKey: true
+    name: {
+        type: Sequelize.STRING(100)
     },
     count: {
         type: Sequelize.INTEGER(11)
     }
 }, {
     freezeTableName: true,
-    tableName: 'goods_attrs',
+    underscored: true,
     timestamps: false
 });
-Attrs.removeAttribute('id');
 
-module.exports = Attrs;
+module.exports = Good;

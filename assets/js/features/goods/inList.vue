@@ -1,47 +1,47 @@
 <template>
-    <div class="panel panel-primary good-list">
-        <div class="panel-heading">入库记录</div>
-        <table class="table" v-if="!loading.fetch && inList.length > 0">
-            <thead>
-                <tr>
-                    <th>商品名称</th>
-                    <th>商品属性</th>
-                    <th>入库数量</th>
-                    <th>入库价格</th>
-                    <th>入库时间</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="item" v-for="good in inList">
-                    <td><a href="javascript:void(0)" v-link="{name: 'detail', params: {id: good.goods_id} }">{{good.name}}</a></td>
-                    <td>{{good.goods_attr | remove-whitespace}}</td>
-                    <td v-if="!good.edit">
-                        {{good.amount}}
-                    </td>
-                    <td v-if="good.edit">
-                        <input type="text" v-model="good.amount">
-                    </td>
-                    <td v-if="!good.edit">{{good.price}}
-                    </td>
-                    <td v-if="good.edit">
-                        <input type="text" v-model="good.price">
-                    </td>
-                    <td>{{good.date}}</td>
-                    <td><i class="fa fa-pencil-square-o" aria-hidden="true" @click="edit(good)" v-if="!good.edit"></i>
-                        <i class="fa fa-floppy-o" aria-hidden="true" v-if="good.edit" @click="save(good)"></i>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <pagination :pagination="params" :change="change"></pagination>
-        <div class="empty" v-if="!loading.fetch && inList.length == 0">
-            <div class="msg">没有入库记录</div>
-        </div>
-        <div v-if="loading.fetch">
-            <div class="loading audio-wave"></div>
-        </div>
+<div class="panel panel-primary good-list">
+    <div class="panel-heading">入库记录</div>
+    <table class="table" v-if="!loading.fetch && inList.length > 0">
+        <thead>
+            <tr>
+                <th>商品名称</th>
+                <th>商品属性</th>
+                <th>入库数量</th>
+                <th>入库价格</th>
+                <th>入库时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="item" v-for="record in inList">
+                <td><a href="javascript:void(0)" v-link="{name: 'detail', params: {id: record.goods_id} }">{{record.good.name}}</a></td>
+                <td>{{record.attrs | join-attrs}}</td>
+                <td v-if="!record.edit">
+                    {{record.amount}}
+                </td>
+                <td v-if="record.edit">
+                    <input type="text" v-model="record.amount">
+                </td>
+                <td v-if="!record.edit">{{record.price}}
+                </td>
+                <td v-if="record.edit">
+                    <input type="text" v-model="record.price">
+                </td>
+                <td>{{record.date}}</td>
+                <td><i class="fa fa-pencil-square-o" aria-hidden="true" @click="edit(record)" v-if="!record.edit"></i>
+                    <i class="fa fa-floppy-o" aria-hidden="true" v-if="record.edit" @click="save(record)"></i>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <pagination :pagination="params" :change="change"></pagination>
+    <div class="empty" v-if="!loading.fetch && inList.length == 0">
+        <div class="msg">没有入库记录</div>
     </div>
+    <div v-if="loading.fetch">
+        <div class="loading audio-wave"></div>
+    </div>
+</div>
 </template>
 <script>
 import API from '../../config/api';
@@ -70,16 +70,16 @@ var InList = Vue.extend({
         this.fetch(true);
     },
     methods: {
-        edit(good) {
-            Vue.set(good, 'edit', !good.edit);
+        edit(record) {
+            Vue.set(record, 'edit', !record.edit);
         },
-        save(good) {
+        save(record) {
             var self = this;
-            good.type = -1;
+            record.type = -1;
             $.ajax({
                 url: API.modifyInOut,
                 type: 'post',
-                data: JSON.stringify(good),
+                data: JSON.stringify(record),
                 success(resp) {
 
                 },
@@ -91,7 +91,7 @@ var InList = Vue.extend({
                     })
                 }
             }).always(() => {
-                Vue.set(good, 'edit', !good.edit);
+                Vue.set(record, 'edit', !record.edit);
             })
         },
         change(page) {

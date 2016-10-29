@@ -1,40 +1,75 @@
 var User = require('./user'),
-    Goods = require('./goods'),
-    Attrs = require('./attrs'),
+    Good = require('./good'),
+    GoodSub = require('./goodsub'),
     Attr = require('./attr'),
-    Records = require('./records');
+    Record = require('./record'),
 
-// Goods.hasMany(Attrs, {
-//     foreignKey: 'goods_id',
+    V_Attr = require('./v_attr');
+
+// Good.hasMany(Attrs, {
+//     foreignKey: 'good_id',
 // });
-// Goods.hasMany(Attr);
-// Goods.hasMany(Records);
-Goods.belongsToMany(User, {
-    through: 'r_user_goods',
-    foreignKey: 'goods_id',
-    otherKey: 'user_id',
+// Good.hasMany(Attr);
+// Good.hasMany(Record);
+// User.belongsToMany(Good, {
+//     through: 'r_user_goods',
+//     foreignKey: 'user_id',
+//     otherKey: 'good_id',
+//     timestamps: false
+// });
+//
+Good.belongsTo(User);
+Good.hasMany(GoodSub);
+Good.belongsToMany(Attr, {
+    through: 'r_good_attr',
+    foreignKey: 'good_id',
+    otherKey: 'attr_id',
+    timestamps: false
+});
+// Good.hasMany(Attrs, {
+//     foreignKey: 'good_id'
+// });
+
+GoodSub.belongsTo(Good, {
+    foreignKey: 'good_id'
+});
+GoodSub.belongsToMany(Attr, {
+    through: 'r_goodsub_attr',
+    foreignKey: 'goodsub_id',
+    otherKey: 'attr_id',
+    timestamps: false
+});
+GoodSub.hasOne(V_Attr, {
+    foreignKey: 'goodsub_id'
+});
+
+Attr.belongsToMany(Good, {
+    through: 'r_good_attr',
+    foreignKey: 'attr_id',
+    otherKey: 'good_id',
     timestamps: false
 });
 
-Attr.belongsTo(Goods, {
-    foreignKey: 'goods_id',
-});
+// Attrs.belongsTo(Good, {
+//     foreignKey: 'good_id',
+// });
 
-Attrs.belongsTo(Goods, {
-    foreignKey: 'goods_id',
+Record.belongsTo(Good, {
+    foreignKey: 'good_id',
 });
-
-Records.belongsTo(Goods, {
-    foreignKey: 'goods_id',
-});
-Records.hasOne(Attrs, {
-    foreignKey: 'attr',
+Record.belongsToMany(Attr, {
+    through: 'r_record_attr',
+    foreignKey: 'record_id',
+    otherKey: 'attr_id',
+    timestamps: false
 });
 
 module.exports = {
     User: User,
-    Goods: Goods,
-    Attrs: Attrs,
+    Good: Good,
+    GoodSub: GoodSub,
     Attr: Attr,
-    Records: Records
+    Record: Record,
+
+    V_Attr: V_Attr
 };

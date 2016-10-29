@@ -57,7 +57,6 @@ class GoodsApi extends BaseApi {
         var body = req.body;
         var id = body.id;
         var amount = body.amount;
-        var attr = body.goods_attr;
         var price = body.price;
         var type = body.type == 1 ? 1 : -1;
         if (!id || !amount || !price) {
@@ -68,11 +67,8 @@ class GoodsApi extends BaseApi {
         if (isNaN(amount) || amount <= 0 || isNaN(price) || price <= 0) {
             return res.status(400).send('参数格式错误');
         }
-        if (!attr) {
-            attr = "";
-        }
 
-        goodsDao.modify(id, amount, price, attr, user_id, type).then((goods) => {
+        goodsDao.modify(id, amount, price, user_id, type).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (goods) => {
             res.status(goods.status).send(goods.ret);

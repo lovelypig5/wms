@@ -1,13 +1,11 @@
 var Sequelize = require('sequelize'),
     sequelize = require('../db/sequelize');
 
-var Goods = sequelize.define('goods', {
+var GoodSub = sequelize.define('goodsub', {
     id: {
         type: Sequelize.INTEGER(11),
+        autoIncrement: true,
         primaryKey: true
-    },
-    name: {
-        type: Sequelize.STRING(100)
     },
     count: {
         type: Sequelize.INTEGER(11)
@@ -18,4 +16,4 @@ var Goods = sequelize.define('goods', {
     timestamps: false
 });
 
-module.exports = Goods;
+module.exports = GoodSub;

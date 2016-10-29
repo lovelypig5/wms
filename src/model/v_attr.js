@@ -1,19 +1,20 @@
 var Sequelize = require('sequelize'),
     sequelize = require('../db/sequelize');
 
-var Attr = sequelize.define('attr', {
+var V_Attr = sequelize.define('v_attr', {
     id: {
         type: Sequelize.INTEGER(11),
         autoIncrement: true,
         primaryKey: true
     },
-    attr: {
-        type: Sequelize.STRING(45)
+    attr_id: {
+        type: Sequelize.INTEGER(11)
     }
 }, {
     freezeTableName: true,
     underscored: true,
-    timestamps: false
+    timestamps: false,
+    tableName: 'v_goodsub_attr'
 });
 
-module.exports = Attr;
+module.exports = V_Attr;
