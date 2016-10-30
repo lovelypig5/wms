@@ -39,7 +39,6 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     list(user_id) {
-        // ISSUE CHECKED
         return model.Good.findAndCountAll({
             where: {
                 user_id: user_id
@@ -63,7 +62,6 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     detail(id, user_id) {
-        //ISSUES CHECKED
         return model.Good.findOne({
             include: [{
                 model: model.GoodSub,
@@ -155,6 +153,15 @@ class GoodsDao extends BaseDao {
         });
     }
 
+    /**
+     * modify a record
+     * @method modify
+     * @param  {Number} record_id : record id
+     * @param  {Number} amount    :
+     * @param  {Double} price     :
+     * @param  {Number} user_id   : user id
+     * @return {Promise}
+     */
     modify(record_id, amount, price, user_id) {
         return model.Record.findOne({
             include: [{
@@ -174,7 +181,7 @@ class GoodsDao extends BaseDao {
             }
 
             return sequelize.transaction((transaction) => {
-                let getPromise = () => {
+                var getPromise = () => {
                     var promises = [];
                     promises.push(record.update({
                         price: price,
@@ -182,10 +189,13 @@ class GoodsDao extends BaseDao {
                     }, {
                         transaction: transaction
                     }).then((record) => {
-                        return record.good.update({
+                        model.Good.update({
                             count: record.good.count + diff
                         }, {
-                            transaction: transaction
+                            transaction: transaction,
+                            where: {
+                                id: record.good_id
+                            }
                         });
                     }));
 
@@ -193,13 +203,14 @@ class GoodsDao extends BaseDao {
                 };
 
                 let attrs = record.attrs;
+                var diff = (record.amount - amount) * record.type;
                 if (attrs.length > 0) {
                     var ids = [];
                     attrs.forEach((item) => {
                         ids.push(item.id);
                     });
                     ids.sort((a, b) => {
-                        return a > b ? 1 : -1
+                        return a > b ? 1 : -1;
                     });
                     return model.GoodSub.findOne({
                         include: [{
@@ -215,15 +226,11 @@ class GoodsDao extends BaseDao {
                         if (!goodsub) {
                             return this.model(400, '没有找到对应的记录');
                         } else {
-                            console.log(goodsub.count);
-                            console.log(amount);
-                            console.log(record.type);
-                            var diff = (goodsub.count - amount) * record.type;
                             if (diff + goodsub.count < 0) {
                                 return this.model(400, '库存不足');
                             }
 
-                            let promises = getPromise();
+                            var promises = getPromise();
                             promises.push(model.GoodSub.update({
                                 count: diff + goodsub.count
                             }, {
@@ -303,7 +310,6 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     inlist(user_id, type, page, pageSize) {
-        //ISSUES CHECKED
         var limit = pageSize > 20 ? 20 : pageSize;
         var offset = page > 1 ? limit * (page - 1) : 0;
 
@@ -378,7 +384,6 @@ class GoodsDao extends BaseDao {
      */
     out(id, amount, price, attr, user_id) {
         return model.Good.findOne({
-
             where: {
                 user_id: user_id,
                 id: id
@@ -584,7 +589,6 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     attrs(user_id, good_id) {
-        //ISSUES CHECKED
         return model.Attr.findAll({
             attributes: ['attr'],
             include: [{
@@ -606,7 +610,13 @@ class GoodsDao extends BaseDao {
         });
     }
 
-
+    /**
+     * add attr to good
+     * @method addAttr
+     * @param  {Number} user_id : user id
+     * @param  {Number} good_id : good id
+     * @param  {String} attr    : good attr
+     */
     addAttr(user_id, good_id, attr) {
         return model.Good.findOne({
             include: [{
@@ -716,7 +726,6 @@ class GoodsDao extends BaseDao {
                 return this.model(500, MESSAGES.SERVER_ERROR);
             });
         } else {
-            // ISSUES CHECKED
             var date = Sequelize.fn('DATE_FORMAT', Sequelize.col('date'), '%Y-%m-%d');
             if (good_id) {
                 return model.Record.findAll({
