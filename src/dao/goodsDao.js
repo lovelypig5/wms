@@ -686,7 +686,10 @@ class GoodsDao extends BaseDao {
                 }
             }, {
                 model: model.Attr,
-                attributes: ['id', 'attr']
+                attributes: ['id', 'attr'],
+                through: {
+                    attributes: []
+                }
             }]
         }).then((rows) => {
             return this.model(200, rows);

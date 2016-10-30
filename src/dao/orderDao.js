@@ -1,6 +1,8 @@
 var Sequelize = require('sequelize'),
     sequelize = require('../db/sequelize');
-var BaseDao = require('./baseDao');
+var BaseDao = require('./baseDao'),
+    GoodDao = require('./goodDao'),
+    goodDao = new GoodDao();
 var model = require('../model');
 var logger = require('../logger'),
     MESSAGES = require('../config/message');
@@ -18,6 +20,8 @@ class OrderDao extends BaseDao {
             var _good = goodList[i];
             var attr = _good.attr;
 
+            goodDao.out();
+
             Array.prototype.push.apply(querys, [{
                 sql: 'select g.* from goods g left join r_user_goods r on r.goods_id = g.id where r.user_id = ? and g.id = ?',
                 params: [user_id, _good.id],
@@ -27,7 +31,7 @@ class OrderDao extends BaseDao {
                         if (good.count < _good.amount) {
                             return {
                                 error: '库存不足'
-                            }
+                            };
                         }
                         return good;
                     }
@@ -92,36 +96,45 @@ class OrderDao extends BaseDao {
         var limit = pageSize > 20 ? 20 : pageSize;
         var offset = page > 1 ? limit * (page - 1) : 0;
 
-        var querys = [{
-            sql: 'select id, expressCost, expressId, name, price, comment, DATE_FORMAT(expressDate, \'%Y-%m-%d\') as date from `order` where user_id = ? order by expressDate desc limit ? offset ?',
-            params: [user_id, limit, offset],
-            parse(rows) {
-                return rows;
-            }
-        }, {
-            sql: 'select count(*) as count from `order` where user_id = ?',
-            params: [user_id],
-            parse(results, rows) {
-                return {
-                    count: results[0].count,
-                    content: rows
-                }
-            }
-        }]
-
-        return this.query(...querys);
+        return model.Order.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            attributes: [
+                [Sequelize.fn('DATE_FORMAT', Sequelize.col('date'), '%Y-%m-%d'), 'date'],
+                'id', 'expressCost', 'expressId', 'name', 'price', 'comment'
+            ],
+            where: {
+                user_id: user_id
+            },
+            order: [
+                ['expressDate', 'DESC']
+            ]
+        }).then((result) => {
+            return this.model(200, {
+                count: result.count,
+                content: result.rows
+            })
+        }).catch((err) => {
+            logger.error(err);
+            return this.model(500, MESSAGES.SERVER_ERROR);
+        });
     }
 
     orderDetail(user_id, order_id) {
-        return this.query({
-            sql: 'select g.name, g.id, g_r.goods_attr, g_r.amount from goods_records g_r \
-            left join goods g on g.id = g_r.goods_id \
-            where g_r.order_id = ? and g_r.user_id = ?',
-            params: [order_id, user_id],
-            parse(rows) {
-                return rows;
+        return model.Records.findAll({
+            include: {
+                model: model.Goods,
+                where: {
+                    order_id: order_id,
+                    user_id: user_id
+                }
             }
-        })
+        }).then((rows) => {
+            return this.model(200, rows);
+        }).catch((err) => {
+            logger.error(err);
+            return this.model(500, MESSAGES.SERVER_ERROR);
+        });
     }
 }
 

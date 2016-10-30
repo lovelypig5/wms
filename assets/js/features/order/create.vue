@@ -1,108 +1,113 @@
 <template>
-    <div class="panel panel-primary create-order">
-        <div class="panel-heading">创建订单</div>
-        <div class="panel-body">
-            <validator name="v">
-                <div class="input-group">
-                    <span class="input-group-addon">订单号：</span>
-                    <input id="orderId" type="text" class="form-control" placeholder="请输入订单号" aria-describedby="orderId" v-model="model.orderId" v-validate:order-id="{required:true, posInt: true}" :class="{'red-border': $v.orderId && $v.orderId.touched && $v.orderId.invalid}">
-                </div>
-                <div class="input-group error-msg" v-if="$v.orderId.touched && $v.orderId.invalid">
-                    <div v-if="$v.orderId.required" class="red-color">订单号不能为空</div>
-                    <div v-if="!$v.orderId.required && $v.orderId.posInt" class="red-color">订单号只能为正整数</div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon">收货人：</span>
-                    <input id="receiveName" type="text" class="form-control" placeholder="请输入收货人" aria-describedby="receiveName" v-model="model.receiveName" v-validate:receive-name="{required:true}" :class="{'red-border': $v.receiveName && $v.receiveName.touched && $v.receiveName.invalid}">
-                </div>
-                <div class="input-group error-msg" v-if="$v.receiveName.touched && $v.receiveName.invalid">
-                    <div v-if="$v.receiveName.required" class="red-color">收货人不能为空</div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon">订单价格</span>
-                    <input id="price" type="text" class="form-control" placeholder="请输入订单价格" aria-describedby="price" v-model="model.price" v-validate:price="{required:true, posFloat: true}" :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}">
-                </div>
-                <div class="input-group error-msg" v-if="$v.price.touched && $v.price.invalid">
-                    <div v-if="$v.price.required" class="red-color">订单价格不能为空</div>
-                     <div v-if="!$v.price.required && $v.price.posFloat" class="red-color">订单价格不能小于零</div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon">快递单号</span>
-                    <input id="expressId" type="text" class="form-control" placeholder="请输入快递单号" aria-describedby="expressId" v-model="model.expressId" v-validate:express-id="{required:true, posInt: true}" :class="{'red-border': $v.expressId && $v.expressId.touched && $v.expressId.invalid}">
-                </div>
-                <div class="input-group error-msg" v-if="$v.expressId.touched && $v.expressId.invalid">
-                    <div v-if="$v.expressId.required" class="red-color">快递单号不能为空</div>
-                    <div v-if="!$v.expressId.required && $v.expressId.posInt" class="red-color">快递单号只能为正整数</div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon">快递费用</span>
-                    <input id="expressCost" type="text" class="form-control" placeholder="请输入快递费" aria-describedby="expressCost" v-model="model.expressCost" v-validate:express-cost="{required:true, posInt: true}" :class="{'red-border': $v.expressCost && $v.expressCost.touched && $v.expressCost.invalid}">
-                </div>
-                <div class="input-group error-msg" v-if="$v.expressCost.touched && $v.expressCost.invalid">
-                    <div v-if="$v.expressCost.required" class="red-color">快递费不能为空</div>
-                    <div v-if="!$v.expressCost.required && $v.expressCost.posInt" class="red-color">快递费只能为正整数</div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon">备注说明</span>
-                    <textarea id="comment" type="text" class="form-control" placeholder="" aria-describedby="comment" v-model="model.comment"></textarea>
-                </div>
-                <div class="good-list" v-if="model.goodList.length > 0">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>商品名称</th>
-                                <th>商品属性</th>
-                                <th>商品数量</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="item" v-for="good in model.goodList">
-                                <td>{{good.name}}</td>
-                                <td>{{good.attr | remove-whitespace}}</td>
-                                <td>
-                                    {{good.amount}}
-                                </td>
-                                <td><i class="fa fa-trash" aria-hidden="true" @click="remove($index)"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="right" v-show="!add"><a href="javascript:void(0)" @click="add=!add">+添加商品</a></div>
-                <div v-show="add" class="addArea">
-                    <div class="input-group">
-                        <span class="input-group-addon">商品名称</span>
-                        <div class="select2Div">
-                            <select id="productName" style="width: 100%" v-model="good.id">
-                            </select>
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon">商品属性</span>
-                        <div class="select2Div">
-                            <select id="productAttr" style="width: 100%">
-                                <option v-for="attr in attrList" :value="attr.attr">{{attr.attr | remove-whitespace}}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon">商品数量</span>
-                        <input id="productAmount" type="text" class="form-control" placeholder="请输入商品数量" aria-describedby="productAmount" v-model="good.amount">
-                    </div>
-                    <div class="float-right btns">
-                        <button type="button" class="btn btn-primary" @click="addGood">保存</button>
-                        <button type="button" class="btn btn-danger" @click="add = !add">完成</button>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </validator>
-            <div class="float-right btns">
-                <button type="button" class="btn btn-primary" @click="createOrder">创建</button>
-                <button type="button" class="btn btn-danger" @click="reset">取消</button>
+<div class="panel panel-primary create-order">
+    <div class="panel-heading">创建订单</div>
+    <div class="panel-body">
+        <validator name="v">
+            <div class="input-group">
+                <span class="input-group-addon">订单号：</span>
+                <input id="orderId" type="text" class="form-control" placeholder="请输入订单号" aria-describedby="orderId" v-model="model.orderId"
+                    v-validate:order-id="{required:true, posInt: true}" :class="{'red-border': $v.orderId && $v.orderId.touched && $v.orderId.invalid}">
             </div>
+            <div class="input-group error-msg" v-if="$v.orderId.touched && $v.orderId.invalid">
+                <div v-if="$v.orderId.required" class="red-color">订单号不能为空</div>
+                <div v-if="!$v.orderId.required && $v.orderId.posInt" class="red-color">订单号只能为正整数</div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">收货人：</span>
+                <input id="receiveName" type="text" class="form-control" placeholder="请输入收货人" aria-describedby="receiveName" v-model="model.receiveName"
+                    v-validate:receive-name="{required:true}" :class="{'red-border': $v.receiveName && $v.receiveName.touched && $v.receiveName.invalid}">
+            </div>
+            <div class="input-group error-msg" v-if="$v.receiveName.touched && $v.receiveName.invalid">
+                <div v-if="$v.receiveName.required" class="red-color">收货人不能为空</div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">订单价格</span>
+                <input id="price" type="text" class="form-control" placeholder="请输入订单价格" aria-describedby="price" v-model="model.price" v-validate:price="{required:true, posFloat: true}"
+                    :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}">
+            </div>
+            <div class="input-group error-msg" v-if="$v.price.touched && $v.price.invalid">
+                <div v-if="$v.price.required" class="red-color">订单价格不能为空</div>
+                <div v-if="!$v.price.required && $v.price.posFloat" class="red-color">订单价格不能小于零</div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">快递单号</span>
+                <input id="expressId" type="text" class="form-control" placeholder="请输入快递单号" aria-describedby="expressId" v-model="model.expressId"
+                    v-validate:express-id="{required:true, posInt: true}" :class="{'red-border': $v.expressId && $v.expressId.touched && $v.expressId.invalid}">
+            </div>
+            <div class="input-group error-msg" v-if="$v.expressId.touched && $v.expressId.invalid">
+                <div v-if="$v.expressId.required" class="red-color">快递单号不能为空</div>
+                <div v-if="!$v.expressId.required && $v.expressId.posInt" class="red-color">快递单号只能为正整数</div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">快递费用</span>
+                <input id="expressCost" type="text" class="form-control" placeholder="请输入快递费" aria-describedby="expressCost" v-model="model.expressCost"
+                    v-validate:express-cost="{required:true, posInt: true}" :class="{'red-border': $v.expressCost && $v.expressCost.touched && $v.expressCost.invalid}">
+            </div>
+            <div class="input-group error-msg" v-if="$v.expressCost.touched && $v.expressCost.invalid">
+                <div v-if="$v.expressCost.required" class="red-color">快递费不能为空</div>
+                <div v-if="!$v.expressCost.required && $v.expressCost.posInt" class="red-color">快递费只能为正整数</div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">备注说明</span>
+                <textarea id="comment" type="text" class="form-control" placeholder="" aria-describedby="comment" v-model="model.comment"></textarea>
+            </div>
+            <div class="good-list" v-if="model.goodList.length > 0">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>商品名称</th>
+                            <th>商品属性</th>
+                            <th>商品数量</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="item" v-for="good in model.goodList">
+                            <td>{{good.name}}</td>
+                            <td>{{good.attr}}</td>
+                            <td>
+                                {{good.amount}}
+                            </td>
+                            <td><i class="fa fa-trash" aria-hidden="true" @click="remove($index)"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="right" v-show="!add"><a href="javascript:void(0)" @click="add=!add">+添加商品</a></div>
+            <div v-show="add" class="addArea">
+                <div class="input-group">
+                    <span class="input-group-addon">商品名称</span>
+                    <div class="select2Div">
+                        <select id="productName" style="width: 100%" v-model="good.id">
+                            </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">商品属性</span>
+                    <div class="select2Div">
+                        <select id="productAttr" style="width: 100%">
+                            <option v-for="attr in attrList" :value="attr.attrs | join-attrs 'attr' ','">{{attr.attrs | join-attrs}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">商品数量</span>
+                    <input id="productAmount" type="text" class="form-control" placeholder="请输入商品数量" aria-describedby="productAmount" v-model="good.amount">
+                </div>
+                <div class="float-right btns">
+                    <button type="button" class="btn btn-primary" @click="addGood">保存</button>
+                    <button type="button" class="btn btn-danger" @click="add = !add">完成</button>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </validator>
+        <div class="float-right btns">
+            <button type="button" class="btn btn-primary" @click="createOrder">创建</button>
+            <button type="button" class="btn btn-danger" @click="reset">取消</button>
         </div>
     </div>
+</div>
 </template>
 <script>
 import API from '../../config/api';
@@ -200,7 +205,7 @@ var CreateOrder = Vue.extend({
                 }
             })
         },
-        remove(index){
+        remove(index) {
             this.model.goodList.splice(index, 1);
         },
         changeSelect() {
@@ -209,20 +214,20 @@ var CreateOrder = Vue.extend({
         addGood() {
             this.good.attr = $(this.$el).find('#productAttr').val() || [];
             var good = Object.assign({}, this.good);
-            if(!this.good.id || !this.good.name){
+            if (!this.good.id || !this.good.name) {
                 this.alert({
-                        show: true,
-                        msg: '请输入商品名称',
-                        type: 'success'
-                    });
+                    show: true,
+                    msg: '请输入商品名称',
+                    type: 'success'
+                });
                 return;
             }
-            if(!this.good.amount){
+            if (!this.good.amount) {
                 this.alert({
-                        show: true,
-                        msg: '请输入商品数量',
-                        type: 'success'
-                    });
+                    show: true,
+                    msg: '请输入商品数量',
+                    type: 'success'
+                });
                 return;
             }
             this.reset();
