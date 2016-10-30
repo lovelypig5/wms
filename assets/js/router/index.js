@@ -26,82 +26,63 @@ router.map({
     'goods': {
         component(resolve) {
             require(['../features/goods/index.vue'], resolve);
-        },
-        subRoutes: {
-            '/': {
-                component(resolve) {
-                    require(['../features/goods/analysis.vue'], resolve);
-                }
-            },
-            '/analysis': {
-                component(resolve) {
-                    require(['../features/goods/analysis.vue'], resolve);
-                }
-            },
-            '/list': {
-                component(resolve) {
-                    require(['../features/goods/goodList.vue'], resolve);
-                }
-            },
-            '/create': {
-                component(resolve) {
-                    require(['../features/goods/create.vue'], resolve);
-                }
-            },
-            '/in': {
-                component(resolve) {
-                    require(['../features/goods/in.vue'], resolve);
-                }
-            },
-            '/out': {
-                component(resolve) {
-                    require(['../features/goods/out.vue'], resolve);
-                }
-            },
-            '/inList': {
-                component(resolve) {
-                    require(['../features/goods/inList.vue'], resolve);
-                }
-            },
-            '/outList': {
-                component(resolve) {
-                    require(['../features/goods/outList.vue'], resolve);
-                }
-            },
-            '/detail/:id': {
-                name: 'detail',
-                component(resolve) {
-                    require(['../features/goods/detail.vue'], resolve);
-                }
-            },
-            '/attr/:id': {
-                name: 'good-attr',
-                component(resolve) {
-                    require(['../features/goods/goodAttr.vue'], resolve);
-                }
-            }
+        }
+    },
+    'goods/list': {
+        component(resolve) {
+            require(['../features/goods/goodList.vue'], resolve);
+        }
+    },
+    'goods/create': {
+        component(resolve) {
+            require(['../features/goods/create.vue'], resolve);
+        }
+    },
+    'goods/in': {
+        component(resolve) {
+            require(['../features/goods/in.vue'], resolve);
+        }
+    },
+    'goods/out': {
+        component(resolve) {
+            require(['../features/goods/out.vue'], resolve);
+        }
+    },
+    'goods/inList': {
+        component(resolve) {
+            require(['../features/goods/inList.vue'], resolve);
+        }
+    },
+    'goods/outList': {
+        component(resolve) {
+            require(['../features/goods/outList.vue'], resolve);
+        }
+    },
+    'goods/detail/:id': {
+        name: 'detail',
+        component(resolve) {
+            require(['../features/goods/detail.vue'], resolve);
+        }
+    },
+    'goods/attr/:id': {
+        name: 'good-attr',
+        component(resolve) {
+            require(['../features/goods/goodAttr.vue'], resolve);
         }
     },
     'order': {
         component(resolve) {
             require(['../features/order/index.vue'], resolve);
-        },
-        subRoutes: {
-            '/': {
-                component(resolve) {
-                    require(['../features/order/list.vue'], resolve);
-                }
-            },
-            '/list': {
-                component(resolve) {
-                    require(['../features/order/list.vue'], resolve);
-                }
-            },
-            '/create': {
-                component(resolve) {
-                    require(['../features/order/create.vue'], resolve);
-                }
-            }
+        }
+    },
+    'order/list': {
+        component(resolve) {
+            require(['../features/order/list.vue'], resolve);
+        }
+    },
+    'order/create': {
+        component(resolve) {
+            require(['../features/order/create.vue'], resolve);
         }
     }
 });

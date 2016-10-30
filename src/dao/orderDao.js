@@ -1,5 +1,10 @@
+var Sequelize = require('sequelize'),
+    sequelize = require('../db/sequelize');
 var BaseDao = require('./baseDao');
-var logger = require('../logger');
+var model = require('../model');
+var logger = require('../logger'),
+    MESSAGES = require('../config/message');
+
 
 class OrderDao extends BaseDao {
 
