@@ -16,14 +16,9 @@ var AppHeader = Vue.extend({
             children: []
         }, {
             name: Vue.t("goods"),
-            path: '/goods/list',
+            path: '/goods',
             className: 'fa-bar-chart-o',
             children: [{
-                name: Vue.t("text_goods_state"),
-                path: '/goods/analysis',
-                className: '',
-                children: []
-            }, {
                 name: Vue.t("text_goods_list"),
                 path: '/goods/list',
                 className: '',
