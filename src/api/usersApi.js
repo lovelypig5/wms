@@ -2,6 +2,7 @@ var BaseApi = require('./baseApi');
 var userDao = require('../dao/userDao');
 
 class UserApi extends BaseApi {
+
     login(req, res) {
         var body = req.body;
         var userName = body.userName;
@@ -12,17 +13,21 @@ class UserApi extends BaseApi {
         userDao.login(userName, password).then((user) => {
             req.session.user = user.ret;
             res.status(user.status).json(user.ret);
-        }, (user) => {
-            res.status(user.status).send(user.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
+
     logout(req, res) {
         req.session.user = null;
         res.status(200).send({});
     }
+
     user(req, res) {
         res.status(200).json(req.session.user || {});
     }
+
     isLogin(req, res) {
         if (req.session.user) {
             res.status(200).json(req.session.user);
