@@ -1,20 +1,20 @@
 <template>
-    <div class="panel panel-primary good-list">
-        <div class="panel-heading">订单列表</div>
-        <table class="table" v-if="!loading.fetch && orderList.length > 0">
-            <thead>
-                <tr>
-                    <th>订单号</th>
-                    <th>快递单号</th>
-                    <th>快递费用</th>
-                    <th>收件人</th>
-                    <th>价格</th>
-                    <th>操作</th>
-                    <th>发货时间</th>
-                </tr>
-            </thead>
-            <tbody>
-                <template v-for="order in orderList">
+<div class="panel panel-primary good-list">
+    <div class="panel-heading">订单列表</div>
+    <table class="table" v-if="!loading.fetch && orderList.length > 0">
+        <thead>
+            <tr>
+                <th>订单号</th>
+                <th>快递单号</th>
+                <th>快递费用</th>
+                <th>收件人</th>
+                <th>价格</th>
+                <th>操作</th>
+                <th>发货时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            <template v-for="order in orderList">
                     <tr class="item" >
                         <td>
                             {{order.id}}
@@ -32,7 +32,7 @@
                         <td><a href="javascript:void(0)" @click="expand(order)" v-if="!order.goodList">展开</a>
                             <div v-if="order.goodList && order.goodList.length > 0" v-for="good in order.goodList">
                                 <span>{{ good.name }}</span>
-                                <span>({{ good.goods_attr | remove-whitespace }})</span>
+                                <span>({{ good.attrs | join-attrs }})</span>
                                 <span>*{{ good.amount }}</span>
                             </div>
                         </td>
@@ -43,7 +43,7 @@
                     <tr v-if="order.comment">
                         <td colspan="7">{{order.comment}}</td>
                     </tr>
-                </template>
+</template>
             </tbody>
         </table>
         <pagination :pagination="params" :change="change"></pagination>
@@ -121,7 +121,7 @@ var OrderList = Vue.extend({
                 self.loading.fetch = !self.loading.fetch;
             })
         },
-        expand(order){
+        expand(order) {
             var self = this;
             if (self.loading.fetchGood) {
                 return;
@@ -133,7 +133,7 @@ var OrderList = Vue.extend({
                 data: {
                     order_id: order.id
                 },
-                success(resp){
+                success(resp) {
                     Vue.set(order, 'goodList', resp);
                 },
                 error(resp) {
