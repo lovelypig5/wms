@@ -62,7 +62,7 @@ class OrderDao extends BaseDao {
             limit: limit,
             offset: offset,
             attributes: [
-                [Sequelize.fn('DATE_FORMAT', Sequelize.col('date'), '%Y-%m-%d'), 'date'],
+                [Sequelize.fn('DATE_FORMAT', Sequelize.col('expressDate'), '%Y-%m-%d'), 'date'],
                 'id', 'expressCost', 'expressId', 'name', 'price', 'comment'
             ],
             where: {
@@ -87,13 +87,21 @@ class OrderDao extends BaseDao {
      * @return {Promise}
      */
     orderDetail(user_id, order_id) {
-        return this.model.Records.findAll({
-            include: {
-                model: this.model.Goods,
+        return this.model.Record.findAll({
+            include: [{
+                model: this.model.Good,
+                attributes: ['name'],
                 where: {
-                    order_id: order_id,
                     user_id: user_id
                 }
+            }, {
+                model: this.model.Attr,
+                through: {
+                    attributes: []
+                }
+            }],
+            where: {
+                order_id: order_id
             }
         }).then((rows) => {
             return this.ajaxModel(200, rows);
