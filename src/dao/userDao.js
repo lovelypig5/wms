@@ -3,36 +3,40 @@ var BaseDao = require('./baseDao'),
 
 class UserDao extends BaseDao {
 
-    checkUser() {
-        return this.query({
-            sql: 'select * from user where id = ?',
-            parse(rows) {
-                if (rows && rows.length > 0) {
-                    return rows[0].id;
-                }
-
-                return {
-                    error: '该用户不存在！'
-                }
+    checkUser(id) {
+        return this.model.User.findOne({
+            attributes: {
+                exclude: ['password']
+            },
+            where: {
+                id: id
+            }
+        }).then((user) => {
+            if (user) {
+                return this.ajaxModel(200, user);
+            } else {
+                throw new this.ERRORS.NotFound('该用户不存在！');
             }
         });
     }
 
     login(userName, password) {
-        return this.query({
-            sql: 'select id, name from user where name = ? and password = ?',
-            params: [userName, password],
-            parse(rows) {
-                if (rows && rows.length > 0) {
-                    return rows[0];
-                }
-
-                return {
-                    error: '用户名或者密码错误！'
-                }
+        return this.model.User.findOne({
+            attributes: {
+                exclude: ['password']
+            },
+            where: {
+                name: userName,
+                password: password
+            }
+        }).then((user) => {
+            if (user) {
+                return this.ajaxModel(200, user);
+            } else {
+                throw new this.ERRORS.NotFound('用户名或密码错误！');
             }
         });
     }
 }
 
-module.exports = new UserDao;
+module.exports = new UserDao();

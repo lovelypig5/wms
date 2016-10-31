@@ -4,7 +4,7 @@ var orderDao = require('../dao/orderDao');
 class OrderApi extends BaseApi {
 
     create(req, res) {
-        var user_id = req.session.user.id
+        var user_id = req.session.user.id;
         var body = req.body;
         var orderId = body.orderId;
         var expressId = body.expressId;
@@ -19,8 +19,8 @@ class OrderApi extends BaseApi {
         expressId = parseInt(expressId);
         expressCost = parseInt(expressCost);
         price = parseFloat(price);
-        if (isNaN(orderId) || orderId <= 0 || isNaN(price) || price <= 0
-                || isNaN(expressId) || expressId <= 0 || isNaN(expressCost) || expressCost < 0) {
+        if (isNaN(orderId) || orderId <= 0 || isNaN(price) || price <= 0 ||
+            isNaN(expressId) || expressId <= 0 || isNaN(expressCost) || expressCost < 0) {
             return res.status(400).send('参数格式错误');
         }
         var goodList = body.goodList;
@@ -43,8 +43,9 @@ class OrderApi extends BaseApi {
 
         orderDao.create(user_id, orderId, expressId, expressCost, name, price, goodList, comment).then((order) => {
             res.status(order.status).json(order.ret);
-        }, (order) => {
-            res.status(order.status).send(order.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -56,9 +57,10 @@ class OrderApi extends BaseApi {
 
         orderDao.list(user_id, page, pageSize).then((order) => {
             res.status(order.status).json(order.ret);
-        }, (order) => {
-            res.status(order.status).send(order.ret);
-        })
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
+        });
     }
 
     orderDetail(req, res) {
@@ -71,9 +73,10 @@ class OrderApi extends BaseApi {
 
         orderDao.orderDetail(user_id, order_id).then((order) => {
             res.status(order.status).json(order.ret);
-        }, (order) => {
-            res.status(order.status).send(order.ret);
-        })
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
+        });
     }
 
 }
@@ -92,4 +95,4 @@ module.exports = [{
     method: 'get',
     route: '/api/order/detail',
     func: orderApi.orderDetail
-}]
+}];

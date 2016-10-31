@@ -1,7 +1,7 @@
 var BaseApi = require('./baseApi');
-var goodsDao = require('../dao/goodsDao');
+var goodDao = require('../dao/goodDao');
 
-class GoodsApi extends BaseApi {
+class GoodApi extends BaseApi {
 
     list(req, res) {
         var user_id = req.session.user.id;
@@ -9,10 +9,11 @@ class GoodsApi extends BaseApi {
         var page = parseInt(query.page) || 1;
         var pageSize = parseInt(query.pageSize) || 20;
 
-        goodsDao.list(user_id, page, pageSize).then((goods) => {
+        goodDao.list(user_id, page, pageSize).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -23,10 +24,11 @@ class GoodsApi extends BaseApi {
         var pageSize = parseInt(query.pageSize) || 20;
         var type = parseInt(query.type) || -1;
 
-        goodsDao.inlist(user_id, type, page, pageSize).then((goods) => {
+        goodDao.inlist(user_id, type, page, pageSize).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -45,10 +47,11 @@ class GoodsApi extends BaseApi {
             return res.status(400).send('参数错误，属性必须为数组');
         }
 
-        goodsDao.create(name, attr, user_id).then((goods) => {
+        goodDao.create(name, attr, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -68,10 +71,11 @@ class GoodsApi extends BaseApi {
             return res.status(400).send('参数格式错误');
         }
 
-        goodsDao.modify(id, amount, price, user_id, type).then((goods) => {
+        goodDao.modify(id, amount, price, user_id, type).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -97,10 +101,11 @@ class GoodsApi extends BaseApi {
             return res.status(400).send('参数错误，属性必须为数组');
         }
 
-        goodsDao.in(id, amount, price, attr.join(','), user_id).then((goods) => {
+        goodDao.in(id, amount, price, attr, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -120,10 +125,11 @@ class GoodsApi extends BaseApi {
             return res.status(400).send('参数格式错误');
         }
 
-        goodsDao.out(id, amount, price, attr, user_id).then((goods) => {
+        goodDao.out(id, amount, price, attr, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -140,10 +146,11 @@ class GoodsApi extends BaseApi {
             return res.status(400).send('参数错误');
         }
 
-        goodsDao.detail(id, user_id).then((goods) => {
+        goodDao.detail(id, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -155,10 +162,11 @@ class GoodsApi extends BaseApi {
             name = '';
         }
 
-        goodsDao.search(user_id, name).then((goods) => {
+        goodDao.search(user_id, name).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -170,10 +178,11 @@ class GoodsApi extends BaseApi {
             return res.status(400).send('缺少参数');
         }
 
-        goodsDao.attrs(user_id, good_id).then((goods) => {
+        goodDao.attrs(user_id, good_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -186,10 +195,11 @@ class GoodsApi extends BaseApi {
             return res.status(400).send('缺少参数');
         }
 
-        goodsDao.addAttr(user_id, goods_id, attr).then((attr) => {
+        goodDao.addAttr(user_id, goods_id, attr).then((attr) => {
             res.status(attr.status).json(attr.ret);
-        }, (attr) => {
-            res.status(attr.status).send(attr.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -201,10 +211,11 @@ class GoodsApi extends BaseApi {
             return res.status(400).send('缺少参数');
         }
 
-        goodsDao.attrlist(user_id, good_id).then((goods) => {
+        goodDao.attrlist(user_id, good_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
-        }, (goods) => {
-            res.status(goods.status).send(goods.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 
@@ -214,15 +225,16 @@ class GoodsApi extends BaseApi {
         var goods_id = query.goods_id;
         var attr = query.attr;
 
-        goodsDao.trend(user_id, goods_id, attr).then((trendData) => {
+        goodDao.trend(user_id, goods_id, attr).then((trendData) => {
             res.status(trendData.status).json(trendData.ret);
-        }, (trendData) => {
-            res.status(trendData.status).send(trendData.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
         });
     }
 }
 
-var goodsApi = new GoodsApi();
+var goodsApi = new GoodApi();
 
 module.exports = [{
     method: 'get',

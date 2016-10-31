@@ -1,10 +1,10 @@
 var Sequelize = require('sequelize'),
-    sequelize = require('../db/sequelize'),
-    Records = require('./records');
+    sequelize = require('../db/sequelize');
 
 var Order = sequelize.define('order', {
     id: {
         type: Sequelize.UUID,
+        autoIncrement: true,
         primaryKey: true
     },
     expressId: {
@@ -24,10 +24,14 @@ var Order = sequelize.define('order', {
     },
     expressDate: {
         type: Sequelize.DATE
+    },
+    user_id: {
+        type: Sequelize.INTEGER(11)
     }
 }, {
     freezeTableName: true,
-    tableName: 'order'
+    tableName: 'order',
+    timestamps: false
 });
 
 // Order.hasMany(Records);

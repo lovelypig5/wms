@@ -1,49 +1,52 @@
 <template>
-    <div class="panel panel-primary good-in">
-        <div class="panel-heading">商品入库</div>
-        <div class="panel-body">
-            <validator name="v">
-                <div class="input-group">
-                    <span class="input-group-addon">商品名称</span>
-                    <div class="select2Div">
-                        <select id="productName" style="width: 100%" v-model="model.id" v-validate:name="{required:true}">
+<div class="panel panel-primary good-in">
+    <div class="panel-heading">商品入库</div>
+    <div class="panel-body">
+        <validator name="v">
+            <div class="input-group">
+                <span class="input-group-addon">商品名称</span>
+                <div class="select2Div">
+                    <select id="productName" style="width: 100%" v-model="model.id" v-validate:name="{required:true}">
                         </select>
-                    </div>
                 </div>
-                <div class="input-group error-msg" v-if="$v.name.touched && $v.name.invalid">
-                    <div v-if="$v.name.required" class="red-color">商品名称不能为空</div>
+            </div>
+            <div class="input-group error-msg" v-if="$v.name.touched && $v.name.invalid">
+                <div v-if="$v.name.required" class="red-color">商品名称不能为空</div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">商品属性</span>
+                <div class="select2Div">
+                    <select id="productAttr" style="width: 100%">
+                        <option v-for="attr in attrList" :value="attr.id">{{attr.attr}}</option>
+                    </select>
                 </div>
-                <div class="input-group">
-                    <span class="input-group-addon">商品属性</span>
-                    <div class="select2Div">
-                        <select id="productAttr" style="width: 100%">
-                            <option v-for="attr in attrList" :value="attr.attr">{{attr.attr}}</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon">入库数量</span>
-                    <input id="productAmount" type="text" class="form-control" placeholder="请输入入库数量" aria-describedby="productAmount" v-model="model.amount" v-validate:amount="{required:true, posInt: true}" :class="{'red-border': $v.amount && $v.amount.touched && $v.amount.invalid}" number>
-                </div>
-                <div class="input-group error-msg" v-if="$v.amount.touched && $v.amount.invalid">
-                    <div v-if="$v.amount.required" class="red-color">入库数量不能为空</div>
-                    <div v-if="!$v.amount.required && $v.amount.posInt" class="red-color">入库数量只能为正整数</div>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="productAmount">商品进价</span>
-                    <input type="text" class="form-control" placeholder="请输入商品进价" aria-describedby="productPriceIn" v-model="model.priceIn" v-validate:price="{required:true, number: true}" :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}">
-                </div>
-                <div class="input-group error-msg" v-if="$v.price.touched && $v.price.invalid">
-                    <div v-if="$v.price.required" class="red-color">商品进价不能为空</div>
-                    <div v-if="!$v.price.required && $v.price.number" class="red-color">商品进价只能为数字</div>
-                </div>
-                <div class="float-right btns">
-                    <button type="button" class="btn btn-primary" @click="goodsIn">入库</button>
-                    <button type="button" class="btn btn-danger" @click="reset">取消</button>
-                </div>
-            </validator>
-        </div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">入库数量</span>
+                <input id="productAmount" type="text" class="form-control" placeholder="请输入入库数量" aria-describedby="productAmount" v-model="model.amount"
+                    v-validate:amount="{required:true, posInt: true}" :class="{'red-border': $v.amount && $v.amount.touched && $v.amount.invalid}"
+                    number>
+            </div>
+            <div class="input-group error-msg" v-if="$v.amount.touched && $v.amount.invalid">
+                <div v-if="$v.amount.required" class="red-color">入库数量不能为空</div>
+                <div v-if="!$v.amount.required && $v.amount.posInt" class="red-color">入库数量只能为正整数</div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" id="productAmount">商品进价</span>
+                <input type="text" class="form-control" placeholder="请输入商品进价" aria-describedby="productPriceIn" v-model="model.priceIn" v-validate:price="{required:true, number: true}"
+                    :class="{'red-border': $v.price && $v.price.touched && $v.price.invalid}">
+            </div>
+            <div class="input-group error-msg" v-if="$v.price.touched && $v.price.invalid">
+                <div v-if="$v.price.required" class="red-color">商品进价不能为空</div>
+                <div v-if="!$v.price.required && $v.price.number" class="red-color">商品进价只能为数字</div>
+            </div>
+            <div class="float-right btns">
+                <button type="button" class="btn btn-primary" @click="goodsIn">入库</button>
+                <button type="button" class="btn btn-danger" @click="reset">取消</button>
+            </div>
+        </validator>
     </div>
+</div>
 </template>
 <script>
 import API from '../../config/api';
@@ -63,7 +66,7 @@ var GoodIn = Vue.extend({
                 priceIn: ""
             },
             attrList: [],
-            loading: { in : false
+            loading: { in: false
             }
         }
     },
@@ -127,7 +130,8 @@ var GoodIn = Vue.extend({
             if (id && name) {
                 self.model.id = id;
                 self.model.name = decodeURIComponent(name);
-                $(self.$el).find('#productName').append('<option value="' + self.model.id + '">' + self.model.name + '</option>');
+                $(self.$el).find('#productName').append('<option value="' + self.model.id + '">' + self.model.name +
+                    '</option>');
                 self.fetchAttrs(() => {
                     var attr = self.$route.query.attr;
                     attr = decodeURIComponent(attr).split(',');
@@ -198,7 +202,7 @@ var GoodIn = Vue.extend({
             })
         },
         reset(flag) {
-            var id = flag ? this.model.id: "";
+            var id = flag ? this.model.id : "";
             var name = flag ? this.model.name : "";
             this.model = {
                 id: id,

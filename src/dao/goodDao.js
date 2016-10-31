@@ -1,9 +1,10 @@
 var Sequelize = require('sequelize'),
     sequelize = require('../db/sequelize');
 var BaseDao = require('./baseDao');
-var model = require('../model');
-var logger = require('../logger'),
-    MESSAGES = require('../config/message');
+
+var comparer = (a, b) => {
+    return a > b ? 1 : -1;
+};
 
 class GoodsDao extends BaseDao {
 
@@ -15,7 +16,7 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     search(user_id, name) {
-        return model.Good.findAll({
+        return this.model.Good.findAll({
             limit: 10,
             attributes: ['id', 'name'],
             where: {
@@ -25,10 +26,7 @@ class GoodsDao extends BaseDao {
                 }
             }
         }).then((rows) => {
-            return this.model(200, rows);
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, MESSAGES.SERVER_ERROR);
+            return this.ajaxModel(200, rows);
         });
     }
 
@@ -39,18 +37,15 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     list(user_id) {
-        return model.Good.findAndCountAll({
+        return this.model.Good.findAndCountAll({
             where: {
                 user_id: user_id
             }
         }).then((result) => {
-            return this.model(200, {
+            return this.ajaxModel(200, {
                 count: result.count,
                 content: result.rows
             });
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, MESSAGES.SERVER_ERROR);
         });
     }
 
@@ -62,12 +57,12 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     detail(id, user_id) {
-        return model.Good.findOne({
+        var p = this.model.Good.findOne({
             include: [{
-                model: model.GoodSub,
+                model: this.model.GoodSub,
                 attributes: ['id', 'count'],
                 include: [{
-                    model: model.Attr,
+                    model: this.model.Attr,
                     attributes: ['attr'],
                     through: {
                         attributes: []
@@ -78,20 +73,19 @@ class GoodsDao extends BaseDao {
                 user_id: user_id,
                 id: id
             }
-        }).then((good) => {
+        });
+
+        return p.then((good) => {
             if (good) {
-                return this.model(200, {
+                return this.ajaxModel(200, {
                     id: good.id,
                     name: good.name,
                     total: good.count,
                     list: good.goodsubs
                 });
             } else {
-                return this.model(400, '不存在该商品');
+                throw new this.ERRORS.NotFound('不存在该商品！');
             }
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, '服务器出错,不能获取商品详情！');
         });
     }
 
@@ -104,23 +98,24 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     create(name, attrs, user_id) {
-        return model.User.findOne({
+        var p = this.model.User.findOne({
             where: {
                 id: user_id
             },
             include: [{
-                model: model.Good,
+                model: this.model.Good,
                 required: false,
                 where: {
                     name: name
                 }
             }]
-        }).then((user) => {
+        });
+        return p.then((user) => {
             if (user.goods.length > 0) {
-                return this.model(400, '商品已经存在！');
+                throw new this.ERRORS.Exist('商品已经存在！');
             } else {
                 return sequelize.transaction((transaction) => {
-                    return model.Good.create({
+                    return this.model.Good.create({
                         name: name,
                         count: 0
                     }, {
@@ -131,7 +126,7 @@ class GoodsDao extends BaseDao {
                         })];
                         if (attrs.length > 0) {
                             attrs.forEach((attr) => {
-                                let promise = model.Attr.create({
+                                let promise = this.model.Attr.create({
                                     user_id: user_id,
                                     goods_id: goods.id,
                                     attr: attr
@@ -142,14 +137,11 @@ class GoodsDao extends BaseDao {
                             });
                         }
                         return Promise.all(promises).then(() => {
-                            return this.model(200, goods);
+                            return this.ajaxModel(200, goods);
                         });
                     });
                 });
             }
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, MESSAGES.SERVER_ERROR);
         });
     }
 
@@ -163,60 +155,56 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     modify(record_id, amount, price, user_id) {
-        return model.Record.findOne({
+        var p = this.model.Record.findOne({
             include: [{
-                model: model.Good,
+                model: this.model.Good,
                 where: {
                     user_id: user_id
                 }
             }, {
-                model: model.Attr
+                model: this.model.Attr
             }],
             where: {
                 id: record_id
             }
-        }).then((record) => {
+        });
+
+        return p.then((record) => {
             if (!record) {
-                return this.model(400, '没有找到对应的记录！');
+                throw new this.ERRORS.NotFound('没有找到对应的记录！');
             }
 
             return sequelize.transaction((transaction) => {
-                var getPromise = () => {
-                    var promises = [];
-                    promises.push(record.update({
-                        price: price,
-                        amount: amount
-                    }, {
-                        transaction: transaction
-                    }).then((record) => {
-                        model.Good.update({
-                            count: record.good.count + diff
-                        }, {
-                            transaction: transaction,
-                            where: {
-                                id: record.good_id
-                            }
-                        });
-                    }));
-
-                    return promises;
-                };
-
                 let attrs = record.attrs;
                 var diff = (record.amount - amount) * record.type;
+                var promises = [];
+                promises.push(record.update({
+                    price: price,
+                    amount: amount
+                }, {
+                    transaction: transaction
+                }).then((record) => {
+                    return this.model.Good.update({
+                        count: record.good.count + diff
+                    }, {
+                        transaction: transaction,
+                        where: {
+                            id: record.good_id
+                        }
+                    });
+                }));
+
                 if (attrs.length > 0) {
-                    var ids = [];
+                    var attr_ids = [];
                     attrs.forEach((item) => {
-                        ids.push(item.id);
+                        attr_ids.push(item.id);
                     });
-                    ids.sort((a, b) => {
-                        return a > b ? 1 : -1;
-                    });
-                    return model.GoodSub.findOne({
+                    attr_ids.sort(comparer);
+                    promises.push(this.model.GoodSub.findOne({
                         include: [{
-                            model: model.V_Attr,
+                            model: this.model.V_Attr,
                             where: {
-                                attr_id: ids.join(',')
+                                attr_id: attr_ids.join(',')
                             }
                         }],
                         where: {
@@ -224,80 +212,31 @@ class GoodsDao extends BaseDao {
                         }
                     }).then((goodsub) => {
                         if (!goodsub) {
-                            return this.model(400, '没有找到对应的记录');
+                            throw new this.ERRORS.NotFound('没有找到对应的记录！');
                         } else {
-                            if (diff + goodsub.count < 0) {
-                                return this.model(400, '库存不足');
+                            var newcount = diff + goodsub.count;
+                            if (newcount < 0) {
+                                throw new this.ERRORS.NotEnough(
+                                    `库存不足！剩余库存：${goodsub.count}`);
                             }
 
-                            var promises = getPromise();
-                            promises.push(model.GoodSub.update({
-                                count: diff + goodsub.count
+                            return this.model.GoodSub.update({
+                                count: newcount
                             }, {
                                 transaction: transaction,
                                 where: {
                                     id: goodsub.id
                                 }
-                            }));
-
-                            return Promise.all(promises).then(() => {
-                                return this.model(200, '修改成功');
                             });
                         }
-                    })
-                } else {
-                    var promises = getPromise();
-                    return Promise.all(promises).then(() => {
-                        return this.model(200, '修改成功');
-                    });
+                    }));
                 }
-            });
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, MESSAGES.SERVER_ERROR);
-        });
 
-        // var querys = [{
-        //     sql: 'select * from goods_records where id = ? and user_id = ? and goods_attr = ?',
-        //     params: [record_id, user_id, good_attr],
-        //     parse(rows) {
-        //         if (rows && rows.length == 1) {
-        //             return rows[0];
-        //         } else {
-        //             return {
-        //                 error: '不存在该出入库记录'
-        //             };
-        //         }
-        //     }
-        // }, {
-        //     sql: 'update goods_records set price = ?, amount = ? where id = ?',
-        //     params: [price, amount, record_id],
-        //     parse(result, data) {
-        //         return {
-        //             diff: (data.amount - amount) * type,
-        //             goods_id: data.goods_id
-        //         };
-        //     }
-        // }, {
-        //     sql: 'update goods set count = count + ? where id = ?',
-        //     params(data) {
-        //         return [data.diff, data.goods_id];
-        //     },
-        //     parse(result, data) {
-        //         return data;
-        //     }
-        // }];
-        //
-        // if (good_attr) {
-        //     querys.push({
-        //         sql: 'update goods_attrs set count = count + ? where goods_id = ? and attr = ?',
-        //         params(data) {
-        //             return [data.diff, data.goods_id, good_attr];
-        //         }
-        //     });
-        // }
-        //
-        // return this.queryWithTransaction(...querys);
+                return Promise.all(promises).then(() => {
+                    return this.ajaxModel(200, '修改成功');
+                });
+            });
+        });
     }
 
     /**
@@ -314,7 +253,7 @@ class GoodsDao extends BaseDao {
         var offset = page > 1 ? limit * (page - 1) : 0;
 
         var promises = [];
-        promises.push(model.Record.count({
+        promises.push(this.model.Record.count({
             limit: limit,
             offset: offset,
             attributes: [
@@ -322,7 +261,7 @@ class GoodsDao extends BaseDao {
                 'id', 'good_id', 'amount', 'price'
             ],
             include: [{
-                model: model.Good,
+                model: this.model.Good,
                 where: {
                     user_id: user_id
                 }
@@ -334,7 +273,7 @@ class GoodsDao extends BaseDao {
                 ['date', 'DESC']
             ]
         }));
-        promises.push(model.Record.findAll({
+        promises.push(this.model.Record.findAll({
             limit: limit,
             offset: offset,
             attributes: [
@@ -342,13 +281,13 @@ class GoodsDao extends BaseDao {
                 'id', 'good_id', 'amount', 'price'
             ],
             include: [{
-                model: model.Attr,
+                model: this.model.Attr,
                 attributes: ['attr'],
                 through: {
                     attributes: []
                 }
             }, {
-                model: model.Good,
+                model: this.model.Good,
                 where: {
                     user_id: user_id
                 }
@@ -362,13 +301,10 @@ class GoodsDao extends BaseDao {
         }));
 
         return Promise.all(promises).then((result) => {
-            return this.model(200, {
+            return this.ajaxModel(200, {
                 count: result[0],
                 content: result[1]
             });
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, MESSAGES.SERVER_ERROR);
         });
     }
 
@@ -382,100 +318,89 @@ class GoodsDao extends BaseDao {
      * @param  {Number} user_id : user id
      * @return {Promise}
      */
-    out(id, amount, price, attr, user_id) {
-        return model.Good.findOne({
+    out(id, amount, price, attr, user_id, order_id) {
+        var p = this.model.Good.findOne({
             where: {
                 user_id: user_id,
                 id: id
             }
-        }).then((good) => {
+        });
+        return p.then((good) => {
+            // return sequelize.transaction((transaction) => {
             if (!good) {
-                return this.model(400, '没有找到指定的商品');
+                throw new this.ERRORS.NotFound('没有找到指定的商品！');
             } else {
                 if (good.count < amount) {
-                    return this.model(400, '库存不足');
+                    throw new this.ERRORS.NotEnough('库存不足！');
                 } else {
-                    return sequelize.transaction((transaction) => {
-                        let getPromise = () => {
-                            var promises = [good.update({
-                                count: good.count - amount
-                            }, {
-                                transaction: transaction
-                            }), model.Record.create({
-                                good_id: id,
-                                user_id: user_id,
-                                price: price,
-                                amount: amount,
-                                type: 1
-                            }, {
-                                transaction: transaction
-                            }).then((record) => {
-                                if (attr) {
-                                    return model.Attr.findAll({
-                                        where: {
-                                            attr: {
-                                                $in: attrs
-                                            }
-                                        }
-                                    }).then((rows) => {
-                                        return record.addAttrs(rows, {
-                                            transaction: transaction
-                                        });
-                                    });
-                                }
-                            })];
-
-                            return promises;
-                        };
-
-
-                        var attrs = [];
+                    var attr_ids = [];
+                    if (attr) {
+                        attr_ids = attr.split(',');
+                        attr_ids.sort(comparer);
+                    }
+                    var promises = [good.update({
+                        count: good.count - amount
+                    }, {
+                        transaction: transaction
+                    }), this.model.Record.create({
+                        good_id: id,
+                        user_id: user_id,
+                        price: price,
+                        amount: amount,
+                        type: 1,
+                        order_id: order_id
+                    }, {
+                        transaction: transaction
+                    }).then((record) => {
                         if (attr) {
-                            attrs = attr.split(',');
-                            return model.GoodSub.findOne({
-                                include: {
-                                    model: model.Attr,
-                                    where: {
-                                        attr: {
-                                            $in: attrs
-                                        }
-                                    }
-                                },
+                            return this.model.Attr.findAll({
                                 where: {
-                                    good_id: id
-                                }
-                            }).then((goodsub) => {
-                                if (!goodsub || goodsub.attrs.length != attrs.length) {
-                                    return this.model(400, `不存在该商品属性:${attr}`);
-                                } else {
-                                    if (goodsub.count < amount) {
-                                        return this.model(400, `商品${attr}库存不足`);
-                                    } else {
-                                        let promises = getPromise();
-                                        promises.push(goodsub.update({
-                                            count: goodsub.count - amount
-                                        }, {
-                                            transaction: transaction
-                                        }));
-
-                                        return Promise.all(promises).then(() => {
-                                            return this.model(200, '出库成功');
-                                        });
+                                    id: {
+                                        $in: attr_ids
                                     }
                                 }
-                            });
-                        } else {
-                            let promises = getPromise();
-                            return Promise.all(promises).then(() => {
-                                return this.model(200, '出库成功');
+                            }).then((rows) => {
+                                return record.addAttrs(rows, {
+                                    transaction: transaction
+                                });
                             });
                         }
+                    })];
+
+                    if (attr) {
+                        promises.push(this.model.GoodSub.findOne({
+                            include: {
+                                model: this.model.V_Attr,
+                                where: {
+                                    attr_id: attr_ids.join(',')
+                                }
+                            },
+                            where: {
+                                good_id: id
+                            }
+                        }).then((goodsub) => {
+                            if (!goodsub) {
+                                throw new this.ERRORS.NotFound(`不存在该商品属性:${attr}`);
+                            } else {
+                                if (goodsub.count < amount) {
+                                    throw new this.ERRORS.NotEnough(`商品${attr}库存不足`);
+                                } else {
+                                    return goodsub.update({
+                                        count: goodsub.count - amount
+                                    }, {
+                                        transaction: transaction
+                                    });
+                                }
+                            }
+                        }));
+                    }
+
+                    return Promise.all(promises).then((result) => {
+                        return this.ajaxModel(200, '出库成功');
                     });
                 }
             }
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, '服务器出错，出库失败！');
+            // });
         });
     }
 
@@ -485,99 +410,98 @@ class GoodsDao extends BaseDao {
      * @param  {Number} id      : good id
      * @param  {Number} amount  : good number
      * @param  {Double} price   : good price
-     * @param  {String} attr    : attr string, split with ,
+     * @param  {Array} attrs    : attrs
      * @param  {Number} user_id : user id
      * @return {Promise}
      */
-    in (id, amount, price, attr, user_id) {
-        return model.Good.findOne({
+    in (id, amount, price, attrs, user_id) {
+        var p = this.model.Good.findOne({
             where: {
                 user_id: user_id,
                 id: id
             }
-        }).then((good) => {
+        });
+        attrs.sort(comparer);
+
+        return p.then((good) => {
             if (!good) {
-                return this.model(400, '没有找到指定的商品');
+                throw new this.ERRORS.NotFound('没有找到指定的商品');
             } else {
                 return sequelize.transaction((transaction) => {
-                    let getPromise = () => {
-                        var promises = [good.update({
-                            count: good.count + amount
-                        }, {
-                            transaction: transaction
-                        }), model.Record.create({
-                            good_id: id,
-                            user_id: user_id,
-                            price: price,
-                            amount: amount,
-                            type: -1
-                        }, {
-                            transaction: transaction
-                        }).then((record) => {
-                            if (attr) {
-                                return model.Attr.findAll({
-                                    where: {
-                                        attr: {
-                                            $in: attrs
-                                        }
-                                    }
-                                }).then((rows) => {
-                                    return record.addAttrs(rows, {
-                                        transaction: transaction
-                                    });
-                                });
-                            }
-                        })];
-
-                        return promises;
-                    };
-
-                    var attrs = [];
-                    if (attr) {
-                        attrs = attr.split(',');
-                        return model.GoodSub.findOne({
-                            include: {
-                                model: model.Attr,
+                    var promises = [good.update({
+                        count: good.count + amount
+                    }, {
+                        transaction: transaction
+                    }), this.model.Record.create({
+                        good_id: id,
+                        user_id: user_id,
+                        price: price,
+                        amount: amount,
+                        type: -1
+                    }, {
+                        transaction: transaction
+                    }).then((record) => {
+                        if (attrs.length > 0) {
+                            return this.model.Attr.findAll({
                                 where: {
-                                    attr: {
+                                    id: {
                                         $in: attrs
                                     }
+                                }
+                            }).then((rows) => {
+                                return record.addAttrs(rows, {
+                                    transaction: transaction
+                                });
+                            });
+                        }
+                    })];
+
+                    if (attrs.length > 0) {
+                        promises.push(this.model.GoodSub.findOne({
+                            include: {
+                                model: this.model.V_Attr,
+                                where: {
+                                    attr_id: attrs
                                 }
                             },
                             where: {
                                 good_id: id
                             }
                         }).then((goodsub) => {
-                            let promises = getPromise();
-                            if (!goodsub || goodsub.attrs.length != attrs.length) {
-                                promises.push(model.GoodSub.create({
+                            if (!goodsub) {
+                                return this.model.GoodSub.create({
                                     count: amount,
                                     good_id: id
                                 }, {
                                     transaction: transaction
-                                }));
+                                }).then((newGoodSub) => {
+                                    return this.model.Attr.findAll({
+                                        where: {
+                                            id: {
+                                                $in: attrs
+                                            }
+                                        }
+                                    }).then((rows) => {
+                                        return newGoodSub.addAttrs(rows, {
+                                            transaction: transaction
+                                        });
+                                    });
+                                });
                             } else {
-                                promises.push(goodsub.update({
+                                return goodsub.update({
                                     count: goodsub.count + amount
                                 }, {
                                     transaction: transaction
-                                }));
+                                });
                             }
-                            return Promise.all(promises).then(() => {
-                                return this.model(200, '出库成功');
-                            });
-                        });
-                    } else {
-                        let promises = getPromise();
-                        return Promise.all(promises).then(() => {
-                            return this.model(200, '出库成功');
-                        });
+                        }));
                     }
+
+                    return Promise.all(promises).then(() => {
+                        return this.ajaxModel(200, '出库成功');
+                    });
                 });
             }
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, '服务器出错，出库失败！');
         });
     }
 
@@ -589,10 +513,10 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     attrs(user_id, good_id) {
-        return model.Attr.findAll({
-            attributes: ['attr'],
+        return this.model.Attr.findAll({
+            attributes: ['id', 'attr'],
             include: [{
-                model: model.Good,
+                model: this.model.Good,
                 attributes: [],
                 where: {
                     user_id: user_id,
@@ -603,10 +527,7 @@ class GoodsDao extends BaseDao {
                 ['attr', 'DESC']
             ]
         }).then((rows) => {
-            return this.model(200, rows);
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, MESSAGES.SERVER_ERROR);
+            return this.ajaxModel(200, rows);
         });
     }
 
@@ -618,9 +539,9 @@ class GoodsDao extends BaseDao {
      * @param  {String} attr    : good attr
      */
     addAttr(user_id, good_id, attr) {
-        return model.Good.findOne({
+        return this.model.Good.findOne({
             include: [{
-                model: model.Attr,
+                model: this.model.Attr,
                 through: {
                     attributes: []
                 }
@@ -631,7 +552,7 @@ class GoodsDao extends BaseDao {
             }
         }).then((good) => {
             if (!good) {
-                return this.model(400, '商品不存在！');
+                throw new this.ERRORS.NotFound('商品不存在！');
             } else {
                 var exist = false;
                 if (good.attrs) {
@@ -642,10 +563,10 @@ class GoodsDao extends BaseDao {
                     });
                 }
                 if (exist) {
-                    return this.model(400, `商品属性${attr}已经存在！`);
+                    throw new this.ERRORS.Exist(`商品属性${attr}已经存在！`);
                 } else {
                     return sequelize.transaction((transaction) => {
-                        return model.Attr.create({
+                        return this.model.Attr.create({
                             attr: attr
                         }, {
                             transaction: transaction
@@ -653,15 +574,12 @@ class GoodsDao extends BaseDao {
                             return good.addAttrs(newAttr, {
                                 transaction: transaction
                             }).then(() => {
-                                return this.model(200, '商品属性添加成功');
+                                return this.ajaxModel(200, '商品属性添加成功');
                             });
                         });
                     });
                 }
             }
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, MESSAGES.SERVER_ERROR);
         });
     }
 
@@ -673,29 +591,26 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     attrlist(user_id, good_id) {
-        return model.GoodSub.findAll({
+        return this.model.GoodSub.findAll({
             attributes: {
                 exclude: ['good_id']
             },
             include: [{
-                model: model.Good,
+                model: this.model.Good,
                 attributes: [],
                 where: {
                     user_id: user_id,
                     id: good_id
                 }
             }, {
-                model: model.Attr,
+                model: this.model.Attr,
                 attributes: ['id', 'attr'],
                 through: {
                     attributes: []
                 }
             }]
         }).then((rows) => {
-            return this.model(200, rows);
-        }).catch((err) => {
-            logger.error(err);
-            return this.model(500, MESSAGES.SERVER_ERROR);
+            return this.ajaxModel(200, rows);
         });
     }
 
@@ -713,7 +628,7 @@ class GoodsDao extends BaseDao {
             return Attrs.findAll({
                 attributes: [],
                 include: [{
-                    model: model.Good,
+                    model: this.model.Good,
                     where: {
                         user_id: user_id,
                         id: good_id
@@ -723,21 +638,18 @@ class GoodsDao extends BaseDao {
                     ['attr', 'ASC']
                 ]
             }).then((rows) => {
-                return this.model(200, rows);
-            }).catch((err) => {
-                logger.error(err);
-                return this.model(500, MESSAGES.SERVER_ERROR);
+                return this.ajaxModel(200, rows);
             });
         } else {
             var date = Sequelize.fn('DATE_FORMAT', Sequelize.col('date'), '%Y-%m-%d');
             if (good_id) {
-                return model.Record.findAll({
+                return this.model.Record.findAll({
                     attributes: [
                         [Sequelize.literal('sum(type * -1 * amount)'), 'amount'],
                         [date, 'date']
                     ],
                     include: [{
-                        model: model.Good,
+                        model: this.model.Good,
                         attributes: ['name', 'count'],
                         where: {
                             user_id: user_id,
@@ -770,28 +682,22 @@ class GoodsDao extends BaseDao {
 
                     if (rows.length > 0) {
                         if (count == rows[0].toJSON().good.count) {
-                            return this.model(200, ret);
+                            return this.ajaxModel(200, ret);
                         } else {
-                            logger.error('数据错误，库存和出入库记录总数无法匹配');
-                            logger.error('用户ID: %s', user_id);
-                            logger.error('商品ID: %s', good_id);
-                            return this.model(500, ret);
+                            throw new this.ERRORS.DataError(`数据错误，库存和出入库记录总数无法匹配。商品ID: ${good_id}`);
                         }
                     } else {
-                        return this.model(200, ret);
+                        return this.ajaxModel(200, ret);
                     }
-                }).catch((err) => {
-                    logger.error(err);
-                    return this.model(500, MESSAGES.SERVER_ERROR);
                 });
             } else {
-                return model.Record.findAll({
+                return this.model.Record.findAll({
                     attributes: [
                         [Sequelize.literal('sum(type * -1 * amount)'), 'amount'],
                         [date, 'date']
                     ],
                     include: [{
-                        model: model.Good,
+                        model: this.model.Good,
                         attributes: ['count'],
                         where: {
                             user_id: user_id
@@ -830,18 +736,13 @@ class GoodsDao extends BaseDao {
                             _count += number;
                         });
                         if (count == _count) {
-                            return this.model(200, ret);
+                            return this.ajaxModel(200, ret);
                         } else {
-                            logger.error('数据错误，库存和出入库记录总数无法匹配，可能存在有库存无销售记录的商品！');
-                            logger.error('用户ID: %s', user_id);
-                            return this.model(200, ret);
+                            throw new this.ERRORS.DataError('数据错误，库存和出入库记录总数无法匹配，可能存在有库存无销售记录的商品。');
                         }
                     } else {
-                        return this.model(200, ret);
+                        return this.ajaxModel(200, ret);
                     }
-                }).catch((err) => {
-                    logger.error(err);
-                    return this.model(500, MESSAGES.SERVER_ERROR);
                 });
             }
         }
