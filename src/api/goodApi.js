@@ -101,7 +101,7 @@ class GoodApi extends BaseApi {
             return res.status(400).send('参数错误，属性必须为数组');
         }
 
-        goodDao.in(id, amount, price, attr.join(','), user_id).then((goods) => {
+        goodDao.in(id, amount, price, attr, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);

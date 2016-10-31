@@ -55,6 +55,9 @@ Attr.belongsToMany(Good, {
 Record.belongsTo(Good, {
     foreignKey: 'good_id',
 });
+Record.belongsTo(Order, {
+    foreignKey: 'order_id',
+});
 Record.belongsToMany(Attr, {
     through: 'r_record_attr',
     foreignKey: 'record_id',

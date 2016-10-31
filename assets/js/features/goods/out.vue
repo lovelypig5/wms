@@ -17,7 +17,7 @@
                 <span class="input-group-addon">商品属性</span>
                 <div class="select2Div">
                     <select id="productAttr" style="width: 100%" v-model="model.attr">
-                        <option v-for="attr in attrList" :value="attr.attrs | join-attrs 'attr' ','">{{attr.attrs | join-attrs}}</option>
+                        <option v-for="attr in attrList" :value="attr.attrs | join-attrs 'id' ','">{{attr.attrs | join-attrs}}</option>
                     </select>
                 </div>
             </div>
