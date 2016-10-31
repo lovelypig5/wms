@@ -3,6 +3,7 @@ var User = require('./user'),
     GoodSub = require('./goodsub'),
     Attr = require('./attr'),
     Record = require('./record'),
+    Order = require('./order'),
 
     V_Attr = require('./v_attr');
 
@@ -11,12 +12,9 @@ var User = require('./user'),
 // });
 // Good.hasMany(Attr);
 // Good.hasMany(Record);
-// User.belongsToMany(Good, {
-//     through: 'r_user_goods',
-//     foreignKey: 'user_id',
-//     otherKey: 'good_id',
-//     timestamps: false
-// });
+User.hasMany(Good, {
+    foreignKey: 'user_id'
+});
 //
 Good.belongsTo(User);
 Good.hasMany(GoodSub);
@@ -70,6 +68,7 @@ module.exports = {
     GoodSub: GoodSub,
     Attr: Attr,
     Record: Record,
+    Order: Order,
 
     V_Attr: V_Attr
 };
