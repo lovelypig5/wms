@@ -6,4 +6,4 @@ module.exports = [{
     })
 }, {
     filter: bodyParser.json()
-}]
+}];

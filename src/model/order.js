@@ -34,6 +34,4 @@ var Order = sequelize.define('order', {
     timestamps: false
 });
 
-// Order.hasMany(Records);
-
 module.exports = Order;

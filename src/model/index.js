@@ -7,15 +7,10 @@ var User = require('./user'),
 
     V_Attr = require('./v_attr');
 
-// Good.hasMany(Attrs, {
-//     foreignKey: 'good_id',
-// });
-// Good.hasMany(Attr);
-// Good.hasMany(Record);
 User.hasMany(Good, {
     foreignKey: 'user_id'
 });
-//
+
 Good.belongsTo(User);
 Good.hasMany(GoodSub);
 Good.belongsToMany(Attr, {
@@ -24,9 +19,6 @@ Good.belongsToMany(Attr, {
     otherKey: 'attr_id',
     timestamps: false
 });
-// Good.hasMany(Attrs, {
-//     foreignKey: 'good_id'
-// });
 
 GoodSub.belongsTo(Good, {
     foreignKey: 'good_id'
@@ -47,10 +39,6 @@ Attr.belongsToMany(Good, {
     otherKey: 'good_id',
     timestamps: false
 });
-
-// Attrs.belongsTo(Good, {
-//     foreignKey: 'good_id',
-// });
 
 Record.belongsTo(Good, {
     foreignKey: 'good_id',
