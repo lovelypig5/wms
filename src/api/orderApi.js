@@ -1,5 +1,5 @@
 var BaseApi = require('./baseApi');
-var orderDao = require('../dao/orderDao');
+var orderService = require('../service/orderService');
 
 class OrderApi extends BaseApi {
 
@@ -41,7 +41,7 @@ class OrderApi extends BaseApi {
             return res.status(400).send('该订单中没有包含商品');
         }
 
-        orderDao.create(user_id, orderId, expressId, expressCost, name, price, goodList, comment).then((order) => {
+        orderService.create(user_id, orderId, expressId, expressCost, name, price, goodList, comment).then((order) => {
             res.status(order.status).json(order.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -55,7 +55,7 @@ class OrderApi extends BaseApi {
         var page = parseInt(query.page) || 1;
         var pageSize = parseInt(query.pageSize) || 20;
 
-        orderDao.list(user_id, page, pageSize).then((order) => {
+        orderService.list(user_id, page, pageSize).then((order) => {
             res.status(order.status).json(order.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -71,7 +71,7 @@ class OrderApi extends BaseApi {
             return res.status(400).send('缺少参数');
         }
 
-        orderDao.orderDetail(user_id, order_id).then((order) => {
+        orderService.orderDetail(user_id, order_id).then((order) => {
             res.status(order.status).json(order.ret);
         }, (err) => {
             var model = super.handleErr(err);

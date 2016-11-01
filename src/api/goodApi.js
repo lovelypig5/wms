@@ -1,5 +1,5 @@
 var BaseApi = require('./baseApi');
-var goodDao = require('../dao/goodDao');
+var goodService = require('../service/goodService');
 
 class GoodApi extends BaseApi {
 
@@ -9,7 +9,7 @@ class GoodApi extends BaseApi {
         var page = parseInt(query.page) || 1;
         var pageSize = parseInt(query.pageSize) || 20;
 
-        goodDao.list(user_id, page, pageSize).then((goods) => {
+        goodService.list(user_id, page, pageSize).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -24,7 +24,7 @@ class GoodApi extends BaseApi {
         var pageSize = parseInt(query.pageSize) || 20;
         var type = parseInt(query.type) || -1;
 
-        goodDao.inlist(user_id, type, page, pageSize).then((goods) => {
+        goodService.inlist(user_id, type, page, pageSize).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -47,7 +47,7 @@ class GoodApi extends BaseApi {
             return res.status(400).send('参数错误，属性必须为数组');
         }
 
-        goodDao.create(name, attr, user_id).then((goods) => {
+        goodService.create(name, attr, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -71,7 +71,7 @@ class GoodApi extends BaseApi {
             return res.status(400).send('参数格式错误');
         }
 
-        goodDao.modify(id, amount, price, user_id, type).then((goods) => {
+        goodService.modify(id, amount, price, user_id, type).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -101,7 +101,7 @@ class GoodApi extends BaseApi {
             return res.status(400).send('参数错误，属性必须为数组');
         }
 
-        goodDao.in(id, amount, price, attr, user_id).then((goods) => {
+        goodService.in(id, amount, price, attr, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -125,7 +125,7 @@ class GoodApi extends BaseApi {
             return res.status(400).send('参数格式错误');
         }
 
-        goodDao.out(id, amount, price, attr, user_id).then((goods) => {
+        goodService.out(id, amount, price, attr, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -146,7 +146,7 @@ class GoodApi extends BaseApi {
             return res.status(400).send('参数错误');
         }
 
-        goodDao.detail(id, user_id).then((goods) => {
+        goodService.detail(id, user_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -162,7 +162,7 @@ class GoodApi extends BaseApi {
             name = '';
         }
 
-        goodDao.search(user_id, name).then((goods) => {
+        goodService.search(user_id, name).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -178,7 +178,7 @@ class GoodApi extends BaseApi {
             return res.status(400).send('缺少参数');
         }
 
-        goodDao.attrs(user_id, good_id).then((goods) => {
+        goodService.attrs(user_id, good_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -195,7 +195,7 @@ class GoodApi extends BaseApi {
             return res.status(400).send('缺少参数');
         }
 
-        goodDao.addAttr(user_id, goods_id, attr).then((attr) => {
+        goodService.addAttr(user_id, goods_id, attr).then((attr) => {
             res.status(attr.status).json(attr.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -211,7 +211,7 @@ class GoodApi extends BaseApi {
             return res.status(400).send('缺少参数');
         }
 
-        goodDao.attrlist(user_id, good_id).then((goods) => {
+        goodService.attrlist(user_id, good_id).then((goods) => {
             res.status(goods.status).json(goods.ret);
         }, (err) => {
             var model = super.handleErr(err);
@@ -225,7 +225,7 @@ class GoodApi extends BaseApi {
         var goods_id = query.goods_id;
         var attr = query.attr;
 
-        goodDao.trend(user_id, goods_id, attr).then((trendData) => {
+        goodService.trend(user_id, goods_id, attr).then((trendData) => {
             res.status(trendData.status).json(trendData.ret);
         }, (err) => {
             var model = super.handleErr(err);
