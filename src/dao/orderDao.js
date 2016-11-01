@@ -1,5 +1,4 @@
-var Sequelize = require('sequelize'),
-    sequelize = require('../db/sequelize');
+var Sequelize = require('sequelize');
 var BaseDao = require('./baseDao'),
     goodDao = require('./goodDao');
 
@@ -18,31 +17,29 @@ class OrderDao extends BaseDao {
      * @param  {String} comment     : comment
      * @return {Promise}
      */
-    create(user_id, orderId, expressId, expressCost, name, price, goodList, comment) {
-        return sequelize.transaction((transaction) => {
-            return this.model.Order.create({
-                id: orderId,
-                expressId: expressId,
-                expressCost: expressCost,
-                name: name,
-                user_id: user_id,
-                comment: comment,
-                price: price
-            }, {
-                transaction: transaction
-            }).then((order) => {
-                if (order) {
-                    var promises = [];
-                    for (var i = 0; i < goodList.length; i++) {
-                        var _good = goodList[i];
-                        promises.push(goodDao.out(_good.id, _good.amount, price, _good.attr,
-                            user_id, orderId));
-                    }
-                    return Promise.all(promises).then((result) => {
-                        return this.ajaxModel(200, '创建成功!');
-                    });
+    create(transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment) {
+        return this.model.Order.create({
+            id: orderId,
+            expressId: expressId,
+            expressCost: expressCost,
+            name: name,
+            user_id: user_id,
+            comment: comment,
+            price: price
+        }, {
+            transaction: transaction
+        }).then((order) => {
+            if (order) {
+                var promises = [];
+                for (var i = 0; i < goodList.length; i++) {
+                    var _good = goodList[i];
+                    promises.push(goodDao.out(_good.id, _good.amount, price, _good.attr,
+                        user_id, orderId));
                 }
-            });
+                return Promise.all(promises).then((result) => {
+                    return this.ajaxModel(200, '创建成功!');
+                });
+            }
         });
     }
 
