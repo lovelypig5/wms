@@ -7,16 +7,9 @@ var ajaxModel = (status, ret) => {
         status: status,
         ret: ret
     };
-}
+};
 
 class BaseApi {
-
-    ajaxModel(status, ret) {
-        return {
-            status: status,
-            ret: ret
-        };
-    }
 
     handleErr(err) {
         logger.error(err);
