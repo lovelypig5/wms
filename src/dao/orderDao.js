@@ -33,7 +33,7 @@ class OrderDao extends BaseDao {
                 var promises = [];
                 for (var i = 0; i < goodList.length; i++) {
                     var _good = goodList[i];
-                    promises.push(goodDao.out(_good.id, _good.amount, price, _good.attr,
+                    promises.push(goodDao.out(transaction, _good.id, _good.amount, price, _good.attr,
                         user_id, orderId));
                 }
                 return Promise.all(promises).then((result) => {

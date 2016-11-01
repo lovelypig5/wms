@@ -1,9 +1,8 @@
-var Sequelize = require('sequelize'),
-    sequelize = require('../db/sequelize');
+var Sequelize = require('sequelize');
 var BaseDao = require('./baseDao');
 
 var comparer = (a, b) => {
-    return a > b ? 1 : -1;
+    return parseInt(a) > parseInt(b) ? 1 : -1;
 };
 
 class GoodsDao extends BaseDao {
@@ -326,7 +325,7 @@ class GoodsDao extends BaseDao {
                 throw new this.ERRORS.NotFound('没有找到指定的商品！');
             } else {
                 if (good.count < amount) {
-                    throw new this.ERRORS.NotEnough('库存不足！');
+                    throw new this.ERRORS.NotEnough(good.name + '库存不足！');
                 } else {
                     var attr_ids = [];
                     if (attr) {

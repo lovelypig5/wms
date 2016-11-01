@@ -5,8 +5,8 @@ class OrderService extends Service {
 
     create(user_id, orderId, expressId, expressCost, name, price, goodList, comment) {
         return this.db.transaction((transaction) => {
-            orderDao.create(transaction, user_id, orderId, expressId, expressCost, name, price, goodList,
-                comment);
+            return orderDao.create(transaction, user_id, orderId, expressId, expressCost, name, price,
+                goodList, comment);
         });
     }
 
