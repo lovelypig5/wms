@@ -42,11 +42,11 @@
                                                 <td>
                                                     {{order.price}}
                                                 </td>
-                                                <td><a href="javascript:void(0)" @click="expand(order)" v-if="!order.goodList">展开</a>
-                                                    <div v-if="order.goodList && order.goodList.length > 0" v-for="good in order.goodList">
-                                                        <span>{{ good.name }}</span>
-                                                        <span>({{ good.attrs | join-attrs }})</span>
-                                                        <span>*{{ good.amount }}</span>
+                                                <td>
+                                                    <div v-for="record in order.records">
+                                                        <span>{{ record.good.name }}</span>
+                                                        <span>({{ record.attrs | join-attrs }})</span>
+                                                        <span> * {{ record.amount }}</span>
                                                     </div>
                                                 </td>
                                                 <td>

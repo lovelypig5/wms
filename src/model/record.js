@@ -21,6 +21,7 @@ var Record = sequelize.define('record', {
     }
 }, {
     freezeTableName: true,
+    underscored: true,
     timestamps: false
 });
 
