@@ -1,6 +1,3 @@
-var Promise = require('promise');
-var async = require('async');
-var pool = require('../db/pool');
 var model = require('../model');
 var logger = require('../logger'),
     MESSAGES = require('../config/message'),

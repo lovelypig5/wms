@@ -53,6 +53,8 @@ Record.belongsToMany(Attr, {
     timestamps: false
 });
 
+Order.hasMany(Record);
+
 module.exports = {
     User: User,
     Good: Good,

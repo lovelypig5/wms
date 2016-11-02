@@ -1,44 +1,10 @@
-<template>
-    <div class="panel panel-primary good-list">
-        <div class="panel-heading">商品列表</div>
-        <table class="table" v-if="!loading.fetch && goodList.length > 0">
-            <thead>
-                <tr>
-                    <th>商品名称</th>
-                    <th>库存数量</th>
-                    <th>操作</th>
-                    <th>库存趋势</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="item" v-for="good in goodList">
-                    <td>
-                        <a href="javascript:void(0)" v-link="{name: 'detail', params: {id: good.id} }">{{good.name}}</a>
-                    </td>
-                    <td>{{good.count}}</td>
-                    <td>
-                        <a href="javascript:void(0)" v-link="{path: '/goods/in', query: {id: good.id, name: good.name} }">入库</a>
-                        <a href="javascript:void(0)" v-link="{path: '/goods/out', query: {id: good.id, name: good.name} }">出库</a>
-                    </td>
-                    <td>
-                        <a href="javascript:void(0)" v-link="{path: '/goods/analysis', params: {id: good.id}}">趋势</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="empty" v-if="!loading.fetch && goodList.length == 0">
-            <div class="msg">商品列表为空</div>
-        </div>
-        <div v-if="loading.fetch">
-            <div class="loading audio-wave"></div>
-        </div>
-    </div>
-</template>
 <script>
+import template from 'templates/goods/goodList.html';
 import API from '../../config/api';
 import actions from '../../vuex/actions';
 
 var GoodList = Vue.extend({
+    template: template,
     name: 'goodList',
     data() {
         return {
@@ -66,7 +32,8 @@ var GoodList = Vue.extend({
                     pageSize: 10,
                     count: 0
                 }
-            } else {
+            }
+            else {
                 self.params.page += 1;
             }
 

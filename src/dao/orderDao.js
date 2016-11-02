@@ -60,8 +60,23 @@ class OrderDao extends BaseDao {
             offset: offset,
             attributes: [
                 [Sequelize.fn('DATE_FORMAT', Sequelize.col('expressDate'), '%Y-%m-%d'), 'date'],
-                'id', 'expressCost', 'expressId', 'name', 'price', 'comment'
+                'id', 'expressCost', 'expressId', 'name', 'price', 'comment', 'expressDate'
             ],
+            include: [{
+                model: this.model.Record,
+                include: [{
+                    model: this.model.Good,
+                    attributes: ['name'],
+                    where: {
+                        user_id: user_id
+                    }
+                }, {
+                    model: this.model.Attr,
+                    through: {
+                        attributes: []
+                    }
+                }]
+            }],
             where: {
                 user_id: user_id
             },

@@ -30,6 +30,7 @@ var Order = sequelize.define('order', {
     }
 }, {
     freezeTableName: true,
+    underscored: true,
     tableName: 'order',
     timestamps: false
 });

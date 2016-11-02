@@ -607,7 +607,7 @@ class GoodsDao extends BaseDao {
      * get good trend info
      * @method trend
      * @param  {Number} user_id  : user id
-     * @param  {Number} good_id : good id
+     * @param  {Number} good_id  : good id
      * @param  {String} attr     : good attributes
      * @return {Promise}
      */
@@ -727,7 +727,9 @@ class GoodsDao extends BaseDao {
                         if (count == _count) {
                             return this.ajaxModel(200, ret);
                         } else {
-                            throw new this.ERRORS.DataError('数据错误，库存和出入库记录总数无法匹配，可能存在有库存无销售记录的商品。');
+                            this.logger.info('数据错误，库存和出入库记录总数无法匹配，可能存在有库存无销售记录的商品。');
+                            return this.ajaxModel(200, ret);
+                            // throw new this.ERRORS.DataError('数据错误，库存和出入库记录总数无法匹配，可能存在有库存无销售记录的商品。');
                         }
                     } else {
                         return this.ajaxModel(200, ret);

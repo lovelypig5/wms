@@ -8,6 +8,6 @@ Vue.use(i18n, {
         en: en,
         zh: zh
     }
-})
+});
 
-export default {}
+export default {};
