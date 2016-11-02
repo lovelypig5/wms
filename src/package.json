@@ -1,28 +1,27 @@
 {
-  "name": "expr",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "AGPL-3.0",
-  "devDependencies": {},
-  "directories": {
-    "test": "test"
-  },
-  "dependencies": {
-    "async": "^1.5.2",
-    "body-parser": "^1.15.0",
-    "chart.js": "^1.1.1",
-    "cookie-parser": "^1.4.1",
-    "cookie-session": "^1.2.0",
-    "express": "^4.13.3",
-    "express-history-api-fallback": "^2.0.0",
-    "log4js": "^0.6.33",
-    "mysql": "^2.10.2",
-    "promise": "^7.1.1",
-    "sequelize": "^3.24.5"
-  },
-  "description": ""
+    "name": "wms-service",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "AGPL-3.0",
+    "devDependencies": {},
+    "directories": {
+        "test": "test"
+    },
+    "dependencies": {
+        "async": "^1.5.2",
+        "body-parser": "^1.15.0",
+        "chart.js": "^1.1.1",
+        "cookie-parser": "^1.4.1",
+        "cookie-session": "^1.2.0",
+        "express": "^4.13.3",
+        "express-history-api-fallback": "^2.0.0",
+        "log4js": "^0.6.33",
+        "mysql": "^2.10.2",
+        "sequelize": "^3.24.5"
+    },
+    "description": ""
 }
