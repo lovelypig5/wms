@@ -26,6 +26,7 @@ var Good = Vue.extend({
                 fetch: false
             },
             goodList: [],
+            outList: [],
             choose: "",
         }
     },
@@ -65,6 +66,7 @@ var Good = Vue.extend({
     },
     ready() {
         this.getGoods();
+        this.getOutList();
         this.getData();
     },
     methods: {
@@ -83,21 +85,46 @@ var Good = Vue.extend({
 
             $.ajax({
                 url: API.goodList,
-                data: self.params,
-                success(resp) {
-                    self.goodList = resp.content;
-                    self.params.total = resp.total;
-                    self.params.totalPage = resp.total / self.params.pageSize;
-                },
-                error(resp) {
-                    self.alert({
-                        show: true,
-                        msg: '拉取商品列表失败',
-                        type: 'error'
-                    })
-                }
+                data: self.params
+            }).done((resp) => {
+                self.goodList = resp.content;
+                self.params.total = resp.total;
+                self.params.totalPage = resp.total / self.params.pageSize;
+            }).fail((resp) => {
+                self.alert({
+                    show: true,
+                    msg: '拉取商品列表失败',
+                    type: 'error'
+                })
             }).always(() => {
                 self.loading.fetch = !self.loading.fetch;
+            })
+        },
+        getOutList() {
+            var self = this;
+
+            if (self.loading.fetchOutlist) {
+                return;
+            }
+            self.loading.fetchOutlist = !self.loading.fetchOutlist;
+
+            $.ajax({
+                url: API.outList,
+                data: {
+                    page: 1,
+                    pageSize: 10,
+                    type: 1
+                }
+            }).done((resp) => {
+                self.outList = resp.content;
+            }).fail((resp) => {
+                self.alert({
+                    show: true,
+                    msg: '拉取出库记录失败',
+                    type: 'error'
+                })
+            }).always(() => {
+                self.loading.fetchOutlist = !self.loading.fetchOutlist;
             })
         },
         getData() {
