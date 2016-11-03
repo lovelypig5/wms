@@ -1,62 +1,60 @@
-<template>
-    <nav class="center">
-        <ul class="pagination" v-show="pagination.count > 1">
-            <li :class="{disabled: pagination.page <= 1}" @click="back10">
-                <a href="javascript:void(0)" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li v-for="i in pagination.count" v-if="i >= this.lower && i < this.upper" :class="{active: pagination.page == i + 1}" @click="change(i+1)"><a href="javascript:void(0)">{{ i + 1 }}</a></li>
-            <li :class="{disabled: pagination.page >= pagination.count}" @click="forword10">
-                <a href="javascript:void(0)" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</template>
 <script>
+import template from 'templates/common/pagination.html';
 var Pagination = Vue.extend({
-    props: ['pagination', 'change'],
+    template: template,
+    props: ['pagination', 'change', 'pageNum'],
+    created() {
+        if (!this.pageNum) {
+            this.pageNum = 10;
+        }
+        this.pageNum = parseInt(this.pageNum);
+    },
     computed: {
-        lower(){
-            var lower = this.pagination.page - 5;
-            var upper = this.pagination.page + 5;
-            if(upper > this.pagination.count){
-                lower = this.pagination.count - 10;
+        pageNumHalf() {
+            return Math.ceil(this.pageNum / 2);
+        },
+        lower() {
+            var lower = this.pagination.page - this.pageNumHalf;
+            var upper = this.pagination.page + this.pageNumHalf - 1;
+            if (upper > this.totalPage) {
+                lower = this.totalPage - this.pageNum;
             }
-            if(lower < 0){
+            if (lower < 0) {
                 lower = 0;
             }
 
             return lower;
         },
-        upper(){
-            var lower = this.pagination.page - 5;
-            var upper = this.pagination.page + 5;
-            if(lower < 0){
-                upper = 10;
+        upper() {
+            var lower = this.pagination.page - this.pageNumHalf;
+            var upper = this.pagination.page + this.pageNumHalf - 1;
+            if (lower < 0) {
+                upper = this.pageNum;
             }
-            if(upper > this.pagination.count){
-                upper = this.pagination.count;
+            if (upper > this.totalPage) {
+                upper = this.totalPage;
             }
 
             return upper;
+        },
+        totalPage() {
+            return Math.ceil(this.pagination.count / this.pagination.pageSize);
         }
     },
     methods: {
-        back10() {
+        back() {
             if (this.pagination.page <= 1) {
                 return
             }
-            var page = this.pagination.page - 10 < 1 ? 1 : this.pagination.page - 10;
+            var page = this.pagination.page - this.pageNum < 1 ? 1 : this.pagination.page - this.pageNum;
             this.change(page);
         },
-        forword10() {
-            if (this.pagination.page >= this.pagination.count) {
+        forword() {
+            if (this.pagination.page >= this.totalPage) {
                 return
             }
-            var page = this.pagination.page + 10 > this.pagination.count ? this.pagination.count : this.pagination.page + 10;
+            var page = this.pagination.page + this.pageNum > this.totalPage ? this.totalPage : this.pagination.page +
+                this.pageNum;
             this.change(page);
         }
     }
