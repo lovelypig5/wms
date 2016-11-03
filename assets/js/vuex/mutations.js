@@ -13,7 +13,7 @@ const mutations = {
     ISLOGIN(state, obj) {
         $.ajax({
             url: API.isLogin
-        })
+        });
     },
     LOGOUT(state, obj) {
         $.ajax({
@@ -30,9 +30,9 @@ const mutations = {
                     show: true,
                     msg: resp.responseText || '登出失败',
                     type: 'error'
-                })
+                });
             }
-        })
+        });
     },
     MODAL(state, obj) {
         if (obj) {
@@ -41,7 +41,7 @@ const mutations = {
                 show: false,
                 type: 'default',
                 component: ''
-            }
+            };
             state.modal.options = obj.options;
             state.modal.show = obj.show;
             state.modal.component = obj.component;
@@ -62,7 +62,7 @@ const mutations = {
                     show: false,
                     msg: '',
                     type: 'default'
-                }
+                };
             }
             state.alert.show = !!obj.show;
             state.alert.msg = obj.msg;
@@ -77,8 +77,8 @@ const mutations = {
                     show: false,
                     msg: '',
                     type: 'default'
-                }
-            }, 2000)
+                };
+            }, 2000);
         }
     },
     USER(state, obj) {
@@ -92,14 +92,14 @@ const mutations = {
                     show: true,
                     msg: '拉取用户信息失败',
                     type: 'error'
-                })
+                });
             }
-        })
+        });
     },
     LOCALE(state, lang) {
         Vue.config.lang = lang;
         state.lang = lang;
     }
-}
+};
 
 export default mutations;

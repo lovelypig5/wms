@@ -2,9 +2,8 @@
 import template from 'templates/app.html';
 import store from './vuex/store';
 import acitons from './vuex/actions';
-import AppHeader from './layout/appHeader.vue';
-import AppFooter from './layout/appFooter.vue';
 import Common from './common/index.vue';
+import AppHeader from './layout/appHeader.vue';
 import LoginPopup from './common/login.vue';
 
 $.ajaxSetup({
@@ -29,7 +28,6 @@ var App = Vue.extend({
     store,
     components: {
         appHeader: AppHeader,
-        appFooter: AppFooter,
         common: Common
     }
 })
