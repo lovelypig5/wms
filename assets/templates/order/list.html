@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="table-responsive">
-                                <table class="table" v-if="!loading.fetch && orderList.length > 0">
+                                <table class="table table-bordered table-hover table-striped" v-if="!loading.fetch && orderList.length > 0">
                                     <thead>
                                         <tr>
                                             <th>订单号</th>
@@ -22,50 +22,47 @@
                                             <th>快递费用</th>
                                             <th>收件人</th>
                                             <th>价格</th>
-                                            <th>操作</th>
+                                            <th>详细商品</th>
                                             <th>发货时间</th>
+                                            <th>备注</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <template v-for="order in orderList">
-                                            <tr class="item" >
-                                                <td>
-                                                    {{order.id}}
-                                                </td>
-                                                <td>{{order.expressId}}</td>
-                                                <td>
-                                                    {{order.expressCost}}
-                                                </td>
-                                                <td>
-                                                    {{order.name}}
-                                                </td>
-                                                <td>
-                                                    {{order.price}}
-                                                </td>
-                                                <td>
-                                                    <div v-for="record in order.records">
-                                                        <span>{{ record.good.name }}</span>
-                                                        <span>({{ record.attrs | join-attrs }})</span>
-                                                        <span> * {{ record.amount }}</span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    {{order.date}}
-                                                </td>
-                                            </tr>
-                                            <tr v-if="order.comment">
-                                                <td colspan="7">{{order.comment}}</td>
-                                            </tr>
-                                        </template>
+                                        <tr class="item" v-for="order in orderList">
+                                            <td>
+                                                {{order.id}}
+                                            </td>
+                                            <td>{{order.expressId}}</td>
+                                            <td>
+                                                {{order.expressCost}}
+                                            </td>
+                                            <td>
+                                                {{order.name}}
+                                            </td>
+                                            <td>
+                                                {{order.price}}
+                                            </td>
+                                            <td>
+                                                <div v-for="record in order.records">
+                                                    <span>{{ record.good.name }}</span>
+                                                    <span>({{ record.attrs | join-attrs }})</span>
+                                                    <span> * {{ record.amount }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {{order.date}}
+                                            </td>
+                                            <td>{{order.comment}}</td>
+                                        </tr>
                                     </tbody>
                                 </table>
-                                <pagination :pagination="params" :change="change"></pagination>
                                 <div class="empty" v-if="!loading.fetch && orderList.length == 0">
                                     <div class="msg">商品列表为空</div>
                                 </div>
                                 <div v-if="loading.fetch">
                                     <div class="loading audio-wave"></div>
                                 </div>
+                                <pagination :pagination="params" :change="change"></pagination>
                             </div>
                         </div>
                     </div>
