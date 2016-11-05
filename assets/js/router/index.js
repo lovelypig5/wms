@@ -13,6 +13,11 @@ if (WEBPACK_DEBUG) {
 }
 
 router.map({
+    '/login': {
+        component(resolve) {
+            require(['../features/login.vue'], resolve);
+        }
+    },
     '/': {
         component(resolve) {
             require(['../features/home/index.vue'], resolve);
