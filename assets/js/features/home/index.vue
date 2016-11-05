@@ -1,13 +1,15 @@
 <script>
 import template from 'templates/home/index.html';
 import AppHeader from '../../layout/appHeader.vue';
+import AppFooter from '../../layout/appFooter.vue';
 import DICT from '../../config/dict';
 
 var Home = Vue.extend({
     template: template,
     name: 'home',
     components: {
-        appHeader: AppHeader
+        appHeader: AppHeader,
+        appFooter: AppFooter
     },
     data() {
         return {
