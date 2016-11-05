@@ -1,0 +1,36 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="login-panel panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">请先登录</h3>
+                </div>
+                <div class="panel-body">
+                    <validator name="v">
+                        <fieldset>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="用户名" aria-describedby="userName" v-model="userName" v-validate:name="{required:true}" :class="{'red-border': $v.name && $v.name.touched && $v.name.invalid}" @keyup.enter="doLogin" />
+                            </div>
+                            <div class="form-group error-msg" v-if="$v.name.touched && $v.name.invalid">
+                                <div v-if="$v.name.required" class="red-color">用户名不能为空</div>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="密码" aria-describedby="password" v-model="password" v-validate:password="{required:true}" :class="{'red-border': $v.password && $v.password.touched && $v.password.invalid}" @keyup.enter="doLogin"
+                                />
+                            </div>
+                            <div class="form-group error-msg" v-if="$v.password.touched && $v.password.invalid">
+                                <div v-if="$v.password.required" class="red-color">密码不能为空</div>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input name="remember" type="checkbox" value="Remember Me">记住我
+                                </label>
+                            </div>
+                            <a href="javascript:void(0)" class="btn btn-lg btn-success btn-block" @click="doLogin">登录</a>
+                        </fieldset>
+                    </validator>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

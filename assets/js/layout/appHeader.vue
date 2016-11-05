@@ -1,74 +1,16 @@
 <script>
 import template from 'templates/layout/appHeader.html';
-import LoginPopup from '../common/login.vue';
+import LeftMenu from './leftMenu.vue';
 import actions from '../vuex/actions';
 
 var AppHeader = Vue.extend({
     template: template,
+    name: 'header',
     ready() {
         this.getUser();
     },
-    data() {
-        var navs = [{
-            name: Vue.t("home"),
-            path: '/home',
-            className: 'fa-dashboard',
-            children: []
-        }, {
-            name: Vue.t("goods"),
-            path: '/goods',
-            className: 'fa-bar-chart-o',
-            children: [{
-                name: Vue.t("text_goods_list"),
-                path: '/goods/list',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_out"),
-                path: '/goods/out',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_in"),
-                path: '/goods/in',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_outlist"),
-                path: '/goods/outList',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_inlist"),
-                path: '/goods/inList',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_create"),
-                path: '/goods/create',
-                className: '',
-                children: []
-            }]
-        }, {
-            name: Vue.t("order"),
-            path: '/order/list',
-            className: 'fa-table',
-            children: [{
-                name: Vue.t("text_order_list"),
-                path: '/order/list',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_order_create"),
-                path: '/order/create',
-                className: '',
-                children: []
-            }]
-        }]
-
-        return {
-            navs: navs
-        };
+    components: {
+        leftMenu: LeftMenu
     },
     vuex: {
         getters: {
@@ -78,13 +20,8 @@ var AppHeader = Vue.extend({
         actions: {
             changeLocale: actions.changeLocale,
             login(store) {
-                actions.modal(store, {
-                    show: true,
-                    type: 'default',
-                    options: {
-                        backdrop: 'static'
-                    },
-                    component: LoginPopup
+                this.$route.router.go({
+                    path: '/login'
                 })
             },
             logout: actions.logout,
