@@ -78,7 +78,7 @@ var OutList = Vue.extend({
                 data: self.params
             }).done((resp) => {
                 self.outList = resp.content;
-                self.params.count = Math.ceil(resp.count / self.params.pageSize);
+                self.params.count = resp.count;
             }).fail((resp) => {
                 self.alert({
                     show: true,

@@ -53,7 +53,7 @@ var OrderList = Vue.extend({
                 data: self.params,
                 success(resp) {
                     self.orderList = resp.content;
-                    self.params.count = Math.ceil(resp.count / self.params.pageSize);
+                    self.params.count = resp.count;
                 },
                 error(resp) {
                     self.alert({
