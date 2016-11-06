@@ -1,8 +1,18 @@
 var Sequelize = require('sequelize');
 var BaseDao = require('./baseDao');
 
-var comparer = (a, b) => {
-    return parseInt(a) > parseInt(b) ? 1 : -1;
+var permutations = (arr, num) => {
+    var r = [];
+    var f = (t, a, n) => {
+        if (n === 0) {
+            return r.push(t);
+        }
+        for (var i = 0, l = a.length; i < l; i++) {
+            f(t.concat(a[i]), a.slice(0, i).concat(a.slice(i + 1)), n - 1);
+        }
+    };
+    f([], arr, num);
+    return r;
 };
 
 class GoodsDao extends BaseDao {
@@ -195,12 +205,19 @@ class GoodsDao extends BaseDao {
                 attrs.forEach((item) => {
                     attr_ids.push(item.id);
                 });
-                attr_ids.sort(comparer);
+                var temp = permutations(attr_ids, attr_ids.length);
+                var ors = [];
+                for (var i = 0; i < temp.length; i++) {
+                    ors.push({
+                        attr_id: temp[i].join(',')
+                    });
+                }
+
                 promises.push(this.model.GoodSub.findOne({
                     include: [{
                         model: this.model.V_Attr,
                         where: {
-                            attr_id: attr_ids.join(',')
+                            $or: ors
                         }
                     }],
                     where: {
@@ -330,7 +347,6 @@ class GoodsDao extends BaseDao {
                     var attr_ids = [];
                     if (attr) {
                         attr_ids = attr.split(',');
-                        attr_ids.sort(comparer);
                     }
                     var promises = [good.update({
                         count: good.count - amount
@@ -362,11 +378,18 @@ class GoodsDao extends BaseDao {
                     })];
 
                     if (attr) {
+                        var temp = permutations(attr_ids, attr_ids.length);
+                        var ors = [];
+                        for (var i = 0; i < temp.length; i++) {
+                            ors.push({
+                                attr_id: temp[i].join(',')
+                            });
+                        }
                         promises.push(this.model.GoodSub.findOne({
                             include: {
                                 model: this.model.V_Attr,
                                 where: {
-                                    attr_id: attr_ids.join(',')
+                                    $or: ors
                                 }
                             },
                             where: {
@@ -414,7 +437,6 @@ class GoodsDao extends BaseDao {
                 id: id
             }
         });
-        attrs.sort(comparer);
 
         return p.then((good) => {
             if (!good) {
@@ -449,11 +471,18 @@ class GoodsDao extends BaseDao {
                 })];
 
                 if (attrs.length > 0) {
+                    var temp = permutations(attrs, attrs.length);
+                    var ors = [];
+                    for (var i = 0; i < temp.length; i++) {
+                        ors.push({
+                            attr_id: temp[i].join(',')
+                        });
+                    }
                     promises.push(this.model.GoodSub.findOne({
                         include: {
                             model: this.model.V_Attr,
                             where: {
-                                attr_id: attrs
+                                $or: ors
                             }
                         },
                         where: {
@@ -523,8 +552,8 @@ class GoodsDao extends BaseDao {
     }
 
     /**
-     * add attr to good*
-@method addAttr
+     * add attr to good
+     * @method addAttr
      * @param  {Number} user_id : user id
      * @param  {Number} good_id : good id
      * @param  {String} attr    : good attr
