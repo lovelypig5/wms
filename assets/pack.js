@@ -30,7 +30,7 @@ module.exports = (modulePath) => {
             })
         ],
         module: {
-            loaders: []
+            rules: []
         },
         resolve: {
             alias: {
