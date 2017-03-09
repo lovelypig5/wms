@@ -8,6 +8,7 @@
     <meta name="author" content="out2man">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>仓储管理系统</title>
+    <%=htmlWebpackPlugin.files.webpackManifest%>
 </head>
 
 <body>
