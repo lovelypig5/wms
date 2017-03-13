@@ -17,5 +17,5 @@ const actions = {
     isLogin(store) {
         store.dispatch('ISLOGIN');
     }
-}
+};
 export default actions;

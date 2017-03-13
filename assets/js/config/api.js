@@ -22,6 +22,6 @@ var api = {
     isLogin: '/isLogin',
     login: '/login',
     logout: '/logout'
-}
+};
 
 export default api;
