@@ -16,7 +16,8 @@ var GoodDetail = Vue.extend({
             loading: {
                 fetch: false,
                 add: false
-            }
+            },
+            filters: []
         }
     },
     ready() {
@@ -30,6 +31,36 @@ var GoodDetail = Vue.extend({
             },
             html: true
         });
+    },
+    computed: {
+        filteredList() {
+            if (!this.filters.length) {
+                return this.good.list;
+            }
+            let list = [];
+            this.good.list.forEach((item) => {
+                let attrs = [];
+                if (this.filters.length <= item.attrs.length) {
+                    item.attrs.forEach((attr) => {
+                        attrs.push(attr.attr)
+                    })
+                }
+
+                let result = true;
+                this.filters.forEach((filter) => {
+                    if (attrs.indexOf(filter) == -1) {
+                        result = false;
+                        return;
+                    }
+                })
+
+                if (result) {
+                    list.push(item);
+                }
+            });
+
+            return list;
+        }
     },
     methods: {
         addAttr() {
@@ -119,6 +150,19 @@ var GoodDetail = Vue.extend({
                     self.attrlist = [];
                 }
             })
+        },
+        filter(attr) {
+            if (this.filters.indexOf(attr) == -1) {
+                this.filters.push(attr);
+            }
+            else {
+                this.filters.splice(attr);
+            }
+        },
+        removeFilter(attr) {
+            if (this.filters.indexOf(attr) != -1) {
+                this.filters.splice(attr);
+            }
         }
     },
     vuex: {

@@ -24,7 +24,23 @@
                                         <tbody>
                                             <tr>
                                                 <td>
-                                                    <span v-for="attr in attrlist" class="attr">{{attr.attr}}</span>
+                                                    <span v-for="attr in attrlist" class="attr" @click="filter(attr.attr)">{{attr.attr}}</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div v-if="filters.length > 0">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>已选过滤条件 (点击下方已选条件取消选择)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <span v-for="attr in filters" class="attr" @click="removeFilter(attr)">{{attr}}</span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -49,7 +65,7 @@
                                                 <a href="javascript:void(0)" v-link="{path: '/goods/analysis'}">趋势</a>
                                             </td>
                                         </tr>
-                                        <tr class="item" v-for="g in good.list">
+                                        <tr class="item" v-for="g in filteredList">
                                             <td>{{g.attrs | join-attrs}}</td>
                                             <td>{{g.count}}</td>
                                             <td>

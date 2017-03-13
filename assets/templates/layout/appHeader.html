@@ -201,7 +201,7 @@
                     <i class="fa fa-user fa-fw"></i> {{user.name}} <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user" v-if="user.id">
-                    <li v-if="user.id"><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                    <li v-if="user.id" v-link="{path: '/goods', activeClass: 'active'}"><a href="#"><i class="fa fa-gear fa-fw"></i>{{$t('text_goods_list')}} </a>
                     </li>
                     <li><a href="javascript:void(0)" @click="changeLocale('en')"><i class="fa fa-language fa-fw"></i> {{$t('text_language')}}</a></li>
                     <li class="divider"></li>
