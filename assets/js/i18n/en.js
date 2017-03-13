@@ -21,5 +21,5 @@ const EN = {
 
     action_login: 'log in',
     action_logout: 'log out',
-}
+};
 export default EN;

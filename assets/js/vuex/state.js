@@ -14,6 +14,6 @@ const state = {
     },
     user: {},
     lang: Vue.config.lang
-}
+};
 
 export default state;

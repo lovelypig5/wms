@@ -4,6 +4,7 @@ import API from '../config/api';
 import store from '../vuex/store';
 import actions from '../vuex/actions';
 import Validator from '../validator';
+import Cookies from 'js-cookie';
 Validator.init();
 
 var Login = Vue.extend({
@@ -11,9 +12,11 @@ var Login = Vue.extend({
     template: template,
     name: 'login',
     data() {
+        var rememberMe = !!Cookies.get('rememberMe');
         return {
-            userName: "",
-            password: "",
+            userName: rememberMe ? Cookies.get('name') : "",
+            password: rememberMe ? Cookies.get('password') : "",
+            rememberMe: rememberMe,
             loading: {
                 login: false
             }
@@ -40,7 +43,25 @@ var Login = Vue.extend({
                     password: self.password
                 })
             }).done((resp) => {
-                $("#close").click();
+                if (self.rememberMe) {
+                    Cookies.set('rememberMe', self.rememberMe, {
+                        expires: 365,
+                        domain: 'wms.out2man.com'
+                    });
+                    Cookies.set('name', self.userName, {
+                        expires: 365,
+                        domain: 'wms.out2man.com'
+                    });
+                    Cookies.set('password', self.password, {
+                        expires: 365,
+                        domain: 'wms.out2man.com'
+                    });
+                }
+                else {
+                    Cookies.remove('rememberMe');
+                    Cookies.remove('name');
+                    Cookies.remove('password');
+                }
                 self.getUser();
                 self.$route.router.go({
                     path: '/goods'
