@@ -13,7 +13,10 @@ module.exports = (modulePath) => {
         // if single entry is used, bundle name will be named as main.js
         entry: {
             main: "./index",
-            common: ['jquery', 'vue', 'vue-router', 'vue-i18n', 'vue-validator', 'vuex', 'taggle', 'select2']
+            common: [
+                'jquery', 'vue', 'vue-router', 'vue-i18n', 'vue-validator', 'vuex',
+                'taggle', 'select2', 'js-cookie'
+            ]
         },
         output: {
             publicPath: '/'
