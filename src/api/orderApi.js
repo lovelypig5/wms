@@ -80,12 +80,8 @@ class OrderApi extends BaseApi {
 
     sync(req, res) {
         var user_id = req.session.user.id;
-        var orders = JSON.parse(unescape(req.body.orders));
-        orders.forEach((order) => {
-            order.goods.forEach((good) => {
-                console.log(JSON.stringify(good));
-            })
-        })
+        var result = unescape(req.body.orders);
+        var orders = JSON.parse(result);
         res.status(200).json(orders);
     }
 }
