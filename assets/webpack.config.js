@@ -14,8 +14,15 @@ module.exports = (modulePath) => {
         entry: {
             main: "./index",
             common: [
-                'jquery', 'vue', 'vue-router', 'vue-i18n', 'vue-validator', 'vuex',
-                'taggle', 'select2', 'js-cookie'
+                'jquery',
+                'vue',
+                'vue-router',
+                'vue-i18n',
+                'vue-validator',
+                'vuex',
+                'taggle',
+                'select2',
+                'js-cookie'
             ]
         },
         output: {
@@ -23,11 +30,7 @@ module.exports = (modulePath) => {
         },
         // plugins example, default no more
         plugins: [
-            new webpack.ProvidePlugin({
-                Vue: 'vue',
-                $: "jquery",
-                jQuery: "jquery"
-            }),
+            new webpack.ProvidePlugin({Vue: 'vue', $: "jquery", jQuery: "jquery"}),
             new HtmlWebpackPlugin({
                 template: './index.tpl',
                 filename: './index.html',
@@ -46,7 +49,8 @@ module.exports = (modulePath) => {
         },
         resolve: {
             alias: {
-                templates: path.resolve("./templates")
+                templates: path.resolve("./templates"),
+                config: path.resolve("./js/config")
             }
         },
         externals: [],

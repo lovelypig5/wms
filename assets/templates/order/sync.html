@@ -1,0 +1,77 @@
+<div>
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">{{ $t('text_order_sync') }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-primary good-list">
+                <div class="panel-heading">
+                    <i class="fa fa-bar-chart-o fa-fw"></i> {{ $t('text_order_sync') }}
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-striped" v-if="!loading.fetch && orderList.length > 0">
+                                    <thead>
+                                        <tr>
+                                            <th>订单号</th>
+                                            <th>快递单号</th>
+                                            <th>快递费用</th>
+                                            <th>收件人</th>
+                                            <th>价格</th>
+                                            <th>详细商品</th>
+                                            <th>发货时间</th>
+                                            <th>备注</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="item" v-for="order in orderList">
+                                            <td>
+                                                {{order.id}}
+                                            </td>
+                                            <td>{{order.expressId}}</td>
+                                            <td>
+                                                {{order.expressCost}}
+                                            </td>
+                                            <td>
+                                                {{order.name}}
+                                            </td>
+                                            <td>
+                                                {{order.price}}
+                                            </td>
+                                            <td>
+                                                <div v-for="record in order.records">
+                                                    <span>{{ record.good.name }}</span>
+                                                    <span>({{ record.attrs | join-attrs }})</span>
+                                                    <span> * {{ record.amount }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {{order.date}}
+                                            </td>
+                                            <td>{{order.comment}}</td>
+                                            <td><i class="fa fa-pencil-square-o" aria-hidden="true" @click="edit(record)" v-if="!record.edit"></i>
+                                                <i class="fa fa-floppy-o" aria-hidden="true" v-if="record.edit" @click="save(record)"></i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="empty" v-if="!loading.fetch && orderList.length == 0">
+                                    <div class="msg">商品列表为空</div>
+                                </div>
+                                <div v-if="loading.fetch">
+                                    <div class="loading audio-wave"></div>
+                                </div>
+                                <pagination :pagination="params" :change="change"></pagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -19,11 +19,11 @@ const ZH = {
 
     text_order_list: '订单列表',
     text_order_create: '创建订单',
+    text_order_sync: '同步订单',
 
     text_goods_outlist_recent: '最近出库记录',
 
     action_login: '登录',
-    action_logout: '退出登录',
-
+    action_logout: '退出登录'
 };
 export default ZH;

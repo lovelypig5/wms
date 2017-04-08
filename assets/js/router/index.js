@@ -7,9 +7,7 @@ var router;
 if (WEBPACK_DEBUG) {
     router = new Router();
 } else {
-    router = new Router({
-        history: true
-    });
+    router = new Router({history: true, saveScrollPosition: true});
 }
 
 router.map({
@@ -19,6 +17,10 @@ router.map({
         }
     },
     '/': {
+        canActivate: function(a) {
+            // route validation here ...
+            return false;
+        },
         component(resolve) {
             require(['../features/home/index.vue'], resolve);
         }
@@ -100,6 +102,11 @@ router.map({
             '/create': {
                 component(resolve) {
                     require(['../features/order/create.vue'], resolve);
+                }
+            },
+            '/sync': {
+                component(resolve) {
+                    require(['../features/order/sync.vue'], resolve);
                 }
             }
         }

@@ -19,8 +19,7 @@ class OrderApi extends BaseApi {
         expressId = parseInt(expressId);
         expressCost = parseInt(expressCost);
         price = parseFloat(price);
-        if (isNaN(orderId) || orderId <= 0 || isNaN(price) || price <= 0 ||
-            isNaN(expressId) || expressId <= 0 || isNaN(expressCost) || expressCost < 0) {
+        if (isNaN(orderId) || orderId <= 0 || isNaN(price) || price <= 0 || isNaN(expressId) || expressId <= 0 || isNaN(expressCost) || expressCost < 0) {
             return res.status(400).send('参数格式错误');
         }
         var goodList = body.goodList;
@@ -79,20 +78,36 @@ class OrderApi extends BaseApi {
         });
     }
 
+    sync(req, res) {
+        var user_id = req.session.user.id;
+        var orders = JSON.parse(unescape(req.body.orders));
+        orders.forEach((order) => {
+            order.goods.forEach((good) => {
+                console.log(JSON.stringify(good));
+            })
+        })
+        res.status(200).json(orders);
+    }
 }
 
 var orderApi = new OrderApi();
 
-module.exports = [{
-    method: 'post',
-    route: '/api/order/create',
-    func: orderApi.create
-}, {
-    method: 'get',
-    route: '/api/order/list',
-    func: orderApi.list
-}, {
-    method: 'get',
-    route: '/api/order/detail',
-    func: orderApi.orderDetail
-}];
+module.exports = [
+    {
+        method: 'post',
+        route: '/api/order/create',
+        func: orderApi.create
+    }, {
+        method: 'get',
+        route: '/api/order/list',
+        func: orderApi.list
+    }, {
+        method: 'get',
+        route: '/api/order/detail',
+        func: orderApi.orderDetail
+    }, {
+        method: 'post',
+        route: '/api/order/sync',
+        func: orderApi.sync
+    }
+];
