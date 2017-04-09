@@ -1,4 +1,10 @@
 (function() {
+    var DICT = {
+        '80ml美国外贸药瓶医用密封PP透明塑料瓶便携分装收纳药盒拇指瓶': '拇指瓶',
+        '美国美剧安全塑料药瓶防儿童误食pp药盒旅行收纳分装瓶正反两用瓶': '两用瓶',
+        '50ml特价创意医用密封透明pet螺旋塑料瓶定制分装瓶保健瓶小药瓶': '螺旋瓶',
+        '60ml美国创意医用密封透明定制分装pp塑料瓶旅行收纳小药瓶安全瓶': '安全瓶'
+    };
     var orders = document.getElementsByClassName('trade-order-main');
     var results = [];
     for (var i = 0; i < orders.length; i++) {
@@ -26,10 +32,19 @@
                 ret.push(attr.innerHTML);
             }
 
-            obj.goods.push({name: good.innerHTML, amount: amount.innerHTML, attrs: ret})
+            var name = DICT[good.innerHTML];
+            if (name) {
+                obj.goods.push({
+                    name: name,
+                    amount: amount.innerHTML,
+                    attrs: ret
+                })
+            }
         }
 
-        results.push(obj);
+        if (obj.goods.length > 0) {
+            results.push(obj);
+        }
     }
 
     var form = document.createElement("form");
