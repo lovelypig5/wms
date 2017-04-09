@@ -14,16 +14,23 @@
         var titleItem = tables[0];
 
         var spans = tables[0].getElementsByTagName('td')[0].getElementsByTagName('span');
+        var goods = tables[1].getElementsByTagName('tr');
+        var outTds = goods[0].getElementsByTagName('td');
+        var price = outTds[6].getElementsByClassName('price-mod__price___3Un7c')[0].getElementsByTagName('span')[1];
+        var expressPrice = outTds[6].getElementsByTagName('span')[3];
+        var buyer = outTds[4].getElementsByClassName('buyer-mod__buyer___3NRwJ')[0].getElementsByTagName('a')[0];
         obj.orderId = spans[2].innerHTML;
+        obj.name = buyer.innerHTML;
         obj.date = spans[5].innerHTML;
         obj.goods = [];
+        obj.expressPrice = Number(expressPrice.innerHTML.replace(/[^0-9.]/g, ''));
+        obj.price = Number(price.innerHTML) - obj.expressPrice;
 
-        var goods = tables[1].getElementsByTagName('tr');
         for (var j = 0; j < goods.length; j++) {
             var item = goods[j];
             var ret = [];
             var attrs = item.getElementsByClassName('production-mod__sku-item___3s6lG');
-            var tds = item.getElementsByClassName('sol-mod__no-br___toLPG');
+            var tds = item.getElementsByTagName('td');
             var good = tds[0].getElementsByTagName('p')[0].getElementsByTagName('span')[1];
             var amount = tds[2].getElementsByTagName('p')[0];
 
