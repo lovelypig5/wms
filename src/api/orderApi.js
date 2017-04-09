@@ -80,30 +80,47 @@ class OrderApi extends BaseApi {
 
     sync(req, res) {
         var user_id = req.session.user.id;
-        var result = unescape(req.body.orders);
-        var orders = JSON.parse(result);
-        res.status(200).json(orders);
+        try {
+            var result = unescape(req.body.orders);
+            var orders = JSON.parse(result);
+            orderService.sync(user_id, orders).then((result) => {
+                res.status(result.status).send('解析成功');
+            });
+        } catch (e) {
+            res.status(400).send('解析失败！');
+        }
+    }
+
+    syncList(req, res) {
+        orderService.synclist(req.session.user.id).then((list) => {
+            res.status(list.status).json(list.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
+        })
     }
 }
 
 var orderApi = new OrderApi();
 
-module.exports = [
-    {
-        method: 'post',
-        route: '/api/order/create',
-        func: orderApi.create
-    }, {
-        method: 'get',
-        route: '/api/order/list',
-        func: orderApi.list
-    }, {
-        method: 'get',
-        route: '/api/order/detail',
-        func: orderApi.orderDetail
-    }, {
-        method: 'post',
-        route: '/api/order/sync',
-        func: orderApi.sync
-    }
-];
+module.exports = [{
+    method: 'post',
+    route: '/api/order/create',
+    func: orderApi.create
+}, {
+    method: 'get',
+    route: '/api/order/list',
+    func: orderApi.list
+}, {
+    method: 'get',
+    route: '/api/order/detail',
+    func: orderApi.orderDetail
+}, {
+    method: 'post',
+    route: '/api/order/sync',
+    func: orderApi.sync
+}, {
+    method: 'get',
+    route: '/api/order/synclist',
+    func: orderApi.syncList
+}];

@@ -33,8 +33,7 @@ class OrderDao extends BaseDao {
                 var promises = [];
                 for (var i = 0; i < goodList.length; i++) {
                     var _good = goodList[i];
-                    promises.push(goodDao.out(transaction, _good.id, _good.amount, price, _good.attr,
-                        user_id, orderId));
+                    promises.push(goodDao.out(transaction, _good.id, _good.amount, price, _good.attr, user_id, orderId));
                 }
                 return Promise.all(promises).then((result) => {
                     return this.ajaxModel(200, '创建成功!');
@@ -59,8 +58,17 @@ class OrderDao extends BaseDao {
             limit: limit,
             offset: offset,
             attributes: [
-                [Sequelize.fn('DATE_FORMAT', Sequelize.col('expressDate'), '%Y-%m-%d'), 'date'],
-                'id', 'expressCost', 'expressId', 'name', 'price', 'comment', 'expressDate'
+                [
+                    Sequelize.fn('DATE_FORMAT', Sequelize.col('expressDate'), '%Y-%m-%d'),
+                    'date'
+                ],
+                'id',
+                'expressCost',
+                'expressId',
+                'name',
+                'price',
+                'comment',
+                'expressDate'
             ],
             include: [{
                 model: this.model.Record,
@@ -118,6 +126,44 @@ class OrderDao extends BaseDao {
         }).then((rows) => {
             return this.ajaxModel(200, rows);
         });
+    }
+
+    /**
+     * [sync description]
+     * @param  {[type]} user_id [description]
+     * @param  {[type]} orders  [description]
+     * @return {[type]}         [description]
+     */
+    sync(transaction, user_id, orders) {
+        var promises = [];
+        orders.forEach((order) => {
+            promises.push(this.model.SyncModel.create({
+                user_id: user_id,
+                key: 'syncOrders',
+                value: JSON.stringify(order)
+            }, {
+                transaction: transaction
+            }));
+        })
+
+        return Promise.all(promises).then((result) => {
+            return this.ajaxModel(200, '解析成功!');
+        });
+    }
+
+    /**
+     * [synclist description]
+     * @param  {[type]} user_id [description]
+     * @return {[type]}         [description]
+     */
+    synclist(user_id) {
+        return this.model.SyncModel.findAll({
+            where: {
+                user_id: user_id
+            }
+        }).then((rows) => {
+            return this.ajaxModel(200, rows);
+        })
     }
 }
 
