@@ -85,6 +85,9 @@ class OrderApi extends BaseApi {
             var orders = JSON.parse(result);
             orderService.sync(user_id, orders).then((result) => {
                 res.status(result.status).send('解析成功');
+            }, (err) => {
+                var model = super.handleErr(err);
+                res.status(model.status).send(model.ret);
             });
         } catch (e) {
             res.status(400).send('解析失败！');

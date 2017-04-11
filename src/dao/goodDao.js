@@ -505,20 +505,41 @@ class GoodsDao extends BaseDao {
      * @return {Promise}
      */
     async attrs(user_id, good_id) {
-        var rows = await this.model.Attr.findAll({
-            attributes: ['id', 'attr'],
-            include: [{
-                model: this.model.Good,
-                attributes: [],
+        var rows;
+
+        if (good_id) {
+            rows = await this.model.Attr.findAll({
+                attributes: ['id', 'attr'],
+                include: [{
+                    model: this.model.Good,
+                    attributes: [],
+                    where: {
+                        user_id: user_id,
+                        id: good_id
+                    }
+                }],
+                order: [
+                    ['attr', 'DESC']
+                ]
+            });
+        } else {
+            rows = await this.model.User.findAll({
+                attributes: ['goods.id'],
+                include: [{
+                    model: this.model.Good,
+                    include: [{
+                        model: this.model.Attr,
+                        attributes: ['id', 'attr'],
+                        through: {
+                            attributes: []
+                        }
+                    }]
+                }],
                 where: {
-                    user_id: user_id,
-                    id: good_id
+                    id: user_id
                 }
-            }],
-            order: [
-                ['attr', 'DESC']
-            ]
-        });
+            })
+        }
 
         return this.ajaxModel(200, rows);
     }

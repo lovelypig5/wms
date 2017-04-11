@@ -31,7 +31,6 @@ class OrderDao extends BaseDao {
         });
 
         if (order) {
-            var promises = [];
             for (var i = 0; i < goodList.length; i++) {
                 var _good = goodList[i];
                 await goodDao.out(transaction, _good.id, _good.amount, price, _good.attr, user_id, orderId);
@@ -132,17 +131,60 @@ class OrderDao extends BaseDao {
      * @return {[type]}         [description]
      */
     async sync(transaction, user_id, orders) {
-        var promises = [];
-        orders.forEach(async(order) => {
-            var _order = JSON.stringify(order);
-            await this.model.SyncModel.create({
-                user_id: user_id,
-                key: 'syncOrders',
-                value: JSON.stringify(order)
-            }, {
-                transaction: transaction
-            });
-        })
+        var rows = await goodDao.attrs(user_id);
+        var names = {};
+        var attrs = {};
+        rows.ret.forEach((row) => {
+            var good = row.toJSON().goods[0];
+            names[good.name] = good.id;
+
+            if (!attrs[good.name]) {
+                attrs[good.name] = {};
+            }
+            good.attrs.forEach((item) => {
+                attrs[good.name][item.attr] = item.id;
+            })
+        });
+
+        for (var t = 0; t < orders.length; t++) {
+            var order = orders[t];
+            let goods = order.goods;
+            let sync = true;
+
+            for (var i = 0; i < goods.length; i++) {
+                var good = goods[i];
+                let name = good.name;
+                let attributes = good.attrs;
+                if (!(goods[i].id = names[name])) {
+                    sync = false;
+                    continue;
+                };
+
+                let ret = [];
+                for (var j = 0; j < attributes.length; j++) {
+                    if (!attrs[name][attributes[j]]) {
+                        sync = false;
+                        continue;
+                    } else {
+                        ret.push({
+                            id: attrs[name][attributes[j]],
+                            attr: attributes[j]
+                        });
+                    }
+                }
+                goods[i].attrs = ret;
+            }
+
+            if (sync) {
+                await this.model.SyncModel.create({
+                    user_id: user_id,
+                    key: 'syncOrders',
+                    value: JSON.stringify(order)
+                }, {
+                    transaction: transaction
+                });
+            }
+        }
 
         return this.ajaxModel(200, '解析成功!');
     }
