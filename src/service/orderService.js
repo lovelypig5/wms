@@ -3,10 +3,9 @@ var orderDao = require('../dao/orderDao');
 
 class OrderService extends Service {
 
-    create(user_id, orderId, expressId, expressCost, name, price, goodList, comment) {
-        return this.db.transaction((transaction) => {
-            return orderDao.create(transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment);
-        });
+    async create(user_id, orderId, expressId, expressCost, name, price, goodList, comment) {
+        var transaction = await this.db.transaction();
+        return orderDao.create(transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment);
     }
 
     list(user_id, page, pageSize) {
@@ -17,10 +16,9 @@ class OrderService extends Service {
         return orderDao.orderDetail(user_id, order_id);
     }
 
-    sync(user_id, orders) {
-        return this.db.transaction((transaction) => {
-            return orderDao.sync(transaction, user_id, orders);
-        });
+    async sync(user_id, orders) {
+        var transaction = await this.db.transaction();
+        return orderDao.sync(transaction, user_id, orders);
     }
 
     synclist(user_id) {
