@@ -1,9 +1,6 @@
 const dict = {
     goodsMenu: [
-        {
-            i18nkey: 'text_goods_state',
-            path: ''
-        }, {
+         {
             i18nkey: 'text_goods_list',
             path: '/goods/list'
         }, {

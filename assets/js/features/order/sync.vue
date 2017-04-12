@@ -3,6 +3,7 @@ import template from 'templates/order/sync.html';
 import API from '../../config/api';
 import actions from '../../vuex/actions';
 import Pagination from '../../common/pagination.vue';
+import ETL from '!!raw-loader!../../etl.js';
 
 var SyncOrder = Vue.extend({
     template: template,
@@ -12,6 +13,7 @@ var SyncOrder = Vue.extend({
     },
     data() {
         return {
+            synclist: [],
             loading: {
                 fetch: false
             },
@@ -19,13 +21,12 @@ var SyncOrder = Vue.extend({
                 page: 1,
                 pageSize: 10,
                 count: 0
-            }
+            },
+            ETL: ETL,
+            show: false
         }
     },
     ready() {
-        $(this.$el).on('load',()=>{
-            console.log($(this.$el).contents());
-        })
         this.fetch(true);
     },
     methods: {
@@ -50,10 +51,14 @@ var SyncOrder = Vue.extend({
             self.loading.fetch = !self.loading.fetch;
 
             $.ajax({
-                url: API.orderList,
+                url: API.orderSyncList,
                 data: self.params,
                 success(resp) {
-                    self.orderList = resp.content;
+                    self.synclist = resp.map((order) => {
+                        var result = JSON.parse(order.value);
+                        result.edit = false;
+                        return result;
+                    })
                     self.params.count = resp.count;
                 },
                 error(resp) {
@@ -67,31 +72,11 @@ var SyncOrder = Vue.extend({
                 self.loading.fetch = !self.loading.fetch;
             })
         },
-        expand(order) {
-            var self = this;
-            if (self.loading.fetchGood) {
-                return;
-            }
-            self.loading.fetchGood = !self.loading.fetchGood;
-
-            $.ajax({
-                url: API.orderDetail,
-                data: {
-                    order_id: order.id
-                },
-                success(resp) {
-                    Vue.set(order, 'goodList', resp);
-                },
-                error(resp) {
-                    self.alert({
-                        show: true,
-                        msg: '获取订单商品失败',
-                        type: 'error'
-                    })
-                }
-            }).always(() => {
-                self.loading.fetchGood = !self.loading.fetchGood;
-            })
+        showScript() {
+            this.show = !this.show;
+        },
+        sync() {
+            alert('doSync')
         }
     },
     vuex: {

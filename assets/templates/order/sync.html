@@ -1,4 +1,4 @@
-<div>
+<div class="sync-order">
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">{{ $t('text_order_sync') }}</h1>
@@ -8,18 +8,28 @@
         <div class="col-lg-12">
             <div class="panel panel-primary good-list">
                 <div class="panel-heading">
-                    <i class="fa fa-bar-chart-o fa-fw"></i> {{ $t('text_order_sync') }}
+                    <i class="fa fa-bar-chart-o fa-fw"></i>
+                    {{ $t('text_order_sync') }}
                 </div>
                 <div class="panel-body">
+                    <div class="row btns">
+                        <button type="button" class="btn btn-primary float-right" @click="sync">同步</button>
+                        <button type="button" class="btn btn-primary float-right" @click="showScript">同步脚本</button>
+                    </div>
+                    <div class="row script" v-if="show">
+                        javascript:{{ ETL }}
+                    </div>
+                    <div class="row script" v-if="show">
+                        请保存书签： 将以上内容复制到网址栏中。
+                    </div>
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover table-striped" v-if="!loading.fetch && orderList.length > 0">
+                                <table class="table table-bordered table-hover table-striped" v-if="!loading.fetch && synclist.length > 0">
                                     <thead>
                                         <tr>
                                             <th>订单号</th>
                                             <th>快递单号</th>
-                                            <th>快递费用</th>
                                             <th>收件人</th>
                                             <th>价格</th>
                                             <th>详细商品</th>
@@ -29,14 +39,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="item" v-for="order in orderList">
+                                        <tr class="item" v-for="order in synclist">
                                             <td>
-                                                {{order.id}}
+                                                {{order.orderId}}
                                             </td>
                                             <td>{{order.expressId}}</td>
-                                            <td>
-                                                {{order.expressCost}}
-                                            </td>
                                             <td>
                                                 {{order.name}}
                                             </td>
@@ -44,23 +51,26 @@
                                                 {{order.price}}
                                             </td>
                                             <td>
-                                                <div v-for="record in order.records">
-                                                    <span>{{ record.good.name }}</span>
-                                                    <span>({{ record.attrs | join-attrs }})</span>
-                                                    <span> * {{ record.amount }}</span>
+                                                <div v-for="good in order.goods">
+                                                    <span>{{ good.name }}</span>
+                                                    <span>({{ good.attrs | join-attrs }})</span>
+                                                    <span>
+                                                        *
+                                                        {{ good.amount }}</span>
                                                 </div>
                                             </td>
                                             <td>
                                                 {{order.date}}
                                             </td>
                                             <td>{{order.comment}}</td>
-                                            <td><i class="fa fa-pencil-square-o" aria-hidden="true" @click="edit(record)" v-if="!record.edit"></i>
-                                                <i class="fa fa-floppy-o" aria-hidden="true" v-if="record.edit" @click="save(record)"></i>
+                                            <td>
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true" @click="edit(order)" v-if="!order.edit"></i>
+                                                <i class="fa fa-floppy-o" aria-hidden="true" v-if="order.edit" @click="save(order)"></i>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <div class="empty" v-if="!loading.fetch && orderList.length == 0">
+                                <div class="empty" v-if="!loading.fetch && synclist.length == 0">
                                     <div class="msg">商品列表为空</div>
                                 </div>
                                 <div v-if="loading.fetch">
