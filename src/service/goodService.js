@@ -15,37 +15,42 @@ class GoodService extends Service {
         return goodDao.detail(id, user_id);
     }
 
-    async create(name, attrs, user_id) {
-        var transaction = await this.db.transaction();
-        return await goodDao.create(transaction, name, attrs, user_id);
+    create(name, attrs, user_id) {
+        return this.db.transaction((transaction) => {
+            return goodDao.create(transaction, name, attrs, user_id);
+        });
     }
 
-    async modify(record_id, amount, price, user_id) {
-        var transaction = await this.db.transaction();
-        return await goodDao.modify(transaction, record_id, amount, price, user_id);
+    modify(record_id, amount, price, user_id) {
+        return this.db.transaction((transaction) => {
+            return goodDao.modify(transaction, record_id, amount, price, user_id);
+        });
     }
 
     inlist(user_id, type, page, pageSize) {
         return goodDao.inlist(user_id, type, page, pageSize);
     }
 
-    async out(id, amount, price, attr, user_id, order_id) {
-        var transaction = await this.db.transaction();
-        return await goodDao.out(transaction, id, amount, price, attr, user_id, order_id);
-    }
-
-    async in (id, amount, price, attrs, user_id) {
-        var transaction = await this.db.transaction();
-        return await goodDao.in(transaction, id, amount, price, attrs, user_id);
+    out(id, amount, price, attr, user_id, order_id) {
+        return this.db.transaction((transaction) => {
+            return goodDao.out(transaction, id, amount, price, attr, user_id, order_id);
+        });
     }
 
     attrs(user_id, good_id) {
         return goodDao.attrs(user_id, good_id);
     }
+ 
+    addAttr(user_id, good_id, attr) {
+        return this.db.transaction((transaction) => {
+            return goodDao.addAttr(user_id, good_id, attr);
+        });
+    }
 
-    async addAttr(user_id, good_id, attr) {
-        var transaction = await this.db.transaction();
-        return await goodDao.addAttr(transaction, user_id, good_id, attr);
+    in (id, amount, price, attrs, user_id) {
+        return this.db.transaction((transaction) => {
+            return goodDao.in(transaction, id, amount, price, attrs, user_id);
+        });
     }
 
     attrlist(user_id, good_id) {
