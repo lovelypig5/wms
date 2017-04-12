@@ -37,19 +37,19 @@ class GoodService extends Service {
         });
     }
 
-    in (id, amount, price, attrs, user_id) {
-        return this.db.transaction((transaction) => {
-            return goodDao.in(transaction, id, amount, price, attrs, user_id);
-        });
-    }
-
     attrs(user_id, good_id) {
         return goodDao.attrs(user_id, good_id);
     }
-
+ 
     addAttr(user_id, good_id, attr) {
         return this.db.transaction((transaction) => {
             return goodDao.addAttr(user_id, good_id, attr);
+        });
+    }
+
+    in (id, amount, price, attrs, user_id) {
+        return this.db.transaction((transaction) => {
+            return goodDao.in(transaction, id, amount, price, attrs, user_id);
         });
     }
 

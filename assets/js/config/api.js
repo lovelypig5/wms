@@ -17,6 +17,7 @@ var api = {
     createOrder: base + '/order/create',
     orderList: base + '/order/list',
     orderDetail: base + '/order/detail',
+    orderSyncList: base + '/order/synclist',
 
     user: '/user',
     isLogin: '/isLogin',

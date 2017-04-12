@@ -5,8 +5,7 @@ class OrderService extends Service {
 
     create(user_id, orderId, expressId, expressCost, name, price, goodList, comment) {
         return this.db.transaction((transaction) => {
-            return orderDao.create(transaction, user_id, orderId, expressId, expressCost, name, price,
-                goodList, comment);
+            return orderDao.create(transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment);
         });
     }
 
@@ -16,6 +15,16 @@ class OrderService extends Service {
 
     orderDetail(user_id, order_id) {
         return orderDao.orderDetail(user_id, order_id);
+    }
+
+    sync(user_id, orders) {
+        return this.db.transaction((transaction) => {
+            return orderDao.sync(transaction, user_id, orders);
+        });
+    }
+
+    synclist(user_id) {
+        return orderDao.synclist(user_id);
     }
 
 }

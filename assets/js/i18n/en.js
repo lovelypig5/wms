@@ -18,8 +18,9 @@ const EN = {
 
     text_order_list: 'Order List',
     text_order_create: 'Create Order',
+    text_order_sync: 'Sync Order',
 
     action_login: 'log in',
-    action_logout: 'log out',
+    action_logout: 'log out'
 };
 export default EN;

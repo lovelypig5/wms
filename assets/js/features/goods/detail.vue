@@ -154,14 +154,14 @@ var GoodDetail = Vue.extend({
         filter(attr) {
             if (this.filters.indexOf(attr) == -1) {
                 this.filters.push(attr);
-            }
-            else {
+            } else {
                 this.filters.splice(attr);
             }
         },
         removeFilter(attr) {
-            if (this.filters.indexOf(attr) != -1) {
-                this.filters.splice(attr);
+            var index = this.filters.indexOf(attr);
+            if (index != -1) {
+                this.filters.splice(index, 1);
             }
         }
     },

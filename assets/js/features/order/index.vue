@@ -8,12 +8,6 @@ import actions from '../../vuex/actions';
 
 var Order = Vue.extend({
     name: 'Order',
-    data() {
-        return {
-            menu: DICT.orderMenu,
-            path: ['/list', '/create']
-        }
-    },
     ready() {
         this.isLogin();
     },

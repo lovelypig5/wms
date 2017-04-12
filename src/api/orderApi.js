@@ -19,8 +19,7 @@ class OrderApi extends BaseApi {
         expressId = parseInt(expressId);
         expressCost = parseInt(expressCost);
         price = parseFloat(price);
-        if (isNaN(orderId) || orderId <= 0 || isNaN(price) || price <= 0 ||
-            isNaN(expressId) || expressId <= 0 || isNaN(expressCost) || expressCost < 0) {
+        if (isNaN(orderId) || orderId <= 0 || isNaN(price) || price <= 0 || isNaN(expressId) || expressId <= 0 || isNaN(expressCost) || expressCost < 0) {
             return res.status(400).send('参数格式错误');
         }
         var goodList = body.goodList;
@@ -79,6 +78,30 @@ class OrderApi extends BaseApi {
         });
     }
 
+    sync(req, res) {
+        var user_id = req.session.user.id;
+        try {
+            var result = unescape(req.body.orders);
+            var orders = JSON.parse(result);
+            orderService.sync(user_id, orders).then((result) => {
+                res.status(result.status).send('解析成功');
+            }, (err) => {
+                var model = super.handleErr(err);
+                res.status(model.status).send(model.ret);
+            });
+        } catch (e) {
+            res.status(400).send('解析失败！');
+        }
+    }
+
+    syncList(req, res) {
+        orderService.synclist(req.session.user.id).then((list) => {
+            res.status(list.status).json(list.ret);
+        }, (err) => {
+            var model = super.handleErr(err);
+            res.status(model.status).send(model.ret);
+        })
+    }
 }
 
 var orderApi = new OrderApi();
@@ -95,4 +118,12 @@ module.exports = [{
     method: 'get',
     route: '/api/order/detail',
     func: orderApi.orderDetail
+}, {
+    method: 'post',
+    route: '/api/order/sync',
+    func: orderApi.sync
+}, {
+    method: 'get',
+    route: '/api/order/synclist',
+    func: orderApi.syncList
 }];

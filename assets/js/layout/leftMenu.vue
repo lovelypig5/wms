@@ -1,5 +1,6 @@
 <script>
 import template from 'templates/layout/leftMenu.html';
+import DICT from 'config/dict';
 
 var LeftMenu = Vue.extend({
     template: template,
@@ -14,52 +15,26 @@ var LeftMenu = Vue.extend({
             name: Vue.t("goods"),
             path: '/goods',
             className: 'fa-bar-chart-o',
-            children: [{
-                name: Vue.t("text_goods_list"),
-                path: '/goods/list',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_out"),
-                path: '/goods/out',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_in"),
-                path: '/goods/in',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_outlist"),
-                path: '/goods/outList',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_inlist"),
-                path: '/goods/inList',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_goods_create"),
-                path: '/goods/create',
-                className: '',
-                children: []
-            }]
+            children: DICT.goodsMenu.map((menu)=>{
+                return {
+                   name: Vue.t(menu.i18nkey),
+                   path: menu.path,
+                   className: '',
+                   children: []
+               }
+            })
         }, {
             name: Vue.t("order"),
             path: '/order/list',
             className: 'fa-table',
-            children: [{
-                name: Vue.t("text_order_list"),
-                path: '/order/list',
-                className: '',
-                children: []
-            }, {
-                name: Vue.t("text_order_create"),
-                path: '/order/create',
-                className: '',
-                children: []
-            }]
+            children: DICT.orderMenu.map((menu)=>{
+                return {
+                   name: Vue.t(menu.i18nkey),
+                   path: menu.path,
+                   className: '',
+                   children: []
+               }
+            })
         }]
 
         return {

@@ -1,18 +1,19 @@
 <script>
-import template from 'templates/order/list.html';
+import template from 'templates/order/sync.html';
 import API from '../../config/api';
 import actions from '../../vuex/actions';
 import Pagination from '../../common/pagination.vue';
+import ETL from '!!raw-loader!../../etl.js';
 
-var OrderList = Vue.extend({
+var SyncOrder = Vue.extend({
     template: template,
-    name: 'orderList',
+    name: 'syncOrder',
     components: {
         pagination: Pagination
     },
     data() {
         return {
-            orderList: [],
+            synclist: [],
             loading: {
                 fetch: false
             },
@@ -20,7 +21,9 @@ var OrderList = Vue.extend({
                 page: 1,
                 pageSize: 10,
                 count: 0
-            }
+            },
+            ETL: ETL,
+            show: false
         }
     },
     ready() {
@@ -48,10 +51,14 @@ var OrderList = Vue.extend({
             self.loading.fetch = !self.loading.fetch;
 
             $.ajax({
-                url: API.orderList,
+                url: API.orderSyncList,
                 data: self.params,
                 success(resp) {
-                    self.orderList = resp.content;
+                    self.synclist = resp.map((order) => {
+                        var result = JSON.parse(order.value);
+                        result.edit = false;
+                        return result;
+                    })
                     self.params.count = resp.count;
                 },
                 error(resp) {
@@ -64,6 +71,12 @@ var OrderList = Vue.extend({
             }).always(() => {
                 self.loading.fetch = !self.loading.fetch;
             })
+        },
+        showScript() {
+            this.show = !this.show;
+        },
+        sync() {
+            alert('doSync')
         }
     },
     vuex: {
@@ -72,5 +85,5 @@ var OrderList = Vue.extend({
         }
     }
 })
-export default OrderList;
+export default SyncOrder;
 </script>

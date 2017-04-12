@@ -1,8 +1,37 @@
 const dict = {
-    goodsMenu: ['text_goods_state', 'text_goods_list', 'text_goods_out', 'text_goods_in', 'text_goods_outlist',
-        'text_goods_inlist', 'text_goods_create'
+    goodsMenu: [
+         {
+            i18nkey: 'text_goods_list',
+            path: '/goods/list'
+        }, {
+            i18nkey: 'text_goods_out',
+            path: '/goods/out'
+        }, {
+            i18nkey: 'text_goods_in',
+            path: '/goods/in'
+        }, {
+            i18nkey: 'text_goods_outlist',
+            path: '/goods/outList'
+        }, {
+            i18nkey: 'text_goods_inlist',
+            path: '/goods/inList'
+        }, {
+            i18nkey: 'text_goods_create',
+            path: '/goods/create'
+        }
     ],
-    orderMenu: ['text_order_list', 'text_order_create'],
+    orderMenu: [
+        {
+            i18nkey: 'text_order_list',
+            path: '/order/list'
+        }, {
+            i18nkey: 'text_order_create',
+            path: '/order/create'
+        }, {
+            i18nkey: 'text_order_sync',
+            path: '/order/sync'
+        }
+    ],
     select2: {
         "zh": {
             errorLoading: function() {

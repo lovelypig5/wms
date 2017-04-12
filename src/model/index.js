@@ -4,12 +4,11 @@ var User = require('./user'),
     Attr = require('./attr'),
     Record = require('./record'),
     Order = require('./order'),
+    SyncModel = require('./sync'),
 
     V_Attr = require('./v_attr');
 
-User.hasMany(Good, {
-    foreignKey: 'user_id'
-});
+User.hasMany(Good, {foreignKey: 'user_id'});
 
 Good.belongsTo(User);
 Good.hasMany(GoodSub);
@@ -20,18 +19,14 @@ Good.belongsToMany(Attr, {
     timestamps: false
 });
 
-GoodSub.belongsTo(Good, {
-    foreignKey: 'good_id'
-});
+GoodSub.belongsTo(Good, {foreignKey: 'good_id'});
 GoodSub.belongsToMany(Attr, {
     through: 'r_goodsub_attr',
     foreignKey: 'goodsub_id',
     otherKey: 'attr_id',
     timestamps: false
 });
-GoodSub.hasOne(V_Attr, {
-    foreignKey: 'goodsub_id'
-});
+GoodSub.hasOne(V_Attr, {foreignKey: 'goodsub_id'});
 
 Attr.belongsToMany(Good, {
     through: 'r_good_attr',
@@ -40,12 +35,8 @@ Attr.belongsToMany(Good, {
     timestamps: false
 });
 
-Record.belongsTo(Good, {
-    foreignKey: 'good_id',
-});
-Record.belongsTo(Order, {
-    foreignKey: 'order_id',
-});
+Record.belongsTo(Good, {foreignKey: 'good_id'});
+Record.belongsTo(Order, {foreignKey: 'order_id'});
 Record.belongsToMany(Attr, {
     through: 'r_record_attr',
     foreignKey: 'record_id',
@@ -54,6 +45,7 @@ Record.belongsToMany(Attr, {
 });
 
 Order.hasMany(Record);
+SyncModel.belongsTo(User);
 
 module.exports = {
     User: User,
@@ -62,6 +54,7 @@ module.exports = {
     Attr: Attr,
     Record: Record,
     Order: Order,
+    SyncModel: SyncModel,
 
     V_Attr: V_Attr
 };
