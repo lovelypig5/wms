@@ -60,7 +60,103 @@ class Goods extends React.Component {
                               onPress={ this.changeTab.bind(this, 'list') }>
                               <List {...this.props}/>
               </TabBarIOS.Item>
-
+              <TabBarIOS.Item title="入库/出库"
+                              icon={ { uri: base64Icon, scale: 3 } }
+                              badge={ this.state.notifCount > 0 ? this.state.notifCount : undefined }
+                              selected={ this.state.selectedTab === 'in-out' }
+                              onPress={ this.changeTab.bind(this, 'in-out') }>
+                <View style={ { flex: 1 } }>
+                  <View style={ styles.common.navigator }>
+                    <Text style={ goodsStyle.title }>
+                      入库/出库
+                    </Text>
+                  </View>
+                  <View style={ styles.common.container_center }>
+                    <View style={ styles.common.row }>
+                      <Text style={ goodsStyle.label }>
+                        商品名称
+                      </Text>
+                      <TextInput placeholder="请输入商品名称"
+                                 onChangeText={ this.changePswd }
+                                 value={ this.state.password }
+                                 style={ styles.common.input } />
+                    </View>
+                    <View style={ styles.common.row }>
+                      <Text style={ goodsStyle.label }>
+                        商品数量
+                      </Text>
+                      <TextInput placeholder="请输入数量"
+                                 onChangeText={ this.changePswd }
+                                 value={ this.state.password }
+                                 style={ styles.common.input } />
+                    </View>
+                    <View style={ styles.common.row }>
+                      <Text style={ goodsStyle.label }>
+                        商品数量
+                      </Text>
+                      <TextInput placeholder="请输入数量"
+                                 onChangeText={ this.changePswd }
+                                 value={ this.state.password }
+                                 style={ styles.common.input } />
+                    </View>
+                    <View style={ styles.common.row }>
+                      <Text style={ goodsStyle.label }>
+                        商品数量
+                      </Text>
+                      <TextInput placeholder="请输入数量"
+                                 onChangeText={ this.changePswd }
+                                 value={ this.state.password }
+                                 style={ styles.common.input } />
+                    </View>
+                    <TouchableOpacity style={ [styles.common.button, styles.login.button] }
+                                      onPress={ this.login }>
+                      <Text style={ styles.common.buttonText }>
+                        登录
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={ [styles.common.button, styles.login.button] }
+                                      onPress={ this.login }>
+                      <Text style={ styles.common.buttonText }>
+                        登录
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TabBarIOS.Item>
+              <TabBarIOS.Item title="出入库列表"
+                              icon={ { uri: base64Icon, scale: 3 } }
+                              selected={ this.state.selectedTab === 'in-out-list' }
+                              onPress={ this.changeTab.bind(this, 'in-out-list') }>
+                <View style={ { flex: 1 } }>
+                  <View style={ styles.common.navigator }>
+                    <Text style={ goodsStyle.tableText }>
+                      商品列表
+                    </Text>
+                  </View>
+                  <ListView style={ { flex: 1 } }
+                            contentContainerStyle={ { alignItems: "center" } }
+                            dataSource={ this.state.dataSource }
+                            enableEmptySections={ true }
+                            renderRow={ this.renderRow } />
+                </View>
+              </TabBarIOS.Item>
+              <TabBarIOS.Item title="创建商品"
+                              icon={ { uri: base64Icon, scale: 3 } }
+                              selected={ this.state.selectedTab === 'create' }
+                              onPress={ this.changeTab.bind(this, 'create') }>
+                <View style={ { flex: 1 } }>
+                  <View style={ styles.common.navigator }>
+                    <Text style={ goodsStyle.tableText }>
+                      商品列表
+                    </Text>
+                  </View>
+                  <ListView style={ { flex: 1 } }
+                            contentContainerStyle={ { alignItems: "center" } }
+                            dataSource={ this.state.dataSource }
+                            enableEmptySections={ true }
+                            renderRow={ this.renderRow } />
+                </View>
+              </TabBarIOS.Item>
             </TabBarIOS>)
     }
 
