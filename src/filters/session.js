@@ -21,7 +21,6 @@ module.exports = [{
         } else {
             if (!req.session.user) {
                 var user = TokenStore.getUser(token);
-                console.log(user);
                 req.session.user = user;
             }
             next();
