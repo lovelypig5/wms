@@ -1,5 +1,6 @@
 var BaseApi = require('./baseApi');
 var userDao = require('../dao/userDao');
+var TokenStore = require('../tokenStore');
 
 class UserApi extends BaseApi {
 
@@ -10,9 +11,14 @@ class UserApi extends BaseApi {
         if (!userName || !password) {
             return res.status(400).send('缺少参数');
         }
+
         userDao.login(userName, password).then((user) => {
-            req.session.user = user.ret;
-            res.status(user.status).json(user.ret);
+            var result = user.ret.toJSON();
+            var token = result.id + '' + Date.now();
+            result.token = token;
+            req.session.user = result;
+            TokenStore.addToken(token, result);
+            res.status(user.status).json(result);
         }, (err) => {
             var model = super.handleErr(err);
             res.status(model.status).send(model.ret);
@@ -21,6 +27,10 @@ class UserApi extends BaseApi {
 
     logout(req, res) {
         req.session.user = null;
+        var token = req.headers.accesstoken;
+        if (token) {
+            TokenStore.deleteToken(token);
+        }
         res.status(200).send({});
     }
 

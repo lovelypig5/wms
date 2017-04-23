@@ -1,3 +1,4 @@
+var TokenStore = require('../tokenStore');
 var session = require('cookie-session');
 
 module.exports = [{
@@ -13,9 +14,16 @@ module.exports = [{
 }, {
     route: '/api/*',
     filter(req, res, next) {
-        if (!req.session.user) {
+        var headers = req.headers;
+        var token = headers.accesstoken;
+        if (!req.session.user && !TokenStore.hasToken(token)) {
             res.status(401).send('请先登录!');
         } else {
+            if (!req.session.user) {
+                var user = TokenStore.getUser(token);
+                console.log(user);
+                req.session.user = user;
+            }
             next();
         }
     }
