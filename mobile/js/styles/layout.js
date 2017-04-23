@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 const layout = StyleSheet.create({
     title: {
-        color: '#EEE'
+        color: '#FE3F4E'
     },
     button: {
     },

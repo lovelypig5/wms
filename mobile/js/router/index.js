@@ -1,57 +1,50 @@
 import React from 'react'
 import { AsyncStorage } from 'react-native';
 // import SideMenu from 'react-native-side-menu';
-import Menu from '../features/menu';
-import Home from '../features/home';
-import Goods from '../features/goods';
+// import Menu from '../features/menu';
+import Nav from '../features/navigator';
+import Entry from '../features';
+import LoginButton from '../features/login/button';
 import DICT from '../config/dict';
 import styles from '../styles';
 
 class Router extends React.Component {
 
     constructor(props) {
-      super(props);
+        super(props);
+        this.state = {
+            user: ''
+        };
 
-      this.state = {
-            user: this.props.user,
-            component: Home
-        }
+        this.initUser = this.initUser.bind(this);
+    }
+
+    componentDidMount() {
+        this.initUser();
     }
 
     render() {
-        var Component = this.state.component;
-        if (this.state.user) {
-            Component = Goods;
-        }
-        var App = <Component {...this.props} changeModule={ this.changeModule } />
-        if (this.state.user) {
-            App = <SideMenu user={ this.props.user }
-                            menu={ <Menu user={ this.state.user } onItemSelected={ this.selected } /> }>{ App }
-                  </SideMenu>
+        var initialRoute = {
+            title: '仓储管理系统',
+            back: '',
+            component: Entry,
+            index: 0,
+            right: LoginButton
         }
 
-        return App
+        return <Nav {...this.state} initialRoute={initialRoute} initUser={this.initUser} />
     }
 
-    async selected(module) {
-        switch (module) {
-        case 'logout':
-            try {
-                await AsyncStorage.removeItem(DICT.LOGINKEY);
+    async initUser() {
+        try {
+            let user = await AsyncStorage.getItem(DICT.LOGINKEY);
+            if (user) {
                 this.setState({
-                    user: ""
-                })
-            } catch ( err ) {
-                console.error(err);
+                    user: JSON.parse(user)
+                });
             }
-            break;
-        case 'goods':
-            this.setState({
-                component: Goods
-            })
-            break;
-        default:
-            break;
+        } catch (err) {
+            console.error(err);
         }
     }
 

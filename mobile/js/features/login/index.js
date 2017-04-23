@@ -6,14 +6,20 @@ import DICT from '../../config/dict';
 import API from '../../config/api';
 import styles from '../../styles';
 
-var Login = React.createClass({
+class Login extends React.Component {
 
-    getInitialState() {
-        return {
+    constructor(props) {
+        super(props);
+
+        this.state = {
             name: "",
             password: ""
         }
-    },
+
+        this.changeName = this.changeName.bind(this);
+        this.changePswd = this.changePswd.bind(this);
+        this.login = this.login.bind(this);
+    }
 
     render() {
         return (
@@ -45,19 +51,19 @@ var Login = React.createClass({
               </TouchableOpacity>
             </View>
         )
-    },
+    }
 
     changeName(name) {
         this.setState({
             name: name
         });
-    },
+    }
 
     changePswd(password) {
         this.setState({
             password: password
         });
-    },
+    }
 
     async login() {
         var { name, password } = this.state;
@@ -84,9 +90,10 @@ var Login = React.createClass({
                 case 200:
                     try {
                         await AsyncStorage.setItem(DICT.LOGINKEY, responseText);
-                        this.props.initUser(responseText);
+                        await this.props.initUser(responseText);
                     } catch (error) {
-                        console.error(error.message);
+                        Alert.alert('内部错误', '内部错误，即将退出!');
+                        return;
                     }
                     this.jumpForward();
                     break;
@@ -97,12 +104,13 @@ var Login = React.createClass({
         } catch (error) {
             Alert.alert('登录失败', '无法连接到服务器');
         }
-    },
+    }
 
     jumpForward() {
         var { navigator } = this.props;
         navigator.pop();
     }
-})
+
+}
 
 export default Login;
