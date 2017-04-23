@@ -15,7 +15,7 @@ module.exports = [{
     route: '/api/*',
     filter(req, res, next) {
         var headers = req.headers;
-        var token = headers.accesstoken;
+        var token = headers['access-token'];
         if (!req.session.user && !TokenStore.hasToken(token)) {
             res.status(401).send('请先登录!');
         } else {
