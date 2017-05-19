@@ -1,6 +1,6 @@
-var Sequelize = require('sequelize');
-var BaseDao = require('./baseDao'),
-    goodDao = require('./goodDao');
+var Sequelize = require( 'sequelize' );
+var BaseDao = require( './baseDao' ),
+    goodDao = require( './goodDao' );
 
 class OrderDao extends BaseDao {
 
@@ -17,8 +17,8 @@ class OrderDao extends BaseDao {
      * @param  {String} comment     : comment
      * @return {Promise}
      */
-    async create(transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment) {
-        var order = await this.model.Order.create({
+    async create( transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment ) {
+        var order = await this.model.Order.create( {
             id: orderId,
             expressId: expressId,
             expressCost: expressCost,
@@ -28,14 +28,14 @@ class OrderDao extends BaseDao {
             price: price
         }, {
             transaction: transaction
-        });
+        } );
 
-        if (order) {
-            for (var i = 0; i < goodList.length; i++) {
-                var _good = goodList[i];
-                await goodDao.out(transaction, _good.id, _good.amount, price, _good.attr, user_id, orderId);
+        if ( order ) {
+            for ( var i = 0; i < goodList.length; i++ ) {
+                var _good = goodList[ i ];
+                await goodDao.out( transaction, _good.id, _good.amount, price, _good.attr, user_id, orderId );
             }
-            return this.ajaxModel(200, '创建成功!');
+            return this.ajaxModel( 200, '创建成功!' );
         }
     }
 
@@ -47,16 +47,16 @@ class OrderDao extends BaseDao {
      * @param  {Number} pageSize : page size
      * @return {Promise}
      */
-    async list(user_id, page, pageSize) {
+    async list( user_id, page, pageSize ) {
         var limit = pageSize > 20 ? 20 : pageSize;
-        var offset = page > 1 ? limit * (page - 1) : 0;
+        var offset = page > 1 ? limit * ( page - 1 ) : 0;
 
-        var result = await this.model.Order.findAndCountAll({
+        var result = await this.model.Order.findAndCountAll( {
             limit: limit,
             offset: offset,
             attributes: [
                 [
-                    Sequelize.fn('DATE_FORMAT', Sequelize.col('expressDate'), '%Y-%m-%d'),
+                    Sequelize.fn( 'DATE_FORMAT', Sequelize.col( 'expressDate' ), '%Y-%m-%d' ),
                     'date'
                 ],
                 'id',
@@ -67,11 +67,11 @@ class OrderDao extends BaseDao {
                 'comment',
                 'expressDate'
             ],
-            include: [{
+            include: [ {
                 model: this.model.Record,
-                include: [{
+                include: [ {
                     model: this.model.Good,
-                    attributes: ['name'],
+                    attributes: [ 'name' ],
                     where: {
                         user_id: user_id
                     }
@@ -80,20 +80,20 @@ class OrderDao extends BaseDao {
                     through: {
                         attributes: []
                     }
-                }]
-            }],
+                } ]
+            } ],
             where: {
                 user_id: user_id
             },
             order: [
-                ['expressDate', 'DESC']
+                [ 'expressDate', 'DESC' ]
             ]
-        });
+        } );
 
-        return this.ajaxModel(200, {
+        return this.ajaxModel( 200, {
             count: result.count,
             content: result.rows
-        });
+        } );
     }
 
     /**
@@ -103,11 +103,11 @@ class OrderDao extends BaseDao {
      * @param  {Number} order_id : order id
      * @return {Promise}
      */
-    async orderDetail(user_id, order_id) {
-        var rows = await this.model.Record.findAll({
-            include: [{
+    async orderDetail( user_id, order_id ) {
+        var rows = await this.model.Record.findAll( {
+            include: [ {
                 model: this.model.Good,
-                attributes: ['name'],
+                attributes: [ 'name' ],
                 where: {
                     user_id: user_id
                 }
@@ -116,12 +116,12 @@ class OrderDao extends BaseDao {
                 through: {
                     attributes: []
                 }
-            }],
+            } ],
             where: {
                 order_id: order_id
             }
-        });
-        return this.ajaxModel(200, rows);
+        } );
+        return this.ajaxModel( 200, rows );
     }
 
     /**
@@ -130,63 +130,63 @@ class OrderDao extends BaseDao {
      * @param  {[type]} orders  [description]
      * @return {[type]}         [description]
      */
-    async sync(transaction, user_id, orders) {
-        var rows = await goodDao.attrs(user_id);
+    async sync( transaction, user_id, orders ) {
+        var rows = await goodDao.attrs( user_id );
         var names = {};
         var attrs = {};
-        rows.ret.forEach((row) => {
-            var good = row.toJSON().goods[0];
-            names[good.name] = good.id;
+        rows.ret.forEach( ( row ) => {
+            var good = row.toJSON().goods[ 0 ];
+            names[ good.name ] = good.id;
 
-            if (!attrs[good.name]) {
-                attrs[good.name] = {};
+            if ( !attrs[ good.name ] ) {
+                attrs[ good.name ] = {};
             }
-            good.attrs.forEach((item) => {
-                attrs[good.name][item.attr] = item.id;
-            })
-        });
-
-        for (var t = 0; t < orders.length; t++) {
-            var order = orders[t];
+            good.attrs.forEach( ( item ) => {
+                attrs[ good.name ][ item.attr ] = item.id;
+            } )
+        } );
+        for ( var t = 0; t < orders.length; t++ ) {
+            var order = orders[ t ];
             let goods = order.goods;
             let sync = true;
 
-            for (var i = 0; i < goods.length; i++) {
-                var good = goods[i];
+            for ( var i = 0; i < goods.length; i++ ) {
+                var good = goods[ i ];
                 let name = good.name;
                 let attributes = good.attrs;
-                if (!(goods[i].id = names[name])) {
+                if ( !( goods[ i ].id = names[ name ] ) ) {
                     sync = false;
                     continue;
                 };
 
                 let ret = [];
-                for (var j = 0; j < attributes.length; j++) {
-                    if (!attrs[name][attributes[j]]) {
+                for ( var j = 0; j < attributes.length; j++ ) {
+                    if ( !attrs[ name ][ attributes[ j ] ] ) {
                         sync = false;
                         continue;
                     } else {
-                        ret.push({
-                            id: attrs[name][attributes[j]],
-                            attr: attributes[j]
-                        });
+                        ret.push( {
+                            id: attrs[ name ][ attributes[ j ] ],
+                            attr: attributes[ j ]
+                        } );
                     }
                 }
-                goods[i].attrs = ret;
+                goods[ i ].attrs = ret;
             }
 
-            if (sync) {
-                await this.model.SyncModel.create({
+            if ( sync ) {
+                await this.model.SyncModel.create( {
+                    id: parseInt( order.orderId ),
                     user_id: user_id,
                     key: 'syncOrders',
-                    value: JSON.stringify(order)
+                    value: JSON.stringify( order )
                 }, {
                     transaction: transaction
-                });
+                } );
             }
         }
 
-        return this.ajaxModel(200, '解析成功!');
+        return this.ajaxModel( 200, '解析成功!' );
     }
 
     /**
@@ -194,16 +194,26 @@ class OrderDao extends BaseDao {
      * @param  {[type]} user_id [description]
      * @return {[type]}         [description]
      */
-    async synclist(user_id, page, pageSize) {
+    async synclist( user_id, page, pageSize ) {
         var limit = pageSize > 20 ? 20 : pageSize;
-        var offset = page > 1 ? limit * (page - 1) : 0;
+        var offset = page > 1 ? limit * ( page - 1 ) : 0;
 
-        var rows = await this.model.SyncModel.findAll({
+        var rows = await this.model.SyncModel.findAll( {
             where: {
                 user_id: user_id
             }
-        });
-        return this.ajaxModel(200, rows);
+        } );
+        return this.ajaxModel( 200, rows );
+    }
+
+    async doSync( transaction, id ) {
+        var order = await this.model.SyncModel.find( {
+            where: {
+                id: id
+            }
+        } );
+        console.log( order );
+        // await this.model.O
     }
 }
 
