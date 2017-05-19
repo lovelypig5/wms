@@ -64,8 +64,7 @@
                                             </td>
                                             <td>{{order.comment}}</td>
                                             <td>
-                                                <i class="fa fa-pencil-square-o" aria-hidden="true" @click="edit(order)" v-if="!order.edit"></i>
-                                                <i class="fa fa-floppy-o" aria-hidden="true" v-if="order.edit" @click="save(order)"></i>
+                                                <i class="fa fa-refresh" aria-hidden="true" @click="sync(order, $index)"></i>
                                             </td>
                                         </tr>
                                     </tbody>
