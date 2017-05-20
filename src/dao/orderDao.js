@@ -206,14 +206,33 @@ class OrderDao extends BaseDao {
         return this.ajaxModel( 200, rows );
     }
 
-    async doSync( transaction, id ) {
+    async doSync( transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment ) {
         var order = await this.model.SyncModel.find( {
             where: {
-                id: id
+                id: orderId
             }
         } );
-        console.log( order );
-        // await this.model.O
+
+        if ( order ) {
+            if ( order.flag == 1 ) {
+                return this.ajaxModel( 400, '该订单已经同步!' );
+            }
+            await this.model.SyncModel.update( {
+                flag: 1
+            }, {
+                transaction: transaction,
+                where: {
+                    id: orderId
+                }
+            } )
+
+            await this.create( transaction, user_id, orderId, expressId, expressCost, name, price, goodList,
+                comment );
+
+            return this.ajaxModel( 200, '同步成功!' );
+        } else {
+            return this.ajaxModel( 400, '不存在该订单!' );
+        }
     }
 }
 

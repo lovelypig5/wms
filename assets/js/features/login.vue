@@ -7,6 +7,11 @@ import Validator from '../validator';
 import Cookies from 'js-cookie';
 Validator.init();
 
+var domain = 'wms.out2man.com';
+if (process.env.NODE_ENV == 'development') {
+    domain = 'localhost';
+}
+
 var Login = Vue.extend({
     store,
     template: template,
@@ -44,20 +49,14 @@ var Login = Vue.extend({
                 })
             }).done((resp) => {
                 if (self.rememberMe) {
-                    Cookies.set('rememberMe', self.rememberMe, {
+                    var opt = {
                         expires: 365,
-                        domain: 'wms.out2man.com'
-                    });
-                    Cookies.set('name', self.userName, {
-                        expires: 365,
-                        domain: 'wms.out2man.com'
-                    });
-                    Cookies.set('password', self.password, {
-                        expires: 365,
-                        domain: 'wms.out2man.com'
-                    });
-                }
-                else {
+                        domain: domain
+                    }
+                    Cookies.set('rememberMe', self.rememberMe, opt);
+                    Cookies.set('name', self.userName, opt);
+                    Cookies.set('password', self.password, opt);
+                } else {
                     Cookies.remove('rememberMe');
                     Cookies.remove('name');
                     Cookies.remove('password');

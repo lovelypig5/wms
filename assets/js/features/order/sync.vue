@@ -15,7 +15,8 @@ var SyncOrder = Vue.extend({
         return {
             synclist: [],
             loading: {
-                fetch: false
+                fetch: false,
+                save: false
             },
             params: {
                 page: 1,
@@ -57,6 +58,7 @@ var SyncOrder = Vue.extend({
                     self.synclist = resp.map((order) => {
                         var result = JSON.parse(order.value);
                         result.edit = false;
+                        result.flag = order.flag;
                         return result;
                     })
                     self.params.count = resp.count;
@@ -75,8 +77,50 @@ var SyncOrder = Vue.extend({
         showScript() {
             this.show = !this.show;
         },
-        sync() {
-            alert('doSync')
+        sync(order) {
+            var self = this;
+            if (self.loading.save) {
+                return;
+            }
+            // if (!order.expressId) {
+            //     self.alert({
+            //         show: true,
+            //         msg: '快递单号不能为空',
+            //         type: 'error'
+            //     });
+            //     return;
+            // }
+            self.loading.save = !self.loading.save;
+
+            $.ajax({
+                url: API.syncOrder,
+                type: 'post',
+                data: JSON.stringify({
+                    orderId: order.orderId,
+                    receiveName: order.name,
+                    expressId: order.expressId || 123,
+                    expressCost: order.expressPrice,
+                    goodList: order.goods,
+                    price: order.price,
+                    comment: order.comment
+                }),
+                success(resp) {
+                    self.alert({
+                        show: true,
+                        msg: '同步成功',
+                        type: 'success'
+                    });
+                },
+                error(resp) {
+                    self.alert({
+                        show: true,
+                        msg: resp.responseText || '同步失败',
+                        type: 'error'
+                    })
+                }
+            }).always(() => {
+                self.loading.save = !self.loading.save;
+            })
         }
     },
     vuex: {

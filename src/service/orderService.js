@@ -28,9 +28,10 @@ class OrderService extends Service {
         return orderDao.synclist( user_id );
     }
 
-    doSync( id ) {
+    doSync( user_id, orderId, expressId, expressCost, name, price, goodList, comment ) {
         return this.db.transaction( ( transaction ) => {
-            return orderDao.doSync( transaction, id );
+            return orderDao.doSync( transaction, user_id, orderId, expressId, expressCost, name, price,
+                goodList, comment );
         } );
     }
 
