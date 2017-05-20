@@ -20,7 +20,7 @@ class OrderApi extends BaseApi {
         var price = body.price;
         var comment = body.comment;
         if ( !orderId || !expressId || !expressCost || !name || !price ) {
-            res.status( 400 ).send( '缺少参数' );
+            return res.status( 400 ).send( '缺少参数' );
         }
         orderId = parseInt( orderId );
         expressId = parseInt( expressId );
@@ -170,9 +170,51 @@ class OrderApi extends BaseApi {
     }
 
     doSync( req, res ) {
-        var id = req.body.id;
+        var user_id = req.session.user.id;
+        var body = req.body;
+        var orderId = body.orderId;
+        var expressId = body.expressId;
+        var expressCost = body.expressCost;
+        var name = body.receiveName;
+        var price = body.price;
+        var comment = body.comment;
+        if ( !orderId || !expressId || !expressCost || !name || !price ) {
+            return res.status( 400 ).send( '缺少参数' );
+        }
+        orderId = parseInt( orderId );
+        expressId = parseInt( expressId );
+        expressCost = parseInt( expressCost );
+        price = parseFloat( price );
+        if ( isNaN( orderId ) || orderId <= 0 || isNaN( price ) || price <= 0 || isNaN( expressId ) || expressId <=
+            0 || isNaN( expressCost ) || expressCost < 0 ) {
+            return res.status( 400 ).send( '参数格式错误' );
+        }
+        var goodList = body.goodList;
+        if ( goodList && goodList.length > 0 ) {
+            var goods = [];
+            for ( var i = 0; i < goodList.length; i++ ) {
+                var good = goodList[ i ];
+                var amount = good.amount;
+                if ( !amount ) {
+                    return res.status( 400 ).send( '缺少参数' );
+                }
+                amount = parseInt( amount );
+                if ( isNaN( amount ) || amount <= 0 ) {
+                    return res.status( 400 ).send( '参数格式错误' );
+                }
+                var attr = [];
+                good.attrs.forEach( ( a ) => {
+                    attr.push( a.id );
+                } )
+                good.attr = attr.sort().join( ',' );
+                goods.push( good );
+            }
+        } else {
+            return res.status( 400 ).send( '该订单中没有包含商品' );
+        }
 
-        orderService.doSync( id ).then( ( list ) => {
+        orderService.doSync( user_id, orderId, expressId, expressCost, name, price, goods, comment ).then( (
+            list ) => {
             res.status( list.status ).json( list.ret );
         }, ( err ) => {
             var model = super.handleErr( err );
@@ -203,4 +245,8 @@ module.exports = [ {
     method: 'get',
     route: '/api/order/synclist',
     func: orderApi.syncList
+}, {
+    method: 'post',
+    route: '/api/order/doSync',
+    func: orderApi.doSync
 } ];
