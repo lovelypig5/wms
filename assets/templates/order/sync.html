@@ -13,7 +13,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="row btns">
-                        <button type="button" class="btn btn-primary float-right" @click="sync">同步</button>
+                        <button type="button" class="btn btn-primary float-right" @click="syncAll">同步所有</button>
                         <button type="button" class="btn btn-primary float-right" @click="showScript">同步脚本</button>
                     </div>
                     <div class="row script" v-if="show">
@@ -64,7 +64,10 @@
                                             </td>
                                             <td>{{order.comment}}</td>
                                             <td>
-                                                <i class="fa fa-refresh" aria-hidden="true" @click="sync(order, $index)"></i>
+                                                <i class="fa fa-refresh" aria-hidden="true" @click="sync(order, $index)" v-if="!order.flag"></i>
+                                                <template v-if="order.flag">
+                                                    已同步
+                                                </template>
                                             </td>
                                         </tr>
                                     </tbody>
