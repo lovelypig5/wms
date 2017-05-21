@@ -82,14 +82,14 @@ var SyncOrder = Vue.extend({
             if (self.loading.save) {
                 return;
             }
-            // if (!order.expressId) {
-            //     self.alert({
-            //         show: true,
-            //         msg: '快递单号不能为空',
-            //         type: 'error'
-            //     });
-            //     return;
-            // }
+            if (!order.expressId) {
+                self.alert({
+                    show: true,
+                    msg: '快递单号不能为空',
+                    type: 'error'
+                });
+                return;
+            }
             self.loading.save = !self.loading.save;
 
             $.ajax({
@@ -98,7 +98,7 @@ var SyncOrder = Vue.extend({
                 data: JSON.stringify({
                     orderId: order.orderId,
                     receiveName: order.name,
-                    expressId: order.expressId || 123,
+                    expressId: order.expressId,
                     expressCost: order.expressPrice,
                     goodList: order.goods,
                     price: order.price,
@@ -110,6 +110,7 @@ var SyncOrder = Vue.extend({
                         msg: '同步成功',
                         type: 'success'
                     });
+                    order.flag = 1;
                 },
                 error(resp) {
                     self.alert({

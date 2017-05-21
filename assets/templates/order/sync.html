@@ -35,6 +35,7 @@
                                             <th>详细商品</th>
                                             <th>发货时间</th>
                                             <th>备注</th>
+                                            <th>状态</th>
                                             <th>操作</th>
                                         </tr>
                                     </thead>
@@ -43,7 +44,12 @@
                                             <td>
                                                 {{order.orderId}}
                                             </td>
-                                            <td>{{order.expressId}}</td>
+                                            <td v-if="!order.edit">
+                                                {{order.expressId}}
+                                            </td>
+                                            <td v-if="order.edit">
+                                                <input type="text" v-model="order.expressId">
+                                            </td>
                                             <td>
                                                 {{order.name}}
                                             </td>
@@ -62,12 +68,17 @@
                                             <td>
                                                 {{order.date}}
                                             </td>
-                                            <td>{{order.comment}}</td>
+                                            <td v-if="!order.edit">
+                                                {{order.comment}}
+                                            </td>
+                                            <td v-if="order.edit">
+                                                <textarea type="text" v-model="order.comment"></textarea>
+                                            </td>
+                                            <td>{{['未同步','已同步'][order.flag]}}</td>
                                             <td>
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true" @click="order.edit = true" v-if="!order.edit"></i>
+                                                <i class="fa fa-floppy-o" aria-hidden="true" v-if="order.edit" @click="order.edit = false"></i>
                                                 <i class="fa fa-refresh" aria-hidden="true" @click="sync(order, $index)" v-if="!order.flag"></i>
-                                                <template v-if="order.flag">
-                                                    已同步
-                                                </template>
                                             </td>
                                         </tr>
                                     </tbody>
