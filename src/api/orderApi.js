@@ -181,7 +181,6 @@ class OrderApi extends BaseApi {
         if ( !orderId || !expressId || !expressCost || !name || !price ) {
             return res.status( 400 ).send( '缺少参数' );
         }
-        orderId = parseInt( orderId );
         expressId = parseInt( expressId );
         expressCost = parseInt( expressCost );
         price = parseFloat( price );

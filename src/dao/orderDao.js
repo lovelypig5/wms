@@ -176,7 +176,7 @@ class OrderDao extends BaseDao {
 
             if ( sync ) {
                 await this.model.SyncModel.create( {
-                    id: parseInt( order.orderId ),
+                    id: order.orderId,
                     user_id: user_id,
                     key: 'syncOrders',
                     value: JSON.stringify( order )
@@ -217,8 +217,14 @@ class OrderDao extends BaseDao {
             if ( order.flag == 1 ) {
                 return this.ajaxModel( 400, '该订单已经同步!' );
             }
+
+            var value = JSON.parse( order.value );
+            value.expressId = expressId;
+            value.comment = comment;
+
             await this.model.SyncModel.update( {
-                flag: 1
+                flag: 1,
+                value: JSON.stringify( value )
             }, {
                 transaction: transaction,
                 where: {

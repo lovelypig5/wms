@@ -10,7 +10,7 @@
     var form = document.createElement( "form" );
     document.body.appendChild( form );
     form.method = 'post';
-    form.action = 'http://localhost:9000/api/order/sync';
+    form.action = 'http://wms.out2man.com/api/order/sync';
     form.target = '_blank';
     var newElement = document.createElement( "input" );
     newElement.setAttribute( "name", "content" );
