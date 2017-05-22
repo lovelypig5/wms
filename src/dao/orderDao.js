@@ -17,8 +17,8 @@ class OrderDao extends BaseDao {
      * @param  {String} comment     : comment
      * @return {Promise}
      */
-    async create( transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment ) {
-        var order = await this.model.Order.create( {
+    async create( transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment, expressDate ) {
+        var data = {
             id: orderId,
             expressId: expressId,
             expressCost: expressCost,
@@ -26,14 +26,20 @@ class OrderDao extends BaseDao {
             user_id: user_id,
             comment: comment,
             price: price
-        }, {
+        };
+        if ( expressDate ) {
+            data.expressDate = expressDate;
+        }
+
+        var order = await this.model.Order.create( data, {
             transaction: transaction
         } );
 
         if ( order ) {
             for ( var i = 0; i < goodList.length; i++ ) {
                 var _good = goodList[ i ];
-                await goodDao.out( transaction, _good.id, _good.amount, price, _good.attr, user_id, orderId );
+                await goodDao.out( transaction, _good.id, _good.amount, price, _good.attr, user_id, orderId,
+                    expressDate );
             }
             return this.ajaxModel( 200, '创建成功!' );
         }
@@ -134,6 +140,7 @@ class OrderDao extends BaseDao {
         var rows = await goodDao.attrs( user_id );
         var names = {};
         var attrs = {};
+
         rows.ret.forEach( ( row ) => {
             var good = row.toJSON().goods[ 0 ];
             names[ good.name ] = good.id;
@@ -145,6 +152,32 @@ class OrderDao extends BaseDao {
                 attrs[ good.name ][ item.attr ] = item.id;
             } )
         } );
+
+        var ids = [];
+        orders.forEach( ( order ) => {
+            ids.push( order.orderId );
+        } )
+
+        var existOrders = await this.model.SyncModel.findAll( {
+            attributes: [ 'id' ],
+            where: {
+                id: {
+                    $in: ids
+                }
+            }
+        } );
+
+        var existIds = [];
+        existOrders.forEach( ( order ) => {
+            existIds.push( order.id );
+        } )
+
+        orders = orders.filter( ( order ) => {
+            if ( existIds.indexOf( order.orderId ) == -1 ) {
+                return order;
+            }
+        } )
+
         for ( var t = 0; t < orders.length; t++ ) {
             var order = orders[ t ];
             let goods = order.goods;
@@ -186,7 +219,7 @@ class OrderDao extends BaseDao {
             }
         }
 
-        return this.ajaxModel( 200, '解析成功!' );
+        return this.ajaxModel( 200, `解析成功!过滤掉已经存在的订单：${existIds.join(',')}` );
     }
 
     /**
@@ -198,15 +231,20 @@ class OrderDao extends BaseDao {
         var limit = pageSize > 20 ? 20 : pageSize;
         var offset = page > 1 ? limit * ( page - 1 ) : 0;
 
-        var rows = await this.model.SyncModel.findAll( {
+        var result = await this.model.SyncModel.findAndCountAll( {
+            limit: limit,
+            offset: offset,
             where: {
                 user_id: user_id
             }
         } );
-        return this.ajaxModel( 200, rows );
+        return this.ajaxModel( 200, {
+            count: result.count,
+            content: result.rows
+        } );
     }
 
-    async doSync( transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment ) {
+    async doSync( transaction, user_id, orderId, expressId, expressCost, name, price, goodList, comment, expressDate ) {
         var order = await this.model.SyncModel.find( {
             where: {
                 id: orderId
@@ -233,7 +271,7 @@ class OrderDao extends BaseDao {
             } )
 
             await this.create( transaction, user_id, orderId, expressId, expressCost, name, price, goodList,
-                comment );
+                comment, expressDate );
 
             return this.ajaxModel( 200, '同步成功!' );
         } else {

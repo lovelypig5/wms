@@ -24,14 +24,14 @@ class OrderService extends Service {
         } );
     }
 
-    synclist( user_id ) {
-        return orderDao.synclist( user_id );
+    synclist( user_id, page, pageSize ) {
+        return orderDao.synclist( user_id, page, pageSize );
     }
 
-    doSync( user_id, orderId, expressId, expressCost, name, price, goodList, comment ) {
+    doSync( user_id, orderId, expressId, expressCost, name, price, goodList, comment, expressDate ) {
         return this.db.transaction( ( transaction ) => {
             return orderDao.doSync( transaction, user_id, orderId, expressId, expressCost, name, price,
-                goodList, comment );
+                goodList, comment, expressDate );
         } );
     }
 

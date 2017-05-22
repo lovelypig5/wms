@@ -256,7 +256,7 @@ class GoodsDao extends BaseDao {
             limit: limit,
             offset: offset,
             attributes: [
-                [ Sequelize.fn( 'DATE_FORMAT', Sequelize.col( 'date' ), '%Y-%m-%d' ), 'date' ],
+                [ Sequelize.fn( 'DATE_FORMAT', Sequelize.col( 'date' ), '%Y-%m-%d %H:%m:%S' ), 'date' ],
                 'id', 'good_id', 'amount', 'price'
             ],
             include: [ {
@@ -277,7 +277,7 @@ class GoodsDao extends BaseDao {
             limit: limit,
             offset: offset,
             attributes: [
-                [ Sequelize.fn( 'DATE_FORMAT', Sequelize.col( 'date' ), '%Y-%m-%d' ), 'date' ],
+                [ Sequelize.fn( 'DATE_FORMAT', Sequelize.col( 'date' ), '%Y-%m-%d %H:%m:%S' ), 'date' ],
                 'id', 'good_id', 'amount', 'price'
             ],
             include: [ {
@@ -316,7 +316,7 @@ class GoodsDao extends BaseDao {
      * @param  {Number} user_id : user id
      * @return {Promise}
      */
-    async out( transaction, id, amount, price, attr, user_id, order_id ) {
+    async out( transaction, id, amount, price, attr, user_id, order_id, expressDate ) {
         var good = await this.model.Good.findOne( {
             where: {
                 user_id: user_id,
@@ -339,14 +339,19 @@ class GoodsDao extends BaseDao {
                     transaction: transaction
                 } );
 
-                var record = await this.model.Record.create( {
+                var data = {
                     good_id: id,
                     user_id: user_id,
                     price: price,
                     amount: amount,
                     type: 1,
                     order_id: order_id
-                }, {
+                };
+                if ( expressDate ) {
+                    data.date = expressDate;
+                }
+
+                var record = await this.model.Record.create( data, {
                     transaction: transaction
                 } )
                 if ( attr ) {
