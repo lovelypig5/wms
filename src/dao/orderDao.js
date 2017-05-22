@@ -212,14 +212,20 @@ class OrderDao extends BaseDao {
                     id: order.orderId,
                     user_id: user_id,
                     key: 'syncOrders',
-                    value: JSON.stringify( order )
+                    value: JSON.stringify( order ),
+                    date: order.date
                 }, {
                     transaction: transaction
                 } );
             }
         }
 
-        return this.ajaxModel( 200, `解析成功!过滤掉已经存在的订单：${existIds.join(',')}` );
+        var msg = '解析成功!';
+        if ( existIds.length > 0 ) {
+            msg += '过滤掉已经存在的订单：' + existIds.join( ',' );
+        }
+
+        return this.ajaxModel( 200, msg );
     }
 
     /**
@@ -236,7 +242,10 @@ class OrderDao extends BaseDao {
             offset: offset,
             where: {
                 user_id: user_id
-            }
+            },
+            order: [
+                [ 'date', 'DESC' ]
+            ]
         } );
         return this.ajaxModel( 200, {
             count: result.count,
