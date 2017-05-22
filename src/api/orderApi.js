@@ -161,7 +161,12 @@ class OrderApi extends BaseApi {
     }
 
     syncList( req, res ) {
-        orderService.synclist( req.session.user.id ).then( ( list ) => {
+        var user_id = req.session.user.id;
+        var query = req.query;
+        var page = parseInt( query.page ) || 1;
+        var pageSize = parseInt( query.pageSize ) || 20;
+
+        orderService.synclist( user_id, page, pageSize ).then( ( list ) => {
             res.status( list.status ).json( list.ret );
         }, ( err ) => {
             var model = super.handleErr( err );
@@ -178,7 +183,8 @@ class OrderApi extends BaseApi {
         var name = body.receiveName;
         var price = body.price;
         var comment = body.comment;
-        if ( !orderId || !expressId || !expressCost || !name || !price ) {
+        var expressDate = body.expressDate;
+        if ( !orderId || !expressId || !expressCost || !name || !price || !expressDate ) {
             return res.status( 400 ).send( '缺少参数' );
         }
         expressId = parseInt( expressId );
@@ -212,13 +218,14 @@ class OrderApi extends BaseApi {
             return res.status( 400 ).send( '该订单中没有包含商品' );
         }
 
-        orderService.doSync( user_id, orderId, expressId, expressCost, name, price, goods, comment ).then( (
-            list ) => {
-            res.status( list.status ).json( list.ret );
-        }, ( err ) => {
-            var model = super.handleErr( err );
-            res.status( model.status ).send( model.ret );
-        } )
+        orderService.doSync( user_id, orderId, expressId, expressCost, name, price, goods, comment, expressDate ).then(
+            (
+                list ) => {
+                res.status( list.status ).json( list.ret );
+            }, ( err ) => {
+                var model = super.handleErr( err );
+                res.status( model.status ).send( model.ret );
+            } )
     }
 }
 

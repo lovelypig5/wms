@@ -35,6 +35,13 @@ var SyncOrder = Vue.extend({
             this.params.page = page;
             this.fetch();
         },
+        syncAll() {
+            this.alert({
+                show: true,
+                msg: '正在建设中',
+                type: 'info'
+            })
+        },
         fetch(reset) {
             var self = this;
 
@@ -55,7 +62,7 @@ var SyncOrder = Vue.extend({
                 url: API.orderSyncList,
                 data: self.params,
                 success(resp) {
-                    self.synclist = resp.map((order) => {
+                    self.synclist = resp.content.map((order) => {
                         var result = JSON.parse(order.value);
                         result.edit = false;
                         result.flag = order.flag;
@@ -100,6 +107,7 @@ var SyncOrder = Vue.extend({
                     receiveName: order.name,
                     expressId: order.expressId,
                     expressCost: order.expressPrice,
+                    expressDate: order.date,
                     goodList: order.goods,
                     price: order.price,
                     comment: order.comment
