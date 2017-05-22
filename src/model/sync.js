@@ -18,6 +18,9 @@ var Sync = sequelize.define( 'sync', {
     },
     flag: {
         type: Sequelize.INTEGER( 1 )
+    },
+    date: {
+        type: Sequelize.DATE
     }
 }, {
     freezeTableName: true,

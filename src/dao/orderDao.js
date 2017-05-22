@@ -212,7 +212,8 @@ class OrderDao extends BaseDao {
                     id: order.orderId,
                     user_id: user_id,
                     key: 'syncOrders',
-                    value: JSON.stringify( order )
+                    value: JSON.stringify( order ),
+                    date: order.expressDate
                 }, {
                     transaction: transaction
                 } );
