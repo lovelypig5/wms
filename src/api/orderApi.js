@@ -150,7 +150,7 @@ class OrderApi extends BaseApi {
                 }
             } )
             orderService.sync( user_id, orders ).then( ( result ) => {
-                res.status( result.status ).send( '解析成功' );
+                res.status( result.status ).send( result.ret );
             }, ( err ) => {
                 var model = super.handleErr( err );
                 res.status( model.status ).send( model.ret );
