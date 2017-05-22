@@ -213,7 +213,7 @@ class OrderDao extends BaseDao {
                     user_id: user_id,
                     key: 'syncOrders',
                     value: JSON.stringify( order ),
-                    date: order.expressDate
+                    date: order.date
                 }, {
                     transaction: transaction
                 } );
@@ -237,7 +237,10 @@ class OrderDao extends BaseDao {
             offset: offset,
             where: {
                 user_id: user_id
-            }
+            },
+            order: [
+                [ 'date', 'DESC' ]
+            ]
         } );
         return this.ajaxModel( 200, {
             count: result.count,
