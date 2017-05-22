@@ -220,7 +220,12 @@ class OrderDao extends BaseDao {
             }
         }
 
-        return this.ajaxModel( 200, `解析成功!过滤掉已经存在的订单：${existIds.join(',')}` );
+        var msg = '解析成功!';
+        if ( existIds.length > 0 ) {
+            msg += '过滤掉已经存在的订单：' + existIds.join( ',' );
+        }
+
+        return this.ajaxModel( 200, msg );
     }
 
     /**
