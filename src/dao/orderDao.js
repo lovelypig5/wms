@@ -178,12 +178,16 @@ class OrderDao extends BaseDao {
             }
         } )
 
+        this.logger.debug( orders );
+
+        var errorMsg = [];
         for ( var t = 0; t < orders.length; t++ ) {
             var order = orders[ t ];
             let goods = order.goods;
-            let sync = true;
+            let ret_goods = [];
 
             for ( var i = 0; i < goods.length; i++ ) {
+                let sync = true;
                 var good = goods[ i ];
                 let name = good.name;
                 let attributes = good.attrs;
@@ -195,6 +199,8 @@ class OrderDao extends BaseDao {
                 let ret = [];
                 for ( var j = 0; j < attributes.length; j++ ) {
                     if ( !attrs[ name ][ attributes[ j ] ] ) {
+                        errorMsg.push( `<br />系统中没有找到相同的属性: ${attributes[ j ]}` );
+                        errorMsg.push( `商品${name}的属性: ${attributes.join(' ')}已经被过滤` );
                         sync = false;
                         continue;
                     } else {
@@ -204,25 +210,40 @@ class OrderDao extends BaseDao {
                         } );
                     }
                 }
-                goods[ i ].attrs = ret;
+
+                if ( !sync ) {
+                    continue
+                }
+
+                good.attrs = ret;
+                ret_goods.push( good );
             }
 
-            if ( sync ) {
-                await this.model.SyncModel.create( {
-                    id: order.orderId,
-                    user_id: user_id,
-                    key: 'syncOrders',
-                    value: JSON.stringify( order ),
-                    date: order.date
-                }, {
-                    transaction: transaction
-                } );
+            order.goods = ret_goods;
+
+            if ( ret_goods.length > 0 ) {
+                try {
+                    await this.model.SyncModel.create( {
+                        id: order.orderId,
+                        user_id: user_id,
+                        key: 'syncOrders',
+                        value: JSON.stringify( order ),
+                        date: order.date
+                    }, {
+                        transaction: transaction
+                    } );
+                } catch ( e ) {
+                    this.logger.error( e );
+                }
             }
         }
 
-        var msg = '解析成功!';
+        var msg = '解析成功!<br />';
         if ( existIds.length > 0 ) {
-            msg += '过滤掉已经存在的订单：' + existIds.join( ',' );
+            msg += '过滤掉已经存在的订单：<br />' + existIds.join( '<br />' );
+        }
+        if ( errorMsg.length > 0 ) {
+            msg += errorMsg.join( '<br />' );
         }
 
         return this.ajaxModel( 200, msg );

@@ -108,7 +108,7 @@ class OrderApi extends BaseApi {
                 }
                 order = order.replace( /详情|延长收货时间|卖家已发货/g, '' ).replace( /\n{2,10}/g, '\n' );
                 order.match(
-                    /订单号[:|：] (\d*)成交时间[:|：] ([\d-:\W]*)\t\n([\u4e00-\u9fa5\da-zA-Z ]*)\n([\u4e00-\u9fa5|\d|a-zA-Z：]*)\n￥[.\d]*\n([.\d]*)\n([\u4e00-\u9fa5\d\D]*)\n￥([.\d]*)\n\(含快递[:|：]￥([ .\d]*)\)\n查看物流\n([\u4e00-\u9fa5\d\D]*)/
+                    /订单号[:|：] (\d*)成交时间[:|：] ([\d-:\W]*)\t\n([\u4e00-\u9fa5\da-zA-Z ]*)\n([\u4e00-\u9fa5|\d\D：]*)\n￥[.\d]*\n([.\d]*)\n([\u4e00-\u9fa5\d\D]*)\n￥([.\d]*)\n\(含快递[:|：]￥([ .\d]*)\)\n查看物流\n([\u4e00-\u9fa5\d\D]*)/
                 )
                 var goods = [];
                 var ret = {
