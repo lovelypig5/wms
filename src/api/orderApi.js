@@ -2,6 +2,7 @@ var BaseApi = require( './baseApi' );
 var orderService = require( '../service/orderService' );
 
 const DICT = {
+    '80ml美国外贸药瓶密封PP透明塑料瓶便携分装收纳药盒拇指瓶': '拇指瓶',
     '80ml美国外贸药瓶医用密封PP透明塑料瓶便携分装收纳药盒拇指瓶': '拇指瓶',
     '80ml出口美国医用密封PP透明塑料瓶便携收纳药盒拇指瓶（新款）': '拇指瓶',
     '美国创意医用密封透明分装pp塑料瓶旅行收纳小药瓶道具拇指瓶': '拇指瓶',
